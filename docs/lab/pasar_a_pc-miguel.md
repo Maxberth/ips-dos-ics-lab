@@ -1,5 +1,7 @@
 # Pasar el laboratorio a pc-miguel
 
+> **Actualización 2026-11-17:** pc-miguel no está disponible. Se usará **pc-alem**, un escritorio con mejor refrigeración. Alem prepara su PC con [`docs/prompts/PROMPT_pc-alem.md`](../prompts/PROMPT_pc-alem.md), que readapta esta guía a `profile_pc-alem.env` y `pasar_a_pc-alem.md`. Esta guía sigue siendo la referencia de los pasos.
+
 Todo lo calibrado en laptop-dev se reproduce en pc-miguel con los **mismos scripts, reglas y arnés**. Solo cambia el perfil `lab/config/profile_pc-miguel.env`. Los datos de laptop-dev no se copian a las tablas del paper.
 
 Tiempo estimado de montaje: unos 45–60 min. La parte larga es la compilación de OpenPLC, de unos 15–20 min.
