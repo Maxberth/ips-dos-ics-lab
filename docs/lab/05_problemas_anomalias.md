@@ -81,3 +81,11 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
 - **Consecuencia:** con un solo origen, el techo del IPS es una cola: Suricata procesó unos 95 kpps (2,87 M en 30 s) frente a unos 150 kpps de ataque en laptop-dev. El exceso lo descarta el kernel sin distinguir el tráfico legítimo.
 - **Variabilidad:** dos corridas casi iguales (D18) dieron 93,3 % y 88,5 % de disponibilidad del SCADA. Hacen falta repeticiones (perfil final ×10) para dar intervalos.
 - Se mantienen las 2 colas: no perjudican y ayudan con orígenes distintos. Para el paper: declarar el techo de rendimiento del IPS virtual y reportar `queue_dropped` aparte de los descartes por regla. En pc-miguel hay que medir el techo propio.
+
+## A15. El Modbus/TCP flood sin IPS (E1) tumbó el runtime de OpenPLC; 9 corridas posteriores midieron un PLC caído
+- **Corrida:** `20261117T191113Z_laptop-dev_E1_modbus_piloto_r1`. El atacante abrió 8 conexiones Modbus y escribió unos 9,5 M de solicitudes en 30 s. El SCADA tuvo respuesta hasta la solicitud 352. A partir de la 353 (≈ 35 s desde t0, al terminar el ataque) recibió `ConnectionRefused`.
+- **Estado del PLC:** el proceso `core/openplc` quedó zombi (`<defunct>`), sin rastro en dmesg. `openplc.service` seguía `active` porque systemd vigila el script `start_openplc.sh`, no el runtime.
+- **Impacto:** las 9 corridas siguientes de la matriz piloto (E3 icmp, E1 icmp, E3 udp, E2 modbus, E2 udp, E2 syn, E3 modbus, E2 icmp y E1 syn, de 19:12 a 19:24 UTC) midieron un PLC caído: disponibilidad 0 % y casi todo `ConnectionRefused`. Quedan en `data/raw` con `status=failed` y la explicación en `notes`. **No son mediciones de esos escenarios.**
+- **Es también un hallazgo:** sin IPS, un Modbus flood de una sola fuente tumba el runtime de OpenPLC (commit b5d41356). Hay que comprobar si se repite (E1 modbus ×10) y si el IPS lo evita (E3 modbus).
+- **Corrección del arnés:** antes de cada corrida, `run_once.sh` comprueba el PLC con 1 s de sondeo (≥ 8/10 respuestas). Si no responde, reinicia OpenPLC y lo anota. Al final de la corrida vuelve a comprobarlo y guarda `alive_after=yes|no` en `plc_health.txt`. "PLC caído tras la corrida" pasa a ser un resultado del escenario.
+- **Lección:** el validador debe tratar como FALLO una disponibilidad del 0 % con `ConnectionRefused` desde el inicio, no como un resultado.

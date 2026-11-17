@@ -36,6 +36,10 @@ def main():
         if any(r["ok"] == "1" and not r["rtt_ms"] for r in rows):
             fails.append("ok sin RTT")
         info.append(f"polls={len(rows)} ok={okn}")
+        # A15: si el PLC ya rechazaba conexiones en el calentamiento, la corrida no mide el escenario.
+        warm_rows = rows[:30]
+        if warm_rows and all(r["error"].startswith("ConnectionRefused") for r in warm_rows):
+            fails.append("PLC caído desde el inicio (ConnectionRefused en el calentamiento)")
         if a.attack == "none" and okn < len(rows):
             warns.append(f"{len(rows) - okn} solicitudes fallidas sin ataque")
 

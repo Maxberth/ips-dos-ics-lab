@@ -56,6 +56,15 @@ CUR=$(cat "$LAB_RUN/ips_mode" 2>/dev/null)
 if [ "$CUR" != "$MODE" ]; then "$REPO/lab/harness/ips_mode.sh" "$MODE" > "$OUT/ips_mode.txt" 2>&1 || fail "ips_mode $MODE"; fi
 for vm in lab-attacker lab-fw lab-ips lab-plc lab-scada; do lab_ssh "$vm" true 2>/dev/null || fail "sin SSH a $vm"; done
 
+# --- 1b. Salud del PLC (A15): el runtime puede morir con un ataque y systemd no lo detecta ---
+plc_ok(){ lab_ssh lab-scada "python3 -I /opt/lab/scada_poller.py --plc $PLC --seconds 1 --out /tmp/health.csv >/dev/null 2>&1; awk -F, 'NR>1&&\$5==1{n++}END{exit !(n>=8)}' /tmp/health.csv"; }
+if ! plc_ok; then
+  log "PLC sin respuesta antes de la corrida: se reinicia OpenPLC"
+  lab_ssh lab-plc "sudo systemctl restart openplc"; for i in $(seq 60); do plc_ok && break; sleep 2; done
+  if plc_ok; then NOTES="${NOTES:+$NOTES; }OpenPLC reiniciado antes de la corrida"; echo "restarted_before" > "$OUT/plc_health.txt"
+  else fail "PLC no responde ni tras reiniciar OpenPLC"; fi
+fi
+
 # --- 2. Contadores previos ---
 lab_ssh lab-fw "sudo nft -j list counters" > "$OUT/fw_counters_pre.json" 2>/dev/null || fail "contadores fw"
 lab_ssh lab-ips "sudo nft -j list counters" > "$OUT/ips_counters_pre.json" 2>/dev/null || fail "contadores ips"
@@ -109,6 +118,11 @@ if [ "$MODE" != router ]; then
   lab_ssh lab-ips "ls -l /var/log/suricata/eve.json; df -h / | tail -1" > "$OUT/suricata_disk.txt" 2>&1
   lab_ssh lab-ips "systemctl is-active suricata-lab" > "$OUT/suricata_state_post.txt" 2>&1
 fi
+
+# --- 5b. ¿El PLC sigue vivo tras el ataque y el enfriamiento? (resultado del escenario, A15) ---
+if plc_ok; then echo "alive_after=yes" >> "$OUT/plc_health.txt"; else
+  echo "alive_after=no" >> "$OUT/plc_health.txt"; NOTES="${NOTES:+$NOTES; }PLC SIN RESPUESTA tras la corrida (runtime caído)"
+  lab_ssh lab-plc "pgrep -a openplc; sudo journalctl -u openplc --no-pager -n 20" >> "$OUT/plc_health.txt" 2>&1; fi
 
 # --- 6. Conteos de la captura (segunda fuente) ---
 # Streaming y memoria constante, dentro de un scope con tope (anomalía A10: tshark agotó la RAM del host).
