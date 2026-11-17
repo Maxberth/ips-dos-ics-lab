@@ -12,6 +12,7 @@ Cambios (documentados en docs/lab/04_decisiones.md, D11-D12):
 import sys, yaml
 
 src, dst = sys.argv[1], sys.argv[2]
+MEASURE = "--measure" in sys.argv[3:]   # corridas: eve solo con stats (ver D17)
 text = open(src).read()
 body = text.split("---", 1)[1] if text.lstrip().startswith("%YAML") else text
 c = yaml.safe_load(body)
@@ -27,8 +28,8 @@ for o in c.get("outputs", []):
     name = list(o.keys())[0]
     if name == "eve-log":
         o[name].update({"enabled": True, "filetype": "regular", "filename": "eve.json",
-                        "types": [{"alert": {"tagged-packets": False}}, {"drop": {"alerts": True, "flows": "all"}},
-                                  {"stats": {"totals": True, "threads": False, "deltas": False}}]})
+                        "types": ([] if MEASURE else [{"alert": {"tagged-packets": False}}, {"drop": {"alerts": True, "flows": "all"}}])
+                                 + [{"stats": {"totals": True, "threads": False, "deltas": False}}]})
         outs.append(o)
     elif name == "stats":
         o[name].update({"enabled": True, "filename": "stats.log", "append": True, "totals": True, "threads": False})

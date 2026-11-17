@@ -16,7 +16,10 @@ case $MODE in
   test-drop) ACTION=drop; SET=test;;
   *) echo "modo desconocido"; exit 1;;
 esac
-lab_scp "$CFG/nftables-router.conf" "$CFG/nftables-nfq.conf" "$CFG/suricata-lab.yaml" "lab@$(mgmt_ip lab-ips):/tmp/"
+# Corridas (alert/drop): eve solo con stats; pruebas (test-*): eve con alert y drop (D17).
+case $MODE in test-*) YAML=suricata-lab.yaml;; *) YAML=suricata-lab-measure.yaml;; esac
+lab_scp "$CFG/nftables-router.conf" "$CFG/nftables-nfq.conf" "lab@$(mgmt_ip lab-ips):/tmp/"
+lab_scp "$CFG/$YAML" "lab@$(mgmt_ip lab-ips):/tmp/suricata-lab.yaml"
 if [ -n "$SET" ]; then
   sed "s/^ACTION /$ACTION /" "$CFG/rules/$SET.rules.in" > "$CACHE/active.rules"
   lab_scp "$CACHE/active.rules" "lab@$(mgmt_ip lab-ips):/tmp/lab.rules"

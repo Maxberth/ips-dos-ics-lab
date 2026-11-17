@@ -65,3 +65,9 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Contexto:** todas las VMs tienen una NIC en la VLAN 99 para que el host las gestione por SSH. Sin más, el atacante podría alcanzar a las demás VMs por esa VLAN, saltándose el firewall y el IPS.
 - **Elección:** tabla nftables `mgmtguard` (`lab/config/mgmt-guard.nft`) en todas las VMs: por la interfaz `mgmt` solo entra y sale tráfico con el host (192.168.99.1). En fw e ips va incluida en sus archivos de reglas.
 - **Verificación:** `check_chain.sh` comprueba que el atacante no llega a la gestión de otra VM ni por la VLAN 99 ni a través del firewall.
+
+## D17. En las corridas, eve.json registra solo estadísticas
+- **Contexto:** con `drop`, cada paquete descartado de un flood genera una alerta: unos 4 M de líneas (≈ 3 GB) en 30 s. Llenaría el disco de lab-ips (6 GB) y añadiría carga de escritura que no es parte de la inspección.
+- **Elección:** `suricata-lab-measure.yaml` (corridas E2/E3) registra en eve.json solo `stats` cada 1 s. Los contadores `detect.alert` e `ips.blocked/accepted` siguen contando todas las alertas y descartes. Como cada corrida tiene un solo tipo de ataque y una sola regla aplicable, la atribución por regla se mantiene. `suricata-lab.yaml` (con alert y drop en eve) se usa en las pruebas de `check_chain.sh`.
+- eve.json se vacía al inicio de cada corrida. El tamaño final y el espacio libre quedan en `suricata_disk.txt`.
+- **Limitación:** un IPS real registraría las alertas con limitación de tasa. Este coste de registro no se mide aquí (declarar en el paper).

@@ -14,7 +14,7 @@
 #     ts_host.csv        1 Hz desde el host: domstats de las VMs, puertos espejo, RAM, Tctl
 #     attack.txt         salida del generador (hping3 / modbus_flood.py) y contadores de v10 del atacante
 #     fw_counters_{pre,post}.json, ips_counters_{pre,post}.json   contadores nftables
-#     suricata_stats.jsonl, suricata_alerts_by_sid.txt            Suricata (eve.json, ventana de la corrida)
+#     suricata_stats.jsonl, suricata_disk.txt   Suricata (eve.json solo stats cada 1 s; se vacía al inicio de cada corrida)
 #     plc_pidstat.txt    CPU del proceso PLC dentro de la VM
 #     capture_stats.txt  estadísticas de dumpcap (capturados/descartados)
 #     pcap_counts.csv    conteos por segundo e interfaz de la captura (pcap_count.py, streaming)
@@ -60,7 +60,8 @@ for vm in lab-attacker lab-fw lab-ips lab-plc lab-scada; do lab_ssh "$vm" true 2
 lab_ssh lab-fw "sudo nft -j list counters" > "$OUT/fw_counters_pre.json" 2>/dev/null || fail "contadores fw"
 lab_ssh lab-ips "sudo nft -j list counters" > "$OUT/ips_counters_pre.json" 2>/dev/null || fail "contadores ips"
 lab_ssh lab-attacker "ip -s -j link show v10" > "$OUT/attacker_v10_pre.json" 2>/dev/null
-EVE_LINES0=$(lab_ssh lab-ips "sudo sh -c 'wc -l < /var/log/suricata/eve.json' 2>/dev/null || echo 0")
+lab_ssh lab-ips "sudo truncate -s 0 /var/log/suricata/eve.json 2>/dev/null; true"   # eve.json por corrida (O_APPEND)
+EVE_LINES0=0
 
 # --- 3. Arranque de mediciones ---
 T0_NS=$(date +%s%N)
@@ -103,8 +104,7 @@ lab_ssh lab-plc "cat /tmp/pidstat.txt" > "$OUT/plc_pidstat.txt" 2>/dev/null
 if [ "$MODE" != router ]; then
   lab_ssh lab-ips "sudo tail -n +$((EVE_LINES0 + 1)) /var/log/suricata/eve.json | jq -c 'select(.event_type==\"stats\") | {timestamp, uptime:.stats.uptime, decoder_pkts:.stats.decoder.pkts, ips:.stats.ips, nfq:.stats.capture, alert:.stats.detect.alert, flow_memcap:.stats.flow.memcap, tcp_syn:.stats.tcp.syn}'" \
     > "$OUT/suricata_stats.jsonl" 2>/dev/null || fail "suricata stats"
-  lab_ssh lab-ips "sudo tail -n +$((EVE_LINES0 + 1)) /var/log/suricata/eve.json | jq -r 'select(.event_type==\"alert\") | \"\(.alert.signature_id) \(.alert.action)\"' | sort | uniq -c" \
-    > "$OUT/suricata_alerts_by_sid.txt" 2>/dev/null
+  lab_ssh lab-ips "ls -l /var/log/suricata/eve.json; df -h / | tail -1" > "$OUT/suricata_disk.txt" 2>&1
   lab_ssh lab-ips "systemctl is-active suricata-lab" > "$OUT/suricata_state_post.txt" 2>&1
 fi
 
@@ -123,7 +123,7 @@ T_END_TCTL=$(awk -F, 'END{print $7}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(d
 GMAX=$(awk -F, -v t0="$(date -u -d @$((T0_NS/1000000000)) +%FT%T)" 'NR>1 && $1>=t0{print $10}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null | sort -u | paste -sd'|')
 TMAX=$(awk -F, '$2=="host" && $4=="tctl_c"{if($5>m)m=$5}END{print m}' "$OUT/ts_host.csv")
 RULES_SHA=$( [ "$MODE" != router ] && sha256sum "$CACHE/active.rules" | cut -c1-16 || echo -)
-YAML_SHA=$(sha256sum "$REPO/lab/config/ips/suricata-lab.yaml" 2>/dev/null | cut -c1-16)
+YAML_SHA=$(sha256sum "$REPO/lab/config/ips/suricata-lab-measure.yaml" 2>/dev/null | cut -c1-16)
 [ -s "$OUT/polls.csv" ] || fail "polls vacío"
 validate=$(python3 -I "$REPO/lab/harness/validate_run.py" "$OUT" --attack "$ATTACK" --mode "$MODE" 2>&1 | tail -1)
 H="$REPO/data/raw/runs.csv"
