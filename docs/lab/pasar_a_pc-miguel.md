@@ -46,6 +46,7 @@ mkdir -p ~/.cache/ips-lab && cd ~/.cache/ips-lab && curl -fLO https://cloud.debi
 - **OpenPLC puede morir con el Modbus flood** sin que systemd lo note (A15). El arnés comprueba el PLC antes y después de cada corrida y lo reinicia si hace falta.
 - **El techo del IPS:** con un atacante de una sola IP, Suricata usa una sola cola NFQUEUE. En laptop-dev procesa ~58–95 kpps frente a ~150 kpps de ataque. El resto lo descarta el kernel sin distinguir el tráfico legítimo (A11, A14). En pc-miguel hay que medir su propio techo y reportar `nfq_queue_dropped` aparte de `ips.blocked`.
 - **Suricata con `exception-policy: ignore`** (D19). Con `auto`, el parser Modbus bloquea el flood en E2 sin reglas (A16).
+- **Decisión abierta antes de las corridas finales (D20):** con la regla Modbus por umbral, el IPS mantiene al SCADA durante el ataque, pero OpenPLC cae al terminar el flood. Hay que decidir si se reporta así o se prueba `reject`.
 - **Guardián en pc-miguel:** escritorio sin batería (`GUARD_REQUIRE_AC=0`). Si usa zram con `swappiness` alta como laptop-dev, subir `GUARD_ABORT_SWAP_GROWTH_MIB` (D15).
 
 ## 2c. Tiempos medidos en laptop-dev
