@@ -98,6 +98,19 @@ def main():
         for k in ("c_v10_plc_tcp502", "c_v10_plc_udp", "c_v10_plc_icmp", "c_fwd_est", "c_fwd_drop"):
             if k in f1: s["fw_" + k[2:]] = f1[k] - f0.get(k, 0)
         s["tctl_max_c"] = r["tctl_max_c"]
+        # Frecuencia de CPU del host: reposo (calentamiento) frente a ataque (A19)
+        th = f"{d}/ts_host.csv"
+        if os.path.exists(th):
+            fq = [(int(x["ts_unix_ns"]), float(x["value"])) for x in csv.DictReader(open(th))
+                  if x["key"] == "cpu_mhz_mean" and x["value"]]
+            if fq:
+                t0h = fq[0][0]
+                wa = [v for t, v in fq if (t - t0h) / 1e9 < warm]
+                aa = [v for t, v in fq if warm <= (t - t0h) / 1e9 < warm + att]
+                if wa: s["cpu_mhz_warm"] = round(sum(wa) / len(wa))
+                if aa: s["cpu_mhz_attack"] = round(sum(aa) / len(aa))
+            tc = [float(x["value"]) for x in csv.DictReader(open(th)) if x["key"] == "tctl_c" and x["value"]]
+            if tc: s["tctl_mean_c"] = round(sum(tc) / len(tc), 1)
         ph = f"{d}/plc_health.txt"
         if os.path.exists(ph):
             txt = open(ph).read()

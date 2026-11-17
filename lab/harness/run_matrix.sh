@@ -32,6 +32,6 @@ while read -r s a r; do
   [ -e "$LAB_RUN/ABORT" ] && { echo "ABORT del guardián: se detiene la matriz"; exit 3; }
   echo "=== [$i/$N] $s $a rep $r  $(date -u +%T)"
   t0=$(date +%s)
-  "$REPO/lab/harness/run_once.sh" --scenario "$s" --attack "$a" --run-profile "$RP" --rep "$r" --notes "matrix seed=$SEED $i/$N" < /dev/null
+  "$REPO/lab/harness/run_once.sh" --scenario "$s" --attack "$a" --run-profile "$RP" --rep "$r" --notes "matrix seed=$SEED $i/$N${MATRIX_NOTE:+; $MATRIX_NOTE}" < /dev/null
   echo "    duración real: $(( $(date +%s) - t0 )) s"
 done <<< "$PLAN"

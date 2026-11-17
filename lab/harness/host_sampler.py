@@ -4,7 +4,7 @@
 Escribe en formato largo (crudo, sin procesar):  ts_unix_ns, source, entity, key, value
   - source=domstats : `virsh domstats --cpu-total --interface` de las VMs lab-* (contadores acumulados)
   - source=link     : contadores de los puertos espejo del host mir20 / mir30 (/sys/class/net/*/statistics)
-  - source=host     : MemAvailable (KiB), Tctl (°C), load1
+  - source=host     : MemAvailable (KiB), Tctl (°C), load1, frecuencia media de CPU (MHz)
 Uso: host_sampler.py --seconds 80 --out ts_host.csv
 """
 import argparse, csv, glob, subprocess, sys, time
@@ -57,6 +57,14 @@ def main():
             w.writerow([ts, "host", "host", "mem_avail_kib", mem])
             w.writerow([ts, "host", "host", "tctl_c", tctl()])
             w.writerow([ts, "host", "host", "load1", open("/proc/loadavg").read().split()[0]])
+            # Frecuencia media de los hilos (MHz): detecta throttling durante el ataque (A19)
+            fr = []
+            for fp in glob.glob("/sys/devices/system/cpu/cpu[0-9]*/cpufreq/scaling_cur_freq"):
+                try: fr.append(int(open(fp).read()) / 1000)
+                except OSError: pass
+            if fr:
+                w.writerow([ts, "host", "host", "cpu_mhz_mean", round(sum(fr) / len(fr), 1)])
+                w.writerow([ts, "host", "host", "cpu_mhz_vm_threads", round(sum(fr[2:]) / max(1, len(fr[2:])), 1)])
             f.flush()
             i += 1
     return 0
