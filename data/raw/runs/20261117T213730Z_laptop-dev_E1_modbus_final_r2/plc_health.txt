@@ -1,0 +1,23 @@
+alive_after=no
+644 /bin/bash /opt/lab/OpenPLC_v3/start_openplc.sh
+686 [openplc] <defunct>
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: client ID: 14 has closed the connection
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 29 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 27 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 21 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 22 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: client ID: 17 has closed the connection
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 24 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 25 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: client ID: 20 has closed the connection
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread
+Nov 17 21:37:11 plc start_openplc.sh[686]: Modbus Server: Something is wrong with the  client ID: 9 message Size : -1
+Nov 17 21:37:11 plc start_openplc.sh[686]: Terminating Modbus connections thread

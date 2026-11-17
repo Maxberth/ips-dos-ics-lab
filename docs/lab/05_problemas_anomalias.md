@@ -112,3 +112,10 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
 - **Hipótesis descartada:** un SIGPIPE al escribir en un socket cerrado dejaría la señal 13 en el código de salida, y no aparece. **No se determinó la causa en el código de OpenPLC**; no se afirma ninguna.
 - **En E3 (drop) también cayó una vez tras el ataque** (`20261117T195929Z`), aunque el SCADA tuvo 100 % de disponibilidad durante el ataque. La regla 1000004 deja pasar los primeros 100 segmentos/s por origen (`detection_filter`), y cada segmento del flood lleva 32 solicitudes, así que llegan hasta ~3 200 solicitudes/s. Ajustar el umbral, o medir por solicitudes en lugar de segmentos, es una decisión pendiente para pc-miguel; se registra el resultado tal cual.
 - **Consecuencia para el diseño:** "el PLC sigue vivo tras la corrida" (`alive_after` en `plc_health.txt`) es un resultado del escenario y el arnés lo registra. El reinicio previo garantiza que cada corrida empiece con el PLC sano.
+
+## A19. Calibración térmica de la tanda real en laptop-dev: sin throttling
+- **Bloque:** E0 ×1 y E1/E3 × syn/modbus × 2, perfil `final` (21:26–21:46 UTC).
+- **Temperatura:** Tctl máximo de 81,1 °C (PAUSE a 88 °C) y medio de hasta 68,5 °C durante las corridas con flood. El arnés esperó 5 veces a que la temperatura bajara de 65 °C antes de una corrida.
+- **Frecuencia:** media de 4 125–4 217 MHz durante el ataque, frente a 3 000–3 430 MHz en el calentamiento. En reposo la CPU baja de frecuencia por sí sola, así que la frecuencia sube con la carga y no hay throttling. No hacen falta optimizaciones térmicas.
+- **Duración:** 114–166 s por corrida.
+- **Captura:** en E1 syn, dumpcap descartó 8–13 % (≈ 177 kpps). Esos conteos son una cota inferior; el contador del firewall y el kernel del atacante no dependen de la captura.
