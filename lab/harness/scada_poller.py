@@ -50,7 +50,7 @@ def main():
     n_total = int(round(a.seconds * a.hz))
     sock, reconnects, tx = None, 0, 0
     with open(a.out, "w", newline="") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["seq", "ts_send_unix_ns", "ts_send_mono_ns", "ts_recv_mono_ns", "ok",
                     "rtt_ms", "error", "tx_id", "reconnects"])
         t0 = time.monotonic()

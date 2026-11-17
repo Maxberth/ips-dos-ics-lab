@@ -60,6 +60,7 @@ for vm in lab-attacker lab-fw lab-ips lab-plc lab-scada; do lab_ssh "$vm" true 2
 lab_ssh lab-fw "sudo nft -j list counters" > "$OUT/fw_counters_pre.json" 2>/dev/null || fail "contadores fw"
 lab_ssh lab-ips "sudo nft -j list counters" > "$OUT/ips_counters_pre.json" 2>/dev/null || fail "contadores ips"
 lab_ssh lab-attacker "ip -s -j link show v10" > "$OUT/attacker_v10_pre.json" 2>/dev/null
+lab_ssh lab-ips "sudo cat /proc/net/netfilter/nfnetlink_queue" > "$OUT/nfq_pre.txt" 2>&1   # queue_dropped = desbordamiento de cola (A11)
 lab_ssh lab-ips "sudo truncate -s 0 /var/log/suricata/eve.json 2>/dev/null; true"   # eve.json por corrida (O_APPEND)
 EVE_LINES0=0
 
@@ -97,6 +98,7 @@ lab_ssh lab-attacker "ip -s -j link show v10" > "$OUT/attacker_v10_post.json" 2>
 [ "$ATTACK" = modbus ] && lab_ssh lab-attacker "cat /tmp/modbus_flood.json" >> "$OUT/attack.txt"
 lab_ssh lab-fw "sudo nft -j list counters" > "$OUT/fw_counters_post.json" 2>/dev/null || fail "contadores fw post"
 lab_ssh lab-ips "sudo nft -j list counters" > "$OUT/ips_counters_post.json" 2>/dev/null || fail "contadores ips post"
+lab_ssh lab-ips "sudo cat /proc/net/netfilter/nfnetlink_queue" > "$OUT/nfq_post.txt" 2>&1
 for i in $(seq 10); do lab_ssh lab-scada "pgrep -f scada_poller.py >/dev/null" || break; sleep 1; done
 lab_ssh lab-scada "cat /tmp/polls.csv" > "$OUT/polls.csv" 2>/dev/null || fail "polls.csv"
 lab_ssh lab-scada "cat /tmp/poller.log" > "$OUT/poller.log" 2>/dev/null
@@ -121,7 +123,7 @@ echo "$RUN_ID,$(basename "$CAP"),$CAP_SHA,$CAP_SIZE,$KEEP" >> "$REPO/data/captur
 # --- 7. Metadatos y fila de runs.csv ---
 T_END_TCTL=$(awk -F, 'END{print $7}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null)
 GMAX=$(awk -F, -v t0="$(date -u -d @$((T0_NS/1000000000)) +%FT%T)" 'NR>1 && $1>=t0{print $10}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null | sort -u | paste -sd'|')
-TMAX=$(awk -F, '$2=="host" && $4=="tctl_c"{if($5>m)m=$5}END{print m}' "$OUT/ts_host.csv")
+TMAX=$(tr -d '\r' < "$OUT/ts_host.csv" | awk -F, '$2=="host" && $4=="tctl_c"{if($5>m)m=$5}END{print m}')
 RULES_SHA=$( [ "$MODE" != router ] && sha256sum "$CACHE/active.rules" | cut -c1-16 || echo -)
 YAML_SHA=$(sha256sum "$REPO/lab/config/ips/suricata-lab-measure.yaml" 2>/dev/null | cut -c1-16)
 [ -s "$OUT/polls.csv" ] || fail "polls vacío"

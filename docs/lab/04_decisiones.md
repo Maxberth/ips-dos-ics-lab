@@ -71,3 +71,9 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Elección:** `suricata-lab-measure.yaml` (corridas E2/E3) registra en eve.json solo `stats` cada 1 s. Los contadores `detect.alert` e `ips.blocked/accepted` siguen contando todas las alertas y descartes. Como cada corrida tiene un solo tipo de ataque y una sola regla aplicable, la atribución por regla se mantiene. `suricata-lab.yaml` (con alert y drop en eve) se usa en las pruebas de `check_chain.sh`.
 - eve.json se vacía al inicio de cada corrida. El tamaño final y el espacio libre quedan en `suricata_disk.txt`.
 - **Limitación:** un IPS real registraría las alertas con limitación de tasa. Este coste de registro no se mide aquí (declarar en el paper).
+
+## D18. Dos colas NFQUEUE con fanout y dos hilos de recepción en Suricata
+- **Contexto:** A11. Con una cola, Suricata se satura en unos 58 kpps en laptop-dev y el kernel descarta lo demás sin distinguir ataque de tráfico legítimo.
+- **Elección:** `queue num 0-1` en nftables (reparto por hash de flujo entre colas; `fanout` reparte por CPU y desequilibra, ver A13) y `suricata -q 0 -q 1`: una cola por vCPU del IPS (2 en los dos perfiles). Sigue sin `bypass` (D11).
+- **Se mide en cada corrida:** `queue_dropped` por cola. En el paper se reportan por separado los descartes por regla (`ips.blocked`, `drop_reason.rules`) y por desbordamiento (`queue_dropped`).
+- La corrida E3 con una cola queda en `data/raw` como evidencia, marcada en `notes`.

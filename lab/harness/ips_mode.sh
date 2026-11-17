@@ -39,7 +39,7 @@ else
   # Suricata primero, la cola después: así no hay ventana en que la cola exista sin lector.
   LOG=/var/log/suricata/suricata.log; n0=$(sudo sh -c "wc -l < $LOG" 2>/dev/null || echo 0)
   sudo systemd-run --unit=suricata-lab --property=Restart=no \
-    /usr/bin/suricata -c /etc/suricata/suricata-lab.yaml -S /etc/suricata/rules/lab.rules -q 0 --pidfile /run/suricata-lab.pid
+    /usr/bin/suricata -c /etc/suricata/suricata-lab.yaml -S /etc/suricata/rules/lab.rules -q 0 -q 1 --pidfile /run/suricata-lab.pid
   ok=0; for i in $(seq 90); do sudo tail -n +$((n0+1)) $LOG 2>/dev/null | grep -q 'Engine started' && { ok=1; break; }; sleep 1; done
   [ $ok = 1 ] || { echo "Suricata no arrancó en 90 s"; sudo tail -20 $LOG; exit 4; }
   sudo nft -f /tmp/nftables-nfq.conf

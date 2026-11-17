@@ -28,7 +28,7 @@ def main():
     a = ap.parse_args()
     t0 = time.monotonic()
     with open(a.out, "w", newline="") as f:
-        w = csv.writer(f)
+        w = csv.writer(f, lineterminator="\n")
         w.writerow(["ts_unix_ns", "source", "entity", "key", "value"])
         i = 0
         while time.monotonic() - t0 < a.seconds:

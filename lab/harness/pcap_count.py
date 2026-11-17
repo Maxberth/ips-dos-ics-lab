@@ -82,7 +82,7 @@ def main():
                 else:
                     c[7] += 1
     with open(a.out, "w", newline="") as o:
-        w = csv.writer(o); w.writerow(["iface", "second"] + COLS)
+        w = csv.writer(o, lineterminator="\n"); w.writerow(["iface", "second"] + COLS)
         for (ifc, s) in sorted(counts):
             w.writerow([ifc, s] + counts[(ifc, s)])
     print(f"interfaces={ifaces} filas={len(counts)}")

@@ -52,3 +52,32 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
   3. En ABORT, el guardián también detiene los scopes `ips-lab-job-*`.
   4. Captura con snaplen 64 y buffer de 256 MiB. En esta corrida dumpcap descartó 4,5 % en mir20 y 1,6 % en mir30. Quedan declarados en `capture_stats.txt` y en la validación.
 - **Qué se rehízo:** el conteo de la captura de esa corrida con `pcap_count.py` dentro de un scope de 1 GiB. Los demás datos crudos de la corrida (sondeo SCADA, contadores, hping3, muestreo del host) ya estaban guardados y no se tocaron. Su fila en `runs.csv` se escribe a mano con `status=partial` y la explicación.
+
+## A11. Con una sola cola NFQUEUE, el IPS se satura y descarta tráfico legítimo (hallazgo; corrección en D18)
+- **Corrida:** `20261117T190317Z_laptop-dev_E3_syn_piloto_r1` (E3 drop, SYN flood, piloto 30 s, 1 cola NFQUEUE).
+- **Cuadre de fuentes (el ataque se contabiliza entero):**
+  - firewall `c_v10_plc_tcp502`: 4 467 006 SYN nuevos aceptados;
+  - captura VLAN 20 (antes del IPS): 4 455 209 (dumpcap descartó 0,27 %);
+  - Suricata `decoder.pkts`: 1 752 919, de ellos `ips.blocked` 1 747 408 (`drop_reason.rules` 1 732 555, `stream_error` 14 853);
+  - kernel `/proc/net/netfilter/nfnetlink_queue`, cola 0: `queue_dropped` 2 714 095.
+  - 1 752 920 (entregados a Suricata) + 2 714 095 (desbordamiento) = 4 467 015, frente a 4 467 006 del firewall: diferencia de 9 paquetes.
+  - Captura VLAN 30 (después del IPS): 3 072 paquetes de ataque.
+- **Interpretación:** solo el 39 % de lo eliminado lo descartó una regla. El 61 % lo descartó el kernel porque la cola se llenó: Suricata, con un hilo de recepción, procesó unos 58 kpps frente a unos 149 kpps de ataque. Ese desbordamiento es indiscriminado: también se perdieron solicitudes Modbus legítimas (49 solicitudes en la VLAN 20 frente a 22 en la VLAN 30). La disponibilidad del SCADA bajó al 64,9 % (54 timeouts), peor que en E1 sin IPS (99,7 %, RTT p95 249 ms).
+- **No se debe presentar como "bloqueo del IPS" sin separar** `rules` de `queue_dropped`. El arnés ahora guarda `nfq_pre.txt` y `nfq_post.txt` y el resumen reporta `nfq_queue_dropped`.
+- **Error de cálculo propio detectado:** un primer cálculo rápido de disponibilidad con awk dio 0/299 en la ventana de ataque porque mezclaba columnas. El cálculo correcto (`summarize_runs.py`) da 298/299 para E1. No se usó ningún valor del cálculo erróneo.
+
+## A12. `runs.csv` con saltos de línea dentro de un campo (resuelta)
+- `host_sampler.py` escribía CSV con `\r\n`. awk arrastraba el `\r` al campo `tctl_max_c` y partía la fila.
+- Todos los escritores CSV usan ahora `lineterminator="\n"`, y `run_once.sh` quita los `\r`. Se reparó `runs.csv` sin cambiar ningún valor medido; solo se quitaron los `\r`. En la fila E0 se reescribió `validate` con el validador corregido (A10), lo que queda anotado en `notes`.
+
+## A13. `queue num 0-1 fanout` no repartió la carga (resuelta)
+- **Corrida:** `20261117T190614Z_laptop-dev_E3_syn_piloto_r1`. La cola 0 recibió 3 558 paquetes y la cola 1, 2 856 466, de los que desbordaron 1 612 465.
+- **Causa:** en nftables, `fanout` elige la cola según la CPU que procesa el paquete. Todo el flood entra por la misma vCPU. Sin `fanout`, el reparto es por hash de flujo, y hping3 cambia el puerto de origen en cada paquete.
+- **Aun así:** con 2 hilos, Suricata procesó 2,86 M paquetes (antes 1,75 M) y la disponibilidad del SCADA pasó del 64,9 % al 93,3 %.
+
+## A14. El balanceo de NFQUEUE no reparte un flood de una sola IP (limitación; se mantiene D18)
+- **Corrida:** `20261117T190746Z_laptop-dev_E3_syn_piloto_r1`, con `queue num 0-1` sin fanout. La cola 0 recibió 0 paquetes y la cola 1, 2 872 742 (1 626 338 desbordados).
+- **Causa:** el balanceo de NFQUEUE calcula el hash con las direcciones IP de origen y destino, no con los puertos. Un atacante con una sola IP (L5) cae siempre en la misma cola.
+- **Consecuencia:** con un solo origen, el techo del IPS es una cola: Suricata procesó unos 95 kpps (2,87 M en 30 s) frente a unos 150 kpps de ataque en laptop-dev. El exceso lo descarta el kernel sin distinguir el tráfico legítimo.
+- **Variabilidad:** dos corridas casi iguales (D18) dieron 93,3 % y 88,5 % de disponibilidad del SCADA. Hacen falta repeticiones (perfil final ×10) para dar intervalos.
+- Se mantienen las 2 colas: no perjudican y ayudan con orígenes distintos. Para el paper: declarar el techo de rendimiento del IPS virtual y reportar `queue_dropped` aparte de los descartes por regla. En pc-miguel hay que medir el techo propio.
