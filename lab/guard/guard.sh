@@ -35,7 +35,7 @@ PAUSE_TEMP_LATCH=0
 
 destroy_lab_vms(){
   local c="virsh -c qemu:///system"
-  for d in $(sg libvirt -c "$c list --name" 2>/dev/null | grep '^lab-'); do sg libvirt -c "$c destroy $d" >/dev/null 2>&1; done
+  for d in $($c list --name 2>/dev/null | grep '^lab-'); do $c destroy $d >/dev/null 2>&1; done
 }
 
 while :; do

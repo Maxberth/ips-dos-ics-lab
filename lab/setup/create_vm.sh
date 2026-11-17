@@ -9,12 +9,13 @@ VM="${1:?nombre de VM (ver lab/setup/lab_vms.tsv)}"; INSTALL_NIC="${2:-}"
 ROLE=$(vm_field "$VM" 2); [ -n "$ROLE" ] || { echo "VM desconocida: $VM"; exit 1; }
 NICS=$(vm_field "$VM" 3); ROUTES=$(vm_field "$VM" 4); PKGS=$(vm_field "$VM" 5)
 eval "MEM=\$VM_${ROLE}_MEM VCPUS=\$VM_${ROLE}_VCPUS PIN=\"\$VM_${ROLE}_PIN\""
+MEM=${MEM_OVERRIDE:-$MEM}   # p. ej. más RAM temporal para compilar OpenPLC
 guard_ok || { echo "Guardián no está en OK/WARN: $(cat "$LAB_RUN/STATE" 2>/dev/null)"; exit 2; }
 V dominfo "$VM" >/dev/null 2>&1 && { echo "$VM ya existe"; exit 0; }
 
 [ -f "$SSH_KEY" ] || ssh-keygen -q -t ed25519 -N '' -C "ips-lab" -f "$SSH_KEY"
 [ -f "$IMG_DIR/$BASE_IMG_NAME" ] || cp "$CACHE/$BASE_IMG_NAME" "$IMG_DIR/$BASE_IMG_NAME"
-chmod 0644 "$IMG_DIR/$BASE_IMG_NAME"
+chmod 0644 "$IMG_DIR/$BASE_IMG_NAME" 2>/dev/null || true   # libvirt cambia el dueño al usarla
 
 SEED="$CACHE/seed/$VM"; mkdir -p "$SEED"
 MGMT=$(mgmt_ip "$VM")
@@ -55,8 +56,8 @@ MGMT=$(mgmt_ip "$VM")
       r=$(echo "$ROUTES" | tr ',' '\n' | while IFS='>' read -r dst gw; do
             [ -n "$dst" ] || continue
             gnet=$(echo "$gw" | cut -d. -f1-3); inet=$(echo "$ip" | cut -d. -f1-3)
-            [ "$gnet" = "$inet" ] && printf '{to: %s, via: %s}, ' "$dst" "$gw"; done)
-      [ -n "$r" ] && echo "    routes: [${r%, }]"
+            if [ "$gnet" = "$inet" ]; then printf '{to: %s, via: %s}, ' "$dst" "$gw"; fi; done; true)
+      if [ -n "$r" ]; then echo "    routes: [${r%, }]"; fi
     fi
   done
   if [ "$INSTALL_NIC" = --install-nic ]; then
@@ -80,7 +81,7 @@ NETARGS=()
 IFS=, read -ra nl <<<"$NICS"
 for n in "${nl[@]}"; do vlan=${n%%:*}; ip=${n#*:}; ip=${ip%/*}
   NETARGS+=(--network "network=ovs-ot,portgroup=vlan$vlan,model=virtio,mac=$(mac_for "$vlan" "$ip")"); done
-[ "$INSTALL_NIC" = --install-nic ] && NETARGS+=(--network "network=lab-install,model=virtio,mac=$(mac_for 0 "$MGMT")")
+if [ "$INSTALL_NIC" = --install-nic ]; then NETARGS+=(--network "network=lab-install,model=virtio,mac=$(mac_for 0 "$MGMT")"); fi
 
 i=0; PINARGS=""; for c in $PIN; do PINARGS+="vcpupin$i.vcpu=$i,vcpupin$i.cpuset=$c,"; i=$((i+1)); done
 HARD_KIB=$(( (MEM + 384) * 1024 ))
@@ -88,9 +89,9 @@ HARD_KIB=$(( (MEM + 384) * 1024 ))
 VI --name "$VM" --memory "$MEM" --vcpus "$VCPUS" \
   --cputune "${PINARGS}emulatorpin.cpuset=$EMULATOR_CPUS" \
   --memtune "hard_limit=$HARD_KIB" --memballoon none \
-  --cpu host-passthrough --osinfo detect=on,require=off \
+  --cpu host-passthrough --osinfo debian13 \
   --import --disk "path=$IMG_DIR/$VM.qcow2,bus=virtio" --disk "path=$IMG_DIR/$VM-seed.iso,device=cdrom" \
-  "${NETARGS[@]}" --graphics none --console pty,target_type=serial --noautoconsole \
+  "${NETARGS[@]}" --graphics none --video vga --console pty,target_type=serial --noautoconsole \
   --metadata "description=ips-dos-ics-lab $PLATFORM role=$ROLE"
 V dumpxml "$VM" > "$REPO/lab/setup/libvirt/$VM.xml"
 echo "creada $VM (mem=${MEM}MiB vcpus=$VCPUS pin=$PIN mgmt=$MGMT)"

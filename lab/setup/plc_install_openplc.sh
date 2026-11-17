@@ -3,6 +3,12 @@
 # Fija el commit: OPENPLC_COMMIT (si está vacío usa el último de master y lo registra).
 set -euo pipefail
 OPENPLC_COMMIT="${OPENPLC_COMMIT:-}"
+# Salida a Internet solo por el proxy del host (ssh -R 3128), si se pasó LAB_PROXY.
+if [ -n "${LAB_PROXY:-}" ]; then
+  export http_proxy=$LAB_PROXY https_proxy=$LAB_PROXY HTTP_PROXY=$LAB_PROXY HTTPS_PROXY=$LAB_PROXY
+  echo "Acquire::http::Proxy \"$LAB_PROXY\"; Acquire::https::Proxy \"$LAB_PROXY\";" | sudo tee /etc/apt/apt.conf.d/90lab-proxy >/dev/null
+  trap 'sudo rm -f /etc/apt/apt.conf.d/90lab-proxy' EXIT
+fi
 cd /opt/lab
 [ -d OpenPLC_v3 ] || git clone --quiet https://github.com/thiagoralves/OpenPLC_v3.git
 cd OpenPLC_v3

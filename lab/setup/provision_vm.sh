@@ -7,7 +7,19 @@ VM="${1:?vm}"; ROLE=$(vm_field "$VM" 2)
 IP=$(mgmt_ip "$VM")
 for i in $(seq 120); do lab_ssh "$VM" true 2>/dev/null && break; sleep 2; done
 echo "== $VM ($ROLE): esperando a cloud-init"
-lab_ssh "$VM" "cloud-init status --wait >/dev/null 2>&1; cloud-init status --long | head -3; test -f /var/lib/cloud/lab-ready"
+lab_ssh "$VM" "cloud-init status --wait >/dev/null 2>&1; cloud-init status | head -1; test -f /var/lib/cloud/lab-ready"
+
+# Paquetes por un proxy SOCKS inverso sobre SSH (ssh -R): la VM sale a Internet a través de la
+# conexión del host solo mientras dura este comando. No hace falta NAT ni tocar el firewall del host (ufw).
+PKGS=$(vm_field "$VM" 5)
+echo "== $VM: apt-get install $PKGS (vía proxy SOCKS inverso)"
+ssh -i "$SSH_KEY" -o BatchMode=yes -o UserKnownHostsFile="$CACHE/known_hosts" -o ExitOnForwardFailure=yes \
+  -R 127.0.0.1:1080 "lab@$IP" "set -e
+  echo 'Acquire::http::Proxy \"socks5h://127.0.0.1:1080\"; Acquire::https::Proxy \"socks5h://127.0.0.1:1080\";' | sudo tee /etc/apt/apt.conf.d/90lab-proxy >/dev/null
+  sudo apt-get -q update >/tmp/apt-update.log 2>&1 || { tail -5 /tmp/apt-update.log; exit 1; }
+  sudo DEBIAN_FRONTEND=noninteractive apt-get -q -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold install --no-install-recommends $PKGS >/tmp/apt-install.log 2>&1 || { tail -15 /tmp/apt-install.log; exit 1; }
+  sudo rm -f /etc/apt/apt.conf.d/90lab-proxy
+  dpkg-query -W -f='\${Package} \${Version}\n' $PKGS"
 
 # Común: directorio de scripts y sin offloads en las interfaces de datos (capturas y Suricata ven paquetes reales).
 lab_ssh "$VM" "sudo install -d -o lab -g lab /opt/lab"

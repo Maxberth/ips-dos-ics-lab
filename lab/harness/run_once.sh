@@ -67,7 +67,7 @@ T0_NS=$(date +%s%N)
 in_group wireshark dumpcap -q -i mir20 -i mir30 -s 128 -B 64 -a duration:$((TOTAL + 2)) -w "$CAP" \
   > "$OUT/capture_stats.txt" 2>&1 &
 CAP_PID=$!
-in_group libvirt python3 -I "$REPO/lab/harness/host_sampler.py" --seconds "$((TOTAL + 2))" --out "$OUT/ts_host.csv" &
+python3 -I "$REPO/lab/harness/host_sampler.py" --seconds "$((TOTAL + 2))" --out "$OUT/ts_host.csv" &
 HS_PID=$!
 lab_ssh lab-scada "nohup python3 -I /opt/lab/scada_poller.py --plc $PLC --hz $SCADA_HZ --seconds $TOTAL --out /tmp/polls.csv > /tmp/poller.log 2>&1 &" || fail "poller"
 lab_ssh lab-plc "nohup sh -c 'pidstat -h -u -r -p \$(pgrep -d, -f \"$PLC_PROCESS_PATTERN\" || echo 1) 1 $TOTAL' > /tmp/pidstat.txt 2>&1 &"

@@ -10,10 +10,12 @@ SSH_KEY="$HOME/.ssh/ips-lab_ed25519"
 LAB_RUN="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/ips-lab"
 URI=qemu:///system
 
-# Ejecuta con el grupo indicado aunque la sesión gráfica aún no lo tenga (usermod reciente).
-in_group(){ local g=$1; shift; if id -nG | tr ' ' '\n' | grep -qx "$g"; then "$@"; else sg "$g" -c "$(printf '%q ' "$@")"; fi; }
-V(){ in_group libvirt virsh -c "$URI" "$@"; }
-VI(){ in_group libvirt virt-install --connect "$URI" "$@"; }
+# Ejecuta con el grupo indicado aunque la sesión gráfica aún no lo tenga (usermod reciente sin
+# volver a iniciar sesión). CachyOS no trae `sg`; se usa `newgrp` (setuid) leyendo el comando por stdin.
+in_group(){ local g=$1; shift; if id -nG | tr ' ' '\n' | grep -qx "$g"; then "$@"; else printf '%q ' "$@" | newgrp "$g"; fi; }
+# libvirt autoriza por polkit según la pertenencia al grupo en /etc/group, así que no hace falta newgrp.
+V(){ virsh -c "$URI" "$@"; }
+VI(){ virt-install --connect "$URI" "$@"; }
 
 # IP de gestión de una VM (columna nics del inventario, VLAN 99).
 vm_field(){ awk -F'\t' -v n="$1" -v c="$2" '$1==n{print $c}' "$REPO/lab/setup/lab_vms.tsv"; }

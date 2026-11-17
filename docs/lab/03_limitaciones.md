@@ -19,3 +19,9 @@ laptop-dev (Ryzen 5 6600H, 14,8 GiB) tiene menos RAM que pc-miguel y es una lapt
 
 ## L4. Límites de RAM y temperatura condicionan las corridas
 El guardián pausa (PAUSE) o aborta (ABORT) según la RAM disponible, la presión de memoria, el swap, la temperatura y, en laptop-dev, si el cargador está conectado. Puede alargar las corridas (enfriamiento entre repeticiones) y obliga a perfiles de corrida más cortos si el equipo no aguanta el perfil `final`.
+
+## L5. Un solo atacante con IP fija
+El atacante usa una sola IP (sin `--rand-source`), así que las reglas con `track by_src` funcionan. Un DDoS distribuido con muchas IPs de origen queda fuera del alcance del estudio.
+
+## L6. Open vSwitch arrastra DPDK
+En CachyOS, el paquete `openvswitch` instala `dpdk` (unos 577 MiB) como dependencia. El laboratorio no usa DPDK: OVS corre en el kernel (datapath `system`). Solo ocupa disco.

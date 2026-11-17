@@ -87,8 +87,8 @@ done
 ovs-vsctl --columns=name,select_vlan,output_port list mirror
 echo "net.ipv4.ip_forward=$(sysctl -n net.ipv4.ip_forward) (no se cambia)"
 
-step "8. Comprobación como $LAB_USER (con los grupos nuevos vía sg)"
-sudo -u "$LAB_USER" sg libvirt -c 'virsh -c qemu:///system list --all' && echo "libvirt OK sin sudo"
-sudo -u "$LAB_USER" sg wireshark -c 'dumpcap -D' | grep -E 'mir20|mir30|mgmt99' && echo "dumpcap OK sin sudo"
+step "8. Comprobación como $LAB_USER (grupos nuevos sin reiniciar sesión: polkit y newgrp)"
+sudo -u "$LAB_USER" virsh -c qemu:///system list --all && echo "libvirt OK sin sudo"
+echo 'dumpcap -D' | sudo -u "$LAB_USER" newgrp wireshark | grep -E 'mir20|mir30|mgmt99' && echo "dumpcap OK sin sudo"
 virt-host-validate qemu || true
 echo; echo "== root_setup terminado $(date -u +%FT%TZ)"

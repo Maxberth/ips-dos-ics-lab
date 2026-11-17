@@ -1,0 +1,4 @@
+AllowedCPUs=2-11
+MemoryHigh=6442450944
+MemoryMax=6979321856
+MemorySwapMax=0

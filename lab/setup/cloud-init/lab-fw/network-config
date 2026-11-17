@@ -1,0 +1,20 @@
+version: 2
+ethernets:
+  v10:
+    match: {macaddress: "52:54:00:00:10:01"}
+    set-name: v10
+    addresses: [192.168.10.1/24]
+  v20:
+    match: {macaddress: "52:54:00:00:20:01"}
+    set-name: v20
+    addresses: [192.168.20.1/24]
+    routes: [{to: 192.168.30.0/24, via: 192.168.20.2}]
+  mgmt:
+    match: {macaddress: "52:54:00:00:99:0b"}
+    set-name: mgmt
+    addresses: [192.168.99.11/24]
+  nat:
+    match: {macaddress: "52:54:00:00:00:0b"}
+    set-name: nat
+    dhcp4: true
+    nameservers: {addresses: [192.168.250.1]}

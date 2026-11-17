@@ -1,0 +1,499 @@
+== root_setup  2026-11-17T17:56:39Z  plataforma=laptop-dev  usuario=maxberth
+
+== 1. Paquetes del host
++ pacman -S --needed --noconfirm qemu-base libvirt virt-install edk2-ovmf dnsmasq openvswitch libisoburn cloud-image-utils tcpdump wireshark-cli iperf3 python-scipy python-pandas sysstat stress-ng
+advertencia: dnsmasq-2.93-1.1 está actualizado -- omitiéndolo
+resolviendo dependencias...
+buscando conflictos entre paquetes...
+
+Paquete (50)                     Versión nueva  Diferencia neta  Tamaño de la descarga
+
+cachyos-extra-v3/apparmor        4.1.8-2.1             4,96 MiB               1,34 MiB
+cachyos-extra-v3/bcg729          1.1.2-1.1             0,16 MiB               0,07 MiB
+cachyos-extra-v3/capstone        5.0.9-1.1            14,93 MiB               1,07 MiB
+cachyos-extra-v3/cdrtools        3.02a09-6.1           3,88 MiB               0,85 MiB
+extra/dpdk                       25.11.3-3           577,27 MiB              51,82 MiB
+cachyos-extra-v3/dtc             1:1.8.1-1.1           0,72 MiB               0,18 MiB
+cachyos-extra-v3/judy            1.0.5-10.1            0,76 MiB               0,21 MiB
+cachyos-extra-v3/libburn         1.5.8-1.1             0,74 MiB               0,30 MiB
+cachyos-extra-v3/libcbor         0.14.0-1.1            0,18 MiB               0,05 MiB
+cachyos-extra-v3/libisofs        1.5.8.2-2.1           1,03 MiB               0,36 MiB
+cachyos-extra-v3/libnbd          1.24.4-1.1            1,97 MiB               0,80 MiB
+cachyos-extra-v3/libosinfo       1.12.0-3.1            2,74 MiB               0,27 MiB
+cachyos-extra-v3/libslirp        4.9.7-1.1             0,17 MiB               0,08 MiB
+cachyos-extra-v3/libtraceevent   1:1.9.1-1.1           0,44 MiB               0,18 MiB
+cachyos-extra-v3/libtracefs      1.8.4-1.1             0,42 MiB               0,24 MiB
+cachyos-extra-v3/libvirt-python  1:12.9.0-1.1          1,96 MiB               0,25 MiB
+cachyos-extra-v3/libxdp          1.6.3-2.1             0,48 MiB               0,11 MiB
+cachyos-extra-v3/lksctp-tools    1.0.21-1.3            0,31 MiB               0,09 MiB
+cachyos-extra-v3/ndctl           85-1.1                1,07 MiB               0,41 MiB
+extra/osinfo-db                  20260812-1            4,55 MiB               0,22 MiB
+extra/python-certifi             2026.10.23-1          0,02 MiB               0,01 MiB
+extra/python-charset-normalizer  3.5.1-1               0,63 MiB               0,12 MiB
+extra/python-legacy-cgi          2.6.4-2               0,18 MiB               0,04 MiB
+extra/python-pooch               1.9.0-1               0,75 MiB               0,12 MiB
+extra/python-pyelftools          0.33-1                2,57 MiB               0,40 MiB
+extra/python-pytz                2026.1-1              0,17 MiB               0,05 MiB
+extra/python-requests            2.34.2-1              0,76 MiB               0,14 MiB
+extra/qemu-common                11.1.3-1              4,52 MiB               1,90 MiB
+extra/qemu-img                   11.1.3-1             10,76 MiB               2,21 MiB
+extra/qemu-system-x86            11.1.3-1             54,99 MiB               6,50 MiB
+extra/qemu-system-x86-firmware   11.1.3-1              0,12 MiB               0,02 MiB
+cachyos-extra-v3/rdma-core       65.0-1.1             11,03 MiB               2,97 MiB
+extra/seabios                    1.17.0-2              1,04 MiB               0,17 MiB
+cachyos-extra-v3/vde2            2.3.3-10.1            0,74 MiB               0,23 MiB
+cachyos-extra-v3/virtiofsd       1.14.0-1.1            2,43 MiB               0,91 MiB
+cachyos-extra-v3/wolfssl         5.9.4-1.1             5,96 MiB               1,32 MiB
+extra/cloud-image-utils          0.34-1                0,03 MiB               0,01 MiB
+extra/edk2-ovmf                  202608-1             15,57 MiB               5,20 MiB
+cachyos-extra-v3/iperf3          3.22-2.1              0,32 MiB               0,12 MiB
+cachyos-extra-v3/libisoburn      1.5.8.2-1.1           2,01 MiB               0,89 MiB
+cachyos-extra-v3/libvirt         1:12.9.0-1.1         57,88 MiB               9,89 MiB
+cachyos-extra-v3/openvswitch     4.0.0-2.1            22,55 MiB               5,37 MiB
+cachyos-extra-v3/python-pandas   2.3.3-7.1           112,51 MiB              16,05 MiB
+cachyos-extra-v3/python-scipy    1.18.1-1.1          126,79 MiB              24,95 MiB
+extra/qemu-base                  11.1.3-1              0,05 MiB               0,01 MiB
+cachyos-extra-v3/stress-ng       0.22.02-1.1          19,44 MiB               3,90 MiB
+cachyos-extra-v3/sysstat         12.8.0-1.1            1,64 MiB               0,46 MiB
+cachyos-extra-v3/tcpdump         4.99.7-2.1            1,32 MiB               0,51 MiB
+extra/virt-install               5.1.0-4               7,40 MiB               1,19 MiB
+extra/wireshark-cli              4.7.4-1             100,58 MiB              20,99 MiB
+
+Tamaño total de la descarga:      165,51 MiB
+Tamaño total de la instalación:  1183,49 MiB
+
+:: ¿Continuar con la instalación? [S/n] 
+:: Obteniendo los paquetes...
+ descargando dpdk-25.11.3-3-x86_64...
+ descargando python-scipy-1.18.1-1.1-x86_64_v3...
+ descargando wireshark-cli-4.7.4-1-x86_64...
+ descargando python-pandas-2.3.3-7.1-x86_64_v3...
+ descargando libvirt-1:12.9.0-1.1-x86_64_v3...
+ descargando qemu-system-x86-11.1.3-1-x86_64...
+ descargando openvswitch-4.0.0-2.1-x86_64_v3...
+ descargando edk2-ovmf-202608-1-any...
+ descargando stress-ng-0.22.02-1.1-x86_64_v3...
+ descargando rdma-core-65.0-1.1-x86_64_v3...
+ descargando qemu-img-11.1.3-1-x86_64...
+ descargando qemu-common-11.1.3-1-x86_64...
+ descargando apparmor-4.1.8-2.1-x86_64_v3...
+ descargando wolfssl-5.9.4-1.1-x86_64_v3...
+ descargando virt-install-5.1.0-4-any...
+ descargando capstone-5.0.9-1.1-x86_64_v3...
+ descargando virtiofsd-1.14.0-1.1-x86_64_v3...
+ descargando libisoburn-1.5.8.2-1.1-x86_64_v3...
+ descargando cdrtools-3.02a09-6.1-x86_64...
+ descargando libnbd-1.24.4-1.1-x86_64_v3...
+ descargando tcpdump-4.99.7-2.1-x86_64_v3...
+ descargando sysstat-12.8.0-1.1-x86_64_v3...
+ descargando ndctl-85-1.1-x86_64_v3...
+ descargando python-pyelftools-0.33-1-any...
+ descargando libisofs-1.5.8.2-2.1-x86_64_v3...
+ descargando libburn-1.5.8-1.1-x86_64_v3...
+ descargando libosinfo-1.12.0-3.1-x86_64_v3...
+ descargando libvirt-python-1:12.9.0-1.1-x86_64_v3...
+ descargando libtracefs-1.8.4-1.1-x86_64_v3...
+ descargando vde2-2.3.3-10.1-x86_64_v3...
+ descargando osinfo-db-20260812-1-any...
+ descargando judy-1.0.5-10.1-x86_64_v3...
+ descargando libtraceevent-1:1.9.1-1.1-x86_64_v3...
+ descargando dtc-1:1.8.1-1.1-x86_64_v3...
+ descargando seabios-1.17.0-2-any...
+ descargando python-requests-2.34.2-1-any...
+ descargando python-charset-normalizer-3.5.1-1-any...
+ descargando iperf3-3.22-2.1-x86_64_v3...
+ descargando python-pooch-1.9.0-1-any...
+ descargando libxdp-1.6.3-2.1-x86_64_v3...
+ descargando lksctp-tools-1.0.21-1.3-x86_64_v3...
+ descargando libslirp-4.9.7-1.1-x86_64_v3...
+ descargando bcg729-1.1.2-1.1-x86_64_v3...
+ descargando python-pytz-2026.1-1-any...
+ descargando libcbor-0.14.0-1.1-x86_64_v3...
+ descargando python-legacy-cgi-2.6.4-2-any...
+ descargando qemu-system-x86-firmware-11.1.3-1-x86_64...
+ descargando cloud-image-utils-0.34-1-any...
+ descargando qemu-base-11.1.3-1-x86_64...
+ descargando python-certifi-2026.10.23-1-any...
+error: no se pudo obtener el archivo «rdma-core-65.0-1.1-x86_64_v3.pkg.tar.zst» desde cdn77.cachyos.org: The requested URL returned error: 404
+error: no se pudo obtener el archivo «rdma-core-65.0-1.1-x86_64_v3.pkg.tar.zst» desde mirror5.krfoss.org: The requested URL returned error: 404
+comprobando el depósito de claves...
+verificando la integridad de los paquetes...
+cargando los archivos de los paquetes...
+comprobando conflictos entre archivos...
+:: Ejecutando los «hooks» de preinstalación...
+(1/1) Performing snapper pre snapshots for the following configurations...
+==> root: 121
+:: Procesando los cambios de los paquetes...
+instalando qemu-common...
+instalando qemu-img...
+instalando capstone...
+instalando libslirp...
+instalando libxdp...
+instalando libtraceevent...
+Dependencias opcionales para libtraceevent
+    libtraceevent-docs: for documentation
+instalando libtracefs...
+Dependencias opcionales para libtracefs
+    libtracefs-docs: for documentation
+instalando ndctl...
+instalando rdma-core...
+Dependencias opcionales para rdma-core
+    python: for the Python API (pyverbs) [instalado]
+instalando wolfssl...
+instalando vde2...
+instalando dtc...
+Dependencias opcionales para dtc
+    python: Python bindings [instalado]
+instalando edk2-ovmf...
+instalando libcbor...
+instalando qemu-system-x86-firmware...
+instalando seabios...
+Dependencias opcionales para seabios
+    seabios-docs: for documentation
+instalando qemu-system-x86...
+instalando virtiofsd...
+instalando qemu-base...
+Dependencias opcionales para qemu-base
+    qemu-user-static: for static user mode emulation of QEMU targets
+    samba: for SMB/CIFS server support
+    qemu-block-iscsi: for iSCSI block driver
+    qemu-chardev-baum: for Baum chardev driver
+    qemu-docs: for documentation
+    qemu-emulators-full: for all system emulators
+    qemu-full: for a full QEMU installation
+    qemu-hw-s390x-virtio-gpu-ccw: for s390x-virtio-gpu-ccw display device
+    qemu-pr-helper: for persistent reservation utility
+    qemu-system-aarch64: for AARCH64 system emulator
+    qemu-system-alpha: for Alpha system emulator
+    qemu-system-arm: for ARM system emulator
+    qemu-system-avr: for AVR system emulator
+    qemu-system-hexagon: for Hexagon system emulator
+    qemu-system-hppa: for HPPA system emulator
+    qemu-system-m68k: for ColdFire (m68k) system emulator
+    qemu-system-microblaze: for Microblaze system emulator
+    qemu-system-mips: for MIPS system emulator
+    qemu-system-or1k: for OpenRisc32 system emulator
+    qemu-system-ppc: for PPC system emulator
+    qemu-system-riscv: for RISC-V system emulator
+    qemu-system-rx: for RX system emulator
+    qemu-system-s390x: for S390 system emulator
+    qemu-system-sh4: for SH4 system emulator
+    qemu-system-sparc: for SPARC system emulator
+    qemu-system-tricore: for tricore system emulator
+    qemu-system-xtensa: for Xtensa system emulator
+    qemu-tests: for QEMU tests
+    qemu-tools: for QEMU tools
+    qemu-user: for user mode emulation of QEMU targets
+    qemu-audio-alsa: for ALSA audio driver
+    qemu-audio-dbus: for D-Bus audio driver
+    qemu-audio-jack: for JACK audio driver
+    qemu-audio-oss: for OSS audio driver
+    qemu-audio-pa: for PulseAudio audio driver
+    qemu-audio-pipewire: for PipeWire audio driver
+    qemu-audio-sdl: for SDL audio driver
+    qemu-audio-spice: for spice audio driver
+    qemu-block-curl: for curl block driver
+    qemu-block-dmg: for DMG block driver
+    qemu-block-nfs: for NFS block driver
+    qemu-block-ssh: for SSH block driver
+    qemu-chardev-spice: for the spice chardev driver
+    qemu-desktop: for dependencies commonly used on a desktop
+    qemu-hw-display-qxl: for the QXL display device
+    qemu-hw-display-virtio-vga: for the virtio-vga display device
+    qemu-hw-display-virtio-vga-gl: for the virtio-vga-gl display device
+    qemu-hw-display-virtio-vga-rutabaga: for the virtio-vga-rutabaga display device
+    qemu-hw-display-virtio-gpu: for the virtio-gpu display device
+    qemu-hw-display-virtio-gpu-gl: for the virtio-gpu-gl display device
+    qemu-hw-display-virtio-gpu-rutabaga: for the virtio-gpu-rutabaga display device
+    qemu-hw-display-virtio-gpu-pci: for the virtio-gpu-pci display device
+    qemu-hw-display-virtio-gpu-pci-gl: for the virtio-gpu-pci-gl display device
+    qemu-hw-display-virtio-gpu-pci-rutabaga: for the virtio-gpu-pci-rutabaga display device
+    qemu-hw-uefi-vars: for UEFI variable support
+    qemu-hw-usb-host: for host USB support
+    qemu-hw-usb-redirect: for USB redirect support
+    qemu-hw-usb-smartcard: for USB smartcard support
+    qemu-ui-curses: for ncurses UI driver
+    qemu-ui-dbus: for D-Bus UI driver
+    qemu-ui-egl-headless: for EGL headless UI driver
+    qemu-ui-gtk: for GTK UI driver
+    qemu-ui-opengl: for OpenGL UI driver
+    qemu-ui-sdl: for SDL UI driver
+    qemu-ui-spice-app: for spice app UI driver
+    qemu-ui-spice-core: for spice core UI driver
+    qemu-user: for user mode emulation of QEMU targets
+    qemu-vhost-user-gpu: for vhost-user-gpu display device
+    qemu-vmsr-helper: for accessing the Running Average Power Limit (RAPL) MSR
+instalando libnbd...
+Dependencias opcionales para libnbd
+    fuse3: For nbdfuse support [instalado]
+    ocaml: For OCaml bindings
+    python>=3: For Python bindings [instalado]
+instalando libvirt...
+Dependencias opcionales para libvirt
+    dmidecode: DMI system info support [instalado]
+    dnsmasq: required for default NAT/DHCP for guests [instalado]
+    gettext: required for libvirt-guests.service [instalado]
+    iptables-nft: required for default NAT networking [instalado]
+    libvirt-python: for virt-qemu-qmp-proxy and virt-qemu-sev-validate commands [pendiente]
+    libvirt-storage-gluster: Gluster storage backend
+    libvirt-storage-iscsi-direct: iSCSI-direct storage backend
+    lvm2: Logical Volume Manager support [instalado]
+    openbsd-netcat: for remote management over ssh
+    open-iscsi: iSCSI support via iscsiadm
+    python-cryptography: for virt-qemu-sev-validate command [instalado]
+    python-lxml: for virt-qemu-sev-validate command
+    qemu-base: QEMU/KVM support [instalado]
+    qemu-desktop: QEMU/KVM desktop support
+    qemu-emulators-full: Support of additional QEMU architectures
+    radvd: IPv6 RAD support
+    swtpm: TPM emulator support
+instalando libburn...
+instalando libisofs...
+instalando libisoburn...
+Dependencias opcionales para libisoburn
+    tk: for xorriso-tcltk frontend
+    sudo: for use with xorriso-dd-target [instalado]
+instalando osinfo-db...
+instalando libosinfo...
+instalando libvirt-python...
+instalando python-charset-normalizer...
+instalando python-certifi...
+instalando python-requests...
+Dependencias opcionales para python-requests
+    python-chardet: alternative character encoding library
+    python-pysocks: SOCKS proxy support
+instalando virt-install...
+Dependencias opcionales para virt-install
+    libappindicator: SNI tray icon
+    x11-ssh-askpass: provide password for remote machines connected via ssh tunnel
+instalando python-pyelftools...
+instalando dpdk...
+instalando openvswitch...
+Running: ovsdb-tool create etc/openvswitch/conf.db usr/share/openvswitch/vswitch.ovsschema
+instalando cdrtools...
+instalando cloud-image-utils...
+instalando tcpdump...
+instalando bcg729...
+instalando wireshark-cli...
+NOTE: To run wireshark as normal user you have to add yourself into wireshark group
+instalando lksctp-tools...
+instalando iperf3...
+instalando python-pooch...
+Dependencias opcionales para python-pooch
+    python-paramiko: for SFTP downloads
+    python-tqdm: for printing a download progress bar [instalado]
+instalando python-scipy...
+Dependencias opcionales para python-scipy
+    python-pillow: for image saving module [instalado]
+instalando python-pytz...
+instalando python-pandas...
+Dependencias opcionales para python-pandas
+    python-pandas-datareader: pandas.io.data replacement (recommended)
+    python-numexpr: accelerating certain numerical operations (recommended)
+    python-bottleneck: accelerating certain types of nan evaluations (recommended)
+    python-matplotlib: plotting [instalado]
+    python-jinja: conditional formatting with DataFrame.style [instalado]
+    python-tabulate: printing in Markdown-friendly format
+    python-scipy: miscellaneous statistical functions [instalado]
+    python-numba: alternative execution engine
+    python-xarray: pandas-like API for N-dimensional data
+    python-xlrd: Excel XLS input
+    python-xlwt: Excel XLS output
+    python-openpyxl: Excel XLSX input/output
+    python-xlsxwriter: alternative Excel XLSX output
+    python-beautifulsoup4: read_html function (in any case)
+    python-html5lib: read_html function (and/or python-lxml)
+    python-lxml: read_xml, to_xml and read_html function (and/or python-html5lib)
+    python-sqlalchemy: SQL database support
+    python-psycopg2: PostgreSQL engine for sqlalchemy
+    python-pymysql: MySQL engine for sqlalchemy
+    python-pytables: HDF5-based reading / writing
+    python-blosc: for msgpack compression using blosc
+    zlib: compression for msgpack [instalado]
+    python-pyarrow: Parquet, ORC and feather reading/writing
+    python-fsspec: handling files aside from local and HTTP
+    python-qtpy: read_clipboard function (only one needed)
+    xclip: read_clipboard function (only one needed)
+    xsel: read_clipboard function (only one needed)
+    python-brotli: Brotli compression
+    python-snappy: Snappy compression
+    python-zstandard: Zstandard (zstd) compression
+instalando sysstat...
+Dependencias opcionales para sysstat
+    tk: to use isag
+    gnuplot: to use isag
+instalando python-legacy-cgi...
+instalando apparmor...
+Dependencias opcionales para apparmor
+    perl: for perl bindings [instalado]
+    python-gobject: for aa-notify [instalado]
+    python-notify2: for aa-notify
+    python-psutil: for aa-notify [instalado]
+    ruby: for ruby bindings [instalado]
+    sqlite: for aa-notify [instalado]
+    tk: for aa-notify
+instalando judy...
+instalando stress-ng...
+Dependencias opcionales para stress-ng
+    intel-ipsec-mb: support for IPsec tests
+    linux-headers: include some headers from the Arch kernel
+    linux-lts-headers: include some headers from the LTS kernel
+    linux-zen-headers: include some headers from the ZEN kernel
+    linux-hardened-headers: include some headers from the HARDENED kernel
+:: Ejecutando los «hooks» de posinstalación...
+( 1/13) Creating system user accounts...
+Creating group 'virtlogin' with GID 955.
+Creating group 'libvirt' with GID 954.
+Creating group 'rdma' with GID 953.
+Creating group 'wireshark' with GID 150.
+Creating group 'libvirt-qemu' with GID 952.
+Creating user 'libvirt-qemu' (Libvirt QEMU user) with UID 952 and GID 952.
+Creating group 'qemu' with GID 951.
+Creating user 'qemu' (QEMU user) with UID 951 and GID 951.
+( 2/13) Creating temporary files...
+( 3/13) Applying kernel sysctl settings...
+Couldn't write '4096' to 'net/core/netdev_max_backlog', ignoring: No such file or directory
+( 4/13) Reloading system manager configuration...
+( 5/13) Reloading device manager configuration...
+( 6/13) Arming ConditionNeedsUpdate...
+( 7/13) Loading new kernel modules...
+( 8/13) Updating linux initcpios...
+==> Building image from preset: /etc/mkinitcpio.d/linux-cachyos-lts.preset: 'default'
+==> Using default configuration file: '/etc/mkinitcpio.conf'
+  -> -k /boot/vmlinuz-linux-cachyos-lts -g /boot/initramfs-linux-cachyos-lts.img
+==> Using drop-in configuration file: '10-chwd.conf'
+==> Starting build: '6.18.60-2-cachyos-lts'
+  -> Running build hook: [base]
+  -> Running build hook: [systemd]
+  -> Running build hook: [autodetect]
+  -> Running build hook: [microcode]
+  -> Running build hook: [kms]
+  -> Running build hook: [modconf]
+  -> Running build hook: [block]
+  -> Running build hook: [keyboard]
+  -> Running build hook: [sd-vconsole]
+  -> Running build hook: [plymouth]
+  -> Running build hook: [filesystems]
+==> Generating module dependencies
+==> Creating zstd-compressed initcpio image: '/boot/initramfs-linux-cachyos-lts.img'
+  -> Early uncompressed CPIO image generation successful
+==> Initcpio image generation successful
+==> Building image from preset: /etc/mkinitcpio.d/linux-cachyos.preset: 'default'
+==> Using default configuration file: '/etc/mkinitcpio.conf'
+  -> -k /boot/vmlinuz-linux-cachyos -g /boot/initramfs-linux-cachyos.img
+==> Using drop-in configuration file: '10-chwd.conf'
+==> Starting build: '7.3.3-1-cachyos'
+  -> Running build hook: [base]
+  -> Running build hook: [systemd]
+  -> Running build hook: [autodetect]
+  -> Running build hook: [microcode]
+  -> Running build hook: [kms]
+  -> Running build hook: [modconf]
+  -> Running build hook: [block]
+  -> Running build hook: [keyboard]
+  -> Running build hook: [sd-vconsole]
+  -> Running build hook: [plymouth]
+  -> Running build hook: [filesystems]
+==> Generating module dependencies
+==> Creating zstd-compressed initcpio image: '/boot/initramfs-linux-cachyos.img'
+  -> Early uncompressed CPIO image generation successful
+==> Initcpio image generation successful
+( 9/13) Checking for old perl modules...
+(10/13) Updating icon theme caches...
+(11/13) Updating the info directory file...
+(12/13) Updating the desktop file MIME type cache...
+(13/13) Performing snapper post snapshots for the following configurations...
+==> root: 122
+
+== 2. Grupos del usuario
++ usermod -aG libvirt,kvm,wireshark maxberth
+uid=1000(maxberth) gid=1000(maxberth) grupos=1000(maxberth),3(sys),90(network),998(wheel),995(audio),990(kvm),989(lp),985(storage),983(video),982(users),980(rfkill),967(nopasswdlogin),956(docker),954(libvirt),150(wireshark)
+
+== 3. Docker detenido (no deshabilitado)
+Contenedores en ejecución antes de detener:
++ systemctl stop docker.socket docker.service
+docker: inactive  socket: inactive
+Para reactivarlo: sudo systemctl start docker.socket docker.service
+
+== 4. libvirtd y Open vSwitch
++ systemctl enable --now libvirtd.service
+Created symlink '/etc/systemd/system/multi-user.target.wants/libvirtd.service' → '/usr/lib/systemd/system/libvirtd.service'.
+Created symlink '/etc/systemd/system/sockets.target.wants/virtlockd.socket' → '/usr/lib/systemd/system/virtlockd.socket'.
+Created symlink '/etc/systemd/system/sockets.target.wants/virtlogd.socket' → '/usr/lib/systemd/system/virtlogd.socket'.
+Created symlink '/etc/systemd/system/sockets.target.wants/libvirtd.socket' → '/usr/lib/systemd/system/libvirtd.socket'.
+Created symlink '/etc/systemd/system/sockets.target.wants/libvirtd-ro.socket' → '/usr/lib/systemd/system/libvirtd-ro.socket'.
+Created symlink '/etc/systemd/system/sockets.target.wants/libvirtd-admin.socket' → '/usr/lib/systemd/system/libvirtd-admin.socket'.
+Created symlink '/etc/systemd/system/sockets.target.wants/virtlockd-admin.socket' → '/usr/lib/systemd/system/virtlockd-admin.socket'.
+Created symlink '/etc/systemd/system/sockets.target.wants/virtlogd-admin.socket' → '/usr/lib/systemd/system/virtlogd-admin.socket'.
++ systemctl enable --now ovsdb-server.service ovs-vswitchd.service
+Created symlink '/etc/systemd/system/multi-user.target.wants/ovs-vswitchd.service' → '/usr/lib/systemd/system/ovs-vswitchd.service'.
+active
+active
+active
+
+== 5. Directorio de imágenes
++ install -d -o maxberth -g libvirt -m 2775 /var/lib/libvirt/images/ips-lab
+drwxrwsr-x 1 maxberth libvirt 0 nov 17 12:57 /var/lib/libvirt/images/ips-lab
+
+== 6. Límites de machine.slice
++ systemctl set-property machine.slice MemoryHigh=6G MemoryMax=6656M MemorySwapMax=0 AllowedCPUs=2-11
+AllowedCPUs=2-11
+MemoryHigh=6442450944
+MemoryMax=6979321856
+MemorySwapMax=0
+
+== 7. Switch ovs-ot, gestión y espejos
++ ovs-vsctl --may-exist add-br ovs-ot
++ ovs-vsctl --may-exist add-port ovs-ot mgmt99 tag=99 -- set interface mgmt99 type=internal
++ ovs-vsctl --may-exist add-port ovs-ot mir20 -- set interface mir20 type=internal
++ ovs-vsctl --may-exist add-port ovs-ot mir30 -- set interface mir30 type=internal
++ ip link set ovs-ot up
++ ip link set mgmt99 up
++ ip link set mir20 up
++ ip link set mir30 up
++ ip addr add 192.168.99.1/24 dev mgmt99
++ sysctl -q -w net.ipv6.conf.mir20.disable_ipv6=1
++ sysctl -q -w net.ipv6.conf.mir30.disable_ipv6=1
++ ovs-vsctl -- --if-exists clear bridge ovs-ot mirrors
+Puertos de ovs-ot: mgmt99 mir20 mir30 
+name                : m30
+select_vlan         : [30]
+output_port         : e92bdce6-cb14-4d13-b551-ededb22b0aa6
+
+name                : m20
+select_vlan         : [20]
+output_port         : 45182d25-a389-4e4b-ac21-a59d6bfbf72d
+net.ipv4.ip_forward=1 (no se cambia)
+
+== 8. Comprobación como maxberth (con los grupos nuevos vía sg)
+sudo: sg: command not found
+sudo: sg: command not found
+  QEMU: Comprobar para virtualización por hardware                          : APROBADO
+ (SVM)
+  QEMU: Comprobar si existe el dispositivo '/dev/kvm'                        : APROBADO
+
+  QEMU: Comprobar si el dispositivo '/dev/kvm' es accesible                  : APROBADO
+
+  QEMU: Comprobar si existe el dispositivo '/dev/vhost-net'                  : APROBADO
+
+  QEMU: Comprobar si existe el dispositivo '/dev/net/tun'                    : APROBADO
+
+  QEMU: Comprobar mantenimiento de controlador cgroup 'cpu'                  : APROBADO
+
+  QEMU: Comprobar mantenimiento de controlador cgroup 'cpuacct'              : APROBADO
+
+  QEMU: Comprobar mantenimiento de controlador cgroup 'cpuset'               : APROBADO
+
+  QEMU: Comprobar mantenimiento de controlador cgroup 'memory'               : APROBADO
+
+  QEMU: Comprobar mantenimiento de controlador cgroup 'devices'              : APROBADO
+
+  QEMU: Comprobar mantenimiento de controlador cgroup 'blkio'                : APROBADO
+
+  QEMU: Comprobar mantenimiento de asignación de dispositivo IOMMU          : APROBADO
+ (IVRS)
+  QEMU: Comprobar si IOMMU está habilitado por el kernel                    : APROBADO
+
+  QEMU: Comprobar para mantenimiento de invitado seguro                      : ADVERTENCIA (None of SEV, SEV-ES, SEV-SNP, TDX available)
+
+== root_setup terminado 2026-11-17T17:57:13Z
