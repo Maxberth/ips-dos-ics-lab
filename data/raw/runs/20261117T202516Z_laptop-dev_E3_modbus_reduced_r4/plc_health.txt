@@ -1,0 +1,24 @@
+restarted_before
+alive_after=no
+7012 /bin/bash /opt/lab/OpenPLC_v3/start_openplc.sh
+7019 [openplc] <defunct>
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Type: %QW1
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Name: setpoint
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Location: %QW2
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Type: UINT
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Name: status
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Location:
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Type: %QW3
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Name: pump
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Location:
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Type:
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Name: alarm
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Location:
+Nov 17 20:25:23 plc start_openplc.sh[7016]: Type: AT
+Nov 17 20:25:23 plc start_openplc.sh[7016]:  * Serving Flask app 'webserver'
+Nov 17 20:25:23 plc start_openplc.sh[7016]:  * Debug mode: off
+Nov 17 20:25:23 plc start_openplc.sh[7016]: [INFO] 20:25:23 - WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+Nov 17 20:25:23 plc start_openplc.sh[7016]:  * Running on all addresses (0.0.0.0)
+Nov 17 20:25:23 plc start_openplc.sh[7016]:  * Running on http://127.0.0.1:8080
+Nov 17 20:25:23 plc start_openplc.sh[7016]:  * Running on http://127.0.0.1:8080
+Nov 17 20:25:23 plc start_openplc.sh[7016]: [INFO] 20:25:23 - Press CTRL+C to quit

@@ -21,3 +21,8 @@
   - Suricata bloqueaba sin reglas por `exception-policy` y `stream.drop-invalid` (D19).
   - Piloto final con 14 corridas válidas y auditoría: puerta de calidad superada para pasar a pc-miguel.
   - Corrida piloto: 64–93 s, mediana 76 s.
+- 2026-11-17 20:05–20:47 UTC (laptop-dev): P13–P16 en versión reducida (perfil `reduced` ×3: E0, E1 y E3 × syn y modbus; 15 corridas, 71–100 s cada una) y estadística P20 (`lab/analysis/stats_tables.py` → `data/processed/stats_*`, `tables/stats_*.tex`, `figures/*`).
+  - E1 modbus: PLC caído 3/3.
+  - E3 modbus: SCADA al 100 %, pero PLC caído al final 3/3.
+  - Calibración de la regla Modbus (D20): ni el umbral de 20/s ni `flowbits` evitan la caída. Se deja la rev 3 y la decisión abierta.
+  - `check_chain.sh` final: 0 NO CUMPLE.

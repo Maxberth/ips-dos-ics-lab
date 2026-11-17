@@ -1,0 +1,23 @@
+alive_after=no
+6586 /bin/bash /opt/lab/OpenPLC_v3/start_openplc.sh
+6592 [openplc] <defunct>
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: Client accepted! Creating thread for the new client ID: 9...
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: Thread created for client ID: 9
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: waiting for new client...
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Modbus Server: Something is wrong with the  client ID: 8 message Size : -1
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Terminating Modbus connections thread
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Modbus Server: Something is wrong with the  client ID: 7 message Size : -1
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Terminating Modbus connections thread
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Modbus Server: Something is wrong with the  client ID: 6 message Size : -1
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Terminating Modbus connections thread
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Modbus Server: Something is wrong with the  client ID: 4 message Size : -1
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Terminating Modbus connections thread
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Modbus Server: client ID: 9 has closed the connection
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Terminating Modbus connections thread
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: Client accepted! Creating thread for the new client ID: 4...
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: Thread created for client ID: 4
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: waiting for new client...
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Modbus Server: client ID: 4 has closed the connection
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Terminating Modbus connections thread
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: Client accepted! Creating thread for the new client ID: 4...
+Nov 17 20:20:55 plc start_openplc.sh[6592]: Server: Thread created for client ID: 4

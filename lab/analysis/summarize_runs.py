@@ -98,6 +98,10 @@ def main():
         for k in ("c_v10_plc_tcp502", "c_v10_plc_udp", "c_v10_plc_icmp", "c_fwd_est", "c_fwd_drop"):
             if k in f1: s["fw_" + k[2:]] = f1[k] - f0.get(k, 0)
         s["tctl_max_c"] = r["tctl_max_c"]
+        ph = f"{d}/plc_health.txt"
+        if os.path.exists(ph):
+            txt = open(ph).read()
+            s["plc_alive_after"] = "yes" if "alive_after=yes" in txt else ("no" if "alive_after=no" in txt else "")
         out.append(s)
     os.makedirs(f"{REPO}/data/processed", exist_ok=True)
     path = f"{REPO}/data/processed/run_summary_{a.platform}{'_' + a.profile if a.profile else ''}.csv"

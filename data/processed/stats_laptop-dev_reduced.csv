@@ -1,0 +1,6 @@
+platform,profile,scenario,attack,n,availability_pct_mean,availability_pct_sd,availability_pct_ci95,availability_pct_n,rtt_median_ms_mean,rtt_median_ms_sd,rtt_median_ms_ci95,rtt_median_ms_n,rtt_p95_ms_mean,rtt_p95_ms_sd,rtt_p95_ms_ci95,rtt_p95_ms_n,attacker_pps_mean,attacker_pps_sd,attacker_pps_ci95,attacker_pps_n,plc_down_after,removed_pct_mean,removed_pct_sd,removed_pct_ci95,removed_pct_n,sat_pct_mean,sat_pct_sd,sat_pct_ci95,sat_pct_n
+laptop-dev,reduced,E0,none,3,100.0,0.0,0.0,3,0.739,0.063,0.157,3,0.87,0.011,0.027,3,0.0,0.0,0.0,3,0/3,,,,,,,,
+laptop-dev,reduced,E1,modbus,3,100.0,0.0,0.0,3,2.59,2.077,5.159,3,2.824,1.762,4.378,3,5321.0,143.844,357.327,3,3/3,0.012,0.021,0.051,3,,,,
+laptop-dev,reduced,E1,syn,3,98.977,0.922,2.291,3,23.688,2.61,6.483,3,271.526,12.644,31.409,3,179859.333,601.034,1493.052,3,0/3,2.46,0.716,1.78,3,,,,
+laptop-dev,reduced,E3,modbus,5,100.0,0.0,0.0,5,0.848,0.014,0.018,5,1.081,0.062,0.077,5,111.4,48.076,59.694,5,5/5,24.599,10.652,13.226,5,0.0,0.0,0.0,5
+laptop-dev,reduced,E3,syn,3,75.123,24.193,60.098,3,22.527,29.803,74.034,3,360.991,83.526,207.489,3,157313.333,10918.081,27122.018,3,0/3,99.925,0.009,0.022,3,38.159,5.454,13.549,3

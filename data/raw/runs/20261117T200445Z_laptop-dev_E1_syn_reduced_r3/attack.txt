@@ -1,0 +1,6 @@
+hping in flood mode, no replies will be shown
+HPING 192.168.30.10 (v10 192.168.30.10): S set, 40 headers + 0 data bytes
+
+--- 192.168.30.10 hping statistic ---
+4339927 packets transmitted, 0 packets received, 100% packet loss
+round-trip min/avg/max = 0.0/0.0/0.0 ms

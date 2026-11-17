@@ -82,3 +82,16 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Contexto:** A16. Con `auto`, un error del parser en modo IPS descarta el flujo aunque la regla esté en alert. Así no se puede atribuir el bloqueo a las reglas (obs. 10) y E2 deja de ser "solo detección".
 - **Elección:** `exception-policy: ignore` y `stream.drop-invalid: no` (A17) en `suricata-lab*.yaml`. Regla 1000004 rev 2 con `dsize:>0` y `detection_filter` por origen.
 - **Consecuencia:** el laboratorio mide la prevención por reglas. Lo que haría la configuración por defecto (`auto`) queda medido en las corridas previas a D19 y se reporta como hallazgo aparte.
+
+## D20. Regla Modbus: umbral 20 segmentos/s por origen (rev 3). Decisión abierta para pc-miguel
+- **Contexto:** con la rev 2 (100 segmentos/s), E3 mantuvo al SCADA al 100 % durante el ataque, pero OpenPLC cayó al final en 3 de 3 corridas `reduced`. Cada segmento del flood lleva 32 solicitudes, así que pasaban ~3 200 solicitudes/s antes del umbral.
+- **Calibración en laptop-dev (perfil `reduced`, datos en `data/raw/runs/*E3_modbus_reduced*`):**
+  - rev 2 (100/s): SCADA 100 %, PLC caído al final 3/3.
+  - rev 3 (20/s): SCADA 100 %, llegan ~1 000–1 300 paquetes de ataque al PLC, PLC caído 2/2.
+  - rev 4 + 1000005 (`flowbits`, descarta el flujo completo tras el umbral): PLC caído 1/1. La corrida siguiente quedó `failed` porque el PLC no se recuperó a tiempo.
+- **Elección provisional:** rev 3. Es la más estricta sin riesgo para el SCADA (10 solicitudes/s) y no depende del parser.
+- **Conclusión honesta:** con un único atacante y reglas por umbral, Suricata **protege la disponibilidad del SCADA durante el ataque, pero no evita que OpenPLC caiga al terminar el flood**. La causa en OpenPLC no está determinada (A18).
+- **Opciones para decidir antes de las corridas finales:**
+  1. Reportarlo tal cual: el resultado del escenario incluye "PLC caído tras el ataque".
+  2. Probar en pc-miguel `reject` (RST al atacante) en lugar de `drop`.
+  3. Aislar la causa en OpenPLC (fuera del alcance del plazo).
