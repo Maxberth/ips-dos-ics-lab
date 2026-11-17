@@ -1,0 +1,11 @@
+data/captures/*
+!data/captures/manifest.csv
+*.qcow2
+*.iso
+*.img
+__pycache__/
+*.pyc
+.env
+*.key
+*.pem
+.venv/
