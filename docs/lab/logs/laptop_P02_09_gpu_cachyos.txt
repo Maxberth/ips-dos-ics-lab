@@ -1,0 +1,42 @@
+# 09 GPU y CachyOS
+# Fecha: 2026-11-17T12:16:55-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ lspci -k | grep -A3 -E 'VGA|3D|Display'
+pcilib: Error reading /sys/bus/pci/devices/0000:00:08.3/label: Operation not permitted
+01:00.0 VGA compatible controller: NVIDIA Corporation GA107M [GeForce RTX 3050 Mobile] (rev a1)
+	Subsystem: Lenovo Device 3af8
+	Kernel driver in use: nvidia
+	Kernel modules: nouveau, nvidia_drm, nvidia
+--
+05:00.0 VGA compatible controller: Advanced Micro Devices, Inc. [AMD/ATI] Rembrandt [Radeon 680M] (rev c9)
+	Subsystem: Lenovo Device 3af8
+	Kernel driver in use: amdgpu
+	Kernel modules: amdgpu
+
+$ pacman -Q | grep -iE '^(nvidia|mesa |vulkan-radeon|cachyos-settings|cachyos-hooks|cachyos-kernel-manager|linux-cachyos)'
+cachyos-hooks 2026.10.23-1
+cachyos-kernel-manager 1.19.0-1
+cachyos-settings 1:1.4.4-1
+linux-cachyos 7.3.3-1
+linux-cachyos-headers 7.3.3-1
+linux-cachyos-lts 6.18.60-2
+linux-cachyos-lts-headers 6.18.60-2
+linux-cachyos-lts-nvidia-open 6.18.60-2
+linux-cachyos-nvidia-open 7.3.3-1
+mesa 3:26.2.6-1
+nvidia-prime 1.0-6
+nvidia-settings 620.70.06-1
+nvidia-utils 620.70.06-2
+vulkan-radeon 3:26.2.6-1
+
+$ cat /etc/lsb-release
+DISTRIB_ID=cachyos
+DISTRIB_RELEASE="rolling"
+DISTRIB_DESCRIPTION="CachyOS"
+
+$ grep -E '^\[cachyos' /etc/pacman.conf
+[cachyos-v3] 
+[cachyos-extra-v3] 
+[cachyos-core-v3] 
+[cachyos]
+

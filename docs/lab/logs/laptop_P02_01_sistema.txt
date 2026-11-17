@@ -1,0 +1,56 @@
+# 01 Sistema
+# Fecha: 2026-11-17T12:16:04-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ hostname
+maxberth
+
+$ cat /etc/os-release
+NAME="CachyOS Linux"
+PRETTY_NAME="CachyOS"
+ID=cachyos
+ID_LIKE=arch
+BUILD_ID=rolling
+ANSI_COLOR="38;2;23;147;209"
+HOME_URL="https://cachyos.org/"
+DOCUMENTATION_URL="https://wiki.cachyos.org/"
+SUPPORT_URL="https://discuss.cachyos.org/"
+BUG_REPORT_URL="https://github.com/cachyos"
+PRIVACY_POLICY_URL="https://terms.archlinux.org/docs/privacy-policy/"
+LOGO=cachyos
+
+$ uname -a
+Linux maxberth 7.3.3-1-cachyos #1 SMP PREEMPT_DYNAMIC Sat, 07 Nov 2026 13:54:44 +0000 x86_64 GNU/Linux
+
+$ pacman -Q linux-cachyos linux-cachyos-headers linux linux-lts 2>/dev/null
+linux-cachyos 7.3.3-1
+linux-cachyos-headers 7.3.3-1
+
+$ ls /boot
+amd-ucode.img
+efi
+grub
+initramfs-linux-cachyos-lts.img
+initramfs-linux-cachyos.img
+vmlinuz-linux-cachyos
+vmlinuz-linux-cachyos-lts
+
+$ cat /proc/cmdline
+BOOT_IMAGE=/@/boot/vmlinuz-linux-cachyos root=UUID=d6e0f62d-1c44-4098-8dad-869ea83d8a0b rw rootflags=subvol=@ nowatchdog nvme_load=YES splash loglevel=3
+
+$ hostnamectl
+  Static hostname: maxberth
+        Icon name: computer-laptop
+          Chassis: laptop 💻
+Chassis Asset Tag: NO Asset Tag
+       Machine ID: 16a74b14937f41e2b74d2d78e303deb8
+          Boot ID: f311131cbe6f4c55936504eb59ae105f
+ Operating System: CachyOS
+           Kernel: Linux 7.3.3-1-cachyos
+     Architecture: x86-64
+  Hardware Vendor: Lenovo
+   Hardware Model: IdeaPad Gaming 3 15ARH7
+     Hardware SKU: LENOVO_MT_82SB_BU_idea_FM_IdeaPad Gaming 3 15ARH7
+ Firmware Version: JNCN52WW(V2.12)
+    Firmware Date: Fri 2024-10-04
+     Firmware Age: 2y 1month 1w 6d
+

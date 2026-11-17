@@ -1,0 +1,39 @@
+# 08 Paquetes
+# Fecha: 2026-11-17T12:16:46-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+FALTA      qemu-base  -> extra 11.1.3-1
+FALTA      qemu-full  -> extra 11.1.3-1
+FALTA      libvirt  -> extra 1:12.9.0-1
+FALTA      virt-install  -> extra 5.1.0-4
+FALTA      openvswitch  -> extra 4.0.0-2
+FALTA      suricata  -> no está en los repos oficiales (AUR u otra fuente)
+FALTA      snort  -> no está en los repos oficiales (AUR u otra fuente)
+FALTA      hping  -> extra 3.0.0-6
+FALTA      python-scapy  -> extra 2.8.0-1
+FALTA      iperf3  -> extra 3.22-2
+FALTA      tcpdump  -> extra 4.99.7-2
+FALTA      wireshark-cli  -> extra 4.7.4-1
+INSTALADO  nftables 1:1.1.7-3.1
+INSTALADO  iptables 1:1.8.13-1.1
+FALTA      python-pymodbus  -> no está en los repos oficiales (AUR u otra fuente)
+INSTALADO  dnsmasq 2.93-1.1
+FALTA      edk2-ovmf  -> extra 202608-1
+INSTALADO  paru 2.2.0-2
+FALTA      yay  -> cachyos 13.1.0-2
+FALTA      latexmk  -> no está en los repos oficiales (AUR u otra fuente)
+INSTALADO  texlive-binextra 2026.1-1
+
+$ paru -Si suricata snort python-pymodbus 2>&1 | grep -E '^(Repository|Name|Version|Out-of-date|Votes)'
+Repository      : aur
+Name            : suricata
+Version         : 8.0.7-1
+Votes           : 33
+Repository      : aur
+Name            : snort
+Version         : 3.12.2.0-1
+Votes           : 67
+Repository      : aur
+Name            : python-pymodbus
+Version         : 3.16.2-1
+Votes           : 3
+

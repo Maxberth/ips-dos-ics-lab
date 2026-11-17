@@ -1,0 +1,25 @@
+# 10 Estabilidad
+# Fecha: 2026-11-17T12:16:55-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ journalctl --list-boots --no-pager | tail -5
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+ -3 468b3e4598c54092a4465428d42bff2a Mon 2026-11-09 16:10:02 -05 Wed 2026-11-11 17:57:17 -05
+ -2 752efffc6b0b4800b384fe9aba368e58 Thu 2026-11-12 12:06:37 -05 Thu 2026-11-12 12:15:33 -05
+ -1 6972358a84ef4360bbda1c49b6625e4d Thu 2026-11-12 12:15:51 -05 Fri 2026-11-13 14:59:50 -05
+  0 f311131cbe6f4c55936504eb59ae105f Fri 2026-11-13 15:00:47 -05 Tue 2026-11-17 12:16:50 -05
+
+$ journalctl -b -1 -p warning --no-pager | grep -iE 'oom|out of memory|thermal|critical temp|throttl|mce|hardware error' | tail -30 || true
+Nov 13 10:20:21 maxberth kernel: NVRM: nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1196
+Nov 13 10:22:47 maxberth kernel: NVRM: nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1196
+Nov 13 10:23:54 maxberth kernel: NVRM: nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1196
+Nov 13 10:24:46 maxberth kernel: NVRM: nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1196
+
+$ journalctl -b 0 -p warning --no-pager | grep -iE 'oom|out of memory|thermal|critical temp|throttl|mce|hardware error' | tail -30 || true
+Nov 15 07:38:44 maxberth kernel: NVRM: nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1196
+Nov 16 20:01:59 maxberth kernel: NVRM: GPU0 nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from _memdescAllocInternal(pMemDesc) @ mem_desc.c:1196
+Nov 16 20:01:59 maxberth kernel: NVRM: GPU0 nvCheckOkFailedNoLog: Check failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from rmStatus @ system_mem.c:555
+Nov 16 20:01:59 maxberth kernel: NVRM: nvAssertOkFailedNoLog: Assertion failed: Out of memory [NV_ERR_NO_MEMORY] (0x00000051) returned from pRmApi->Alloc(pRmApi, device->session->handle, isSystemMemory ? device->handle : device->subhandle, &physHandle, isSystemMemory ? NV01_MEMORY_SYSTEM : NV01_MEMORY_LOCAL_USER, &memAllocParams, sizeof(memAllocParams)) @ nv_gpu_ops.c:5152
+
+$ uptime
+ 12:16:55 up 3 days, 21:16,  1 user,  load average: 1.82, 0.79, 0.80
+

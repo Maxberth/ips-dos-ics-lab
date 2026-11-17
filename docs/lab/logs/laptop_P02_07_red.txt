@@ -1,0 +1,57 @@
+# 07 Red
+# Fecha: 2026-11-17T12:16:45-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ ip -br link
+lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP> 
+enp2s0           DOWN           e4:a8:df:dd:69:32 <NO-CARRIER,BROADCAST,MULTICAST,UP> 
+wlan0            UP             e0:0a:f6:94:e4:9d <BROADCAST,MULTICAST,UP,LOWER_UP> 
+tailscale0       UNKNOWN        <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP> 
+
+$ ip -br addr
+lo               UNKNOWN        127.0.0.1/8 ::1/128 
+enp2s0           DOWN           
+wlan0            UP             192.168.1.13/24 fe80::91c3:ea3e:e0c1:1ace/64 
+tailscale0       UNKNOWN        100.95.136.23/32 fd7a:115c:a1e0::d01:88f5/128 fe80::a9d1:9e2:324d:6366/64 
+
+$ ip route
+default via 192.168.1.1 dev wlan0 proto dhcp src 192.168.1.13 metric 600 
+192.168.1.0/24 dev wlan0 proto kernel scope link src 192.168.1.13 metric 600 
+
+$ ip -br addr | grep -E '192\.168\.(10|20|30)\.' || echo 'Ninguna interfaz en 192.168.10/20/30.0/24'
+Ninguna interfaz en 192.168.10/20/30.0/24
+
+$ ip route | grep -E '192\.168\.(10|20|30)\.' || echo 'Ninguna ruta a 192.168.10/20/30.0/24'
+Ninguna ruta a 192.168.10/20/30.0/24
+
+$ systemctl is-active docker docker.socket tailscaled libvirtd ovs-vswitchd NetworkManager
+inactive
+active
+active
+inactive
+inactive
+active
+
+$ docker network ls 2>&1
+NETWORK ID     NAME                       DRIVER    SCOPE
+3a12c2099a44   bowfin_default             bridge    local
+320fb7a1d5d7   bridge                     bridge    local
+2a6f643b6aa1   forja-api_default          bridge    local
+d804d5e6017b   host                       host      local
+05cfd8dac001   none                       null      local
+ef971731cfdd   patriac-platform_default   bridge    local
+
+$ lspci | grep -iE 'ethernet|network'
+02:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8211/8411 PCI Express Gigabit Ethernet Controller (rev 15)
+03:00.0 Network controller: Realtek Semiconductor Co., Ltd. RTL8852BE PCIe 802.11ax Wireless Network Controller
+
+
+# Añadido 2026-11-17T12:17:21-05:00: subredes de las redes Docker (el comando 'docker network ls' de arriba activó dockerd por socket a las 12:16:46)
+$ docker network inspect -f "{{.Name}} {{range .IPAM.Config}}{{.Subnet}} {{end}}" $(docker network ls -q)
+bowfin_default 172.19.0.0/16 
+bridge 172.17.0.0/16 
+forja-api_default 172.20.0.0/16 
+host 
+none 
+patriac-platform_default 172.18.0.0/16 
+$ docker ps --format "{{.Names}}"
+(fin)

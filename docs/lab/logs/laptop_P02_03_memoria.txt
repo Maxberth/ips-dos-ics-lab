@@ -1,0 +1,124 @@
+# 03 Memoria
+# Fecha: 2026-11-17T12:16:04-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:            14Gi       5.3Gi       4.2Gi       129Mi       5.7Gi       9.5Gi
+Swap:           14Gi       2.4Gi        12Gi
+
+$ cat /proc/meminfo
+MemTotal:       15525404 kB
+MemFree:         4449456 kB
+MemAvailable:    9988924 kB
+Buffers:             660 kB
+Cached:          5317016 kB
+SwapCached:          636 kB
+Active:          2535700 kB
+Inactive:        4893980 kB
+Active(anon):    2113240 kB
+Inactive(anon):   141576 kB
+Active(file):     422460 kB
+Inactive(file):  4752404 kB
+Unevictable:       12784 kB
+Mlocked:           12784 kB
+SwapTotal:      15524860 kB
+SwapFree:       12972332 kB
+Zswap:                 0 kB
+Zswapped:              0 kB
+Dirty:               320 kB
+Writeback:             0 kB
+AnonPages:       1892064 kB
+Mapped:           626648 kB
+Shmem:            132244 kB
+KReclaimable:     700184 kB
+Slab:            1050340 kB
+SReclaimable:     700184 kB
+SUnreclaim:       350156 kB
+KernelStack:       17348 kB
+PageTables:        65320 kB
+SecPageTables:      3836 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:    23287560 kB
+Committed_AS:   13360468 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:      190108 kB
+VmallocChunk:          0 kB
+Percpu:            18368 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:    425984 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+CmaTotal:              0 kB
+CmaFree:               0 kB
+Unaccepted:            0 kB
+Balloon:               0 kB
+GPUActive:        286292 kB
+GPUReclaim:       555104 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:     8523168 kB
+DirectMap2M:     7407616 kB
+DirectMap1G:     1048576 kB
+
+$ swapon --show
+NAME       TYPE       SIZE USED PRIO
+/dev/zram0 partition 14.8G 2.4G  100
+
+$ zramctl
+NAME       ALGORITHM DISKSIZE DATA COMPR TOTAL STREAMS MOUNTPOINT
+/dev/zram0 zstd         14.8G 2.3G  1.1G  1.1G         [SWAP]
+
+$ cat /proc/sys/vm/swappiness
+150
+
+$ systemctl is-active systemd-oomd earlyoom
+active
+inactive
+
+$ cat /proc/pressure/memory
+some avg10=0.00 avg60=0.00 avg300=0.00 total=39380042
+full avg10=0.00 avg60=0.00 avg300=0.00 total=38899378
+
+$ ps -eo pid,user,rss,comm --sort=-rss | head -16
+    PID USER       RSS COMMAND
+1588876 maxberth 706608 claude-desktop
+1502895 maxberth 567132 qs
+1588569 maxberth 376572 claude-desktop
+1604422 maxberth 373012 claude
+1588638 maxberth 199324 claude-desktop
+1589004 maxberth 112628 claude-desktop
+1588706 maxberth 108244 claude-desktop
+1588641 maxberth 99440 claude-desktop
+1589026 maxberth 86304 claude-desktop
+1601979 maxberth 72404 thunar
+1589047 maxberth 69528 claude-desktop
+   1309 maxberth 64396 Hyprland
+ 936499 maxberth 54084 orca-ide
+1588579 maxberth 53388 claude-desktop
+1588578 maxberth 52296 claude-desktop
+
+$ ps -eo rss,comm --sort=-rss | awk 'NR>1{a[$2]+=$1}END{for(k in a)printf "%8.0f MiB  %s\n",a[k]/1024,k}' | sort -rn | head -15
+    1836 MiB  claude-desktop
+     559 MiB  caelestia
+     554 MiB  qs
+     411 MiB  notify-send
+     364 MiB  claude
+      71 MiB  thunar
+      63 MiB  Hyprland
+      53 MiB  orca-ide
+      51 MiB  xdg-desktop-por
+      29 MiB  tailscaled
+      22 MiB  systemd
+      21 MiB  btop
+      20 MiB  wireplumber
+      19 MiB  kiod6
+      19 MiB  geoclue
+

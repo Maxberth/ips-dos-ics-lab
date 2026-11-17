@@ -1,0 +1,25 @@
+# 05 KVM
+# Fecha: 2026-11-17T12:16:44-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ ls -l /dev/kvm
+crw-rw-rw- 1 root kvm 10, 232 Nov 13 15:00 /dev/kvm
+
+$ lsmod | grep -E '^kvm'
+kvm_amd               270336  0
+kvm                  1597440  1 kvm_amd
+
+$ cat /sys/module/kvm_amd/parameters/nested
+1
+
+$ ls /sys/class/iommu
+ivhd0
+
+$ ls /sys/kernel/iommu_groups | wc -l
+27
+
+$ systemd-detect-virt
+none
+
+$ id
+uid=1000(maxberth) gid=1000(maxberth) groups=1000(maxberth),3(sys),90(network),956(docker),967(nopasswdlogin),980(rfkill),982(users),983(video),985(storage),989(lp),995(audio),998(wheel)
+

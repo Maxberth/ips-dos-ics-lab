@@ -1,0 +1,43 @@
+# 06 Disco
+# Fecha: 2026-11-17T12:16:44-05:00  Host: maxberth  (solo lectura, sin sudo)
+
+$ lsblk -f
+NAME        FSTYPE FSVER LABEL UUID                                 FSAVAIL FSUSE% MOUNTPOINTS
+zram0       swap   1     zram0 258e05b8-9c2c-4c59-bfd5-acf6087b697a                [SWAP]
+nvme0n1                                                                            
+├─nvme0n1p1 vfat   FAT32       71B2-F7DF                             478.3M     6% /boot/efi
+└─nvme0n1p2 btrfs              d6e0f62d-1c44-4098-8dad-869ea83d8a0b  616.9G    33% /var/cache
+                                                                                   /var/tmp
+                                                                                   /var/log
+                                                                                   /srv
+                                                                                   /root
+                                                                                   /home
+                                                                                   /
+
+$ lsblk -d -o NAME,SIZE,ROTA,TRAN,MODEL
+NAME      SIZE ROTA TRAN MODEL
+zram0    14.8G    0      
+nvme0n1 931.5G    0 nvme KINGSTON SNV2S1000G
+
+$ df -h
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/nvme0n1p2  932G  312G  617G  34% /
+devtmpfs        7.3G     0  7.3G   0% /dev
+tmpfs           7.5G  139M  7.3G   2% /dev/shm
+efivarfs        148K  104K   40K  73% /sys/firmware/efi/efivars
+tmpfs           3.0G  2.2M  3.0G   1% /run
+none            1.0M     0  1.0M   0% /run/credentials/systemd-journald.service
+none            1.0M     0  1.0M   0% /run/credentials/systemd-resolved.service
+/dev/nvme0n1p2  932G  312G  617G  34% /home
+/dev/nvme0n1p2  932G  312G  617G  34% /root
+/dev/nvme0n1p2  932G  312G  617G  34% /srv
+tmpfs           7.5G  1.2G  6.3G  16% /tmp
+/dev/nvme0n1p2  932G  312G  617G  34% /var/log
+/dev/nvme0n1p2  932G  312G  617G  34% /var/tmp
+/dev/nvme0n1p2  932G  312G  617G  34% /var/cache
+/dev/nvme0n1p1  511M   33M  479M   7% /boot/efi
+tmpfs           1.5G   15M  1.5G   1% /run/user/1000
+
+$ df -BG --output=avail / | tail -1
+ 617G
+
