@@ -1,4 +1,4 @@
-<domain type='kvm' id='11'>
+<domain type='kvm' id='13'>
   <name>lab-plc</name>
   <uuid>feb95dce-a4ca-46a3-912d-804b9356ad59</uuid>
   <description>ips-dos-ics-lab laptop-dev role=PLC</description>
@@ -165,46 +165,46 @@
     </controller>
     <interface type='bridge'>
       <mac address='52:54:00:00:30:0a'/>
-      <source network='ovs-ot' portgroup='vlan30' portid='72168ddd-5f6f-4efa-83d4-07600af9c5de' bridge='ovs-ot'/>
+      <source network='ovs-ot' portgroup='vlan30' portid='10af011c-aba1-40f9-b594-f431510765a0' bridge='ovs-ot'/>
       <vlan>
         <tag id='30'/>
       </vlan>
       <virtualport type='openvswitch'>
-        <parameters interfaceid='fd28f57b-85af-4e39-aeac-d01c2f1a1fd4'/>
+        <parameters interfaceid='4230e2ab-3112-459d-b719-d58e8e080ef5'/>
       </virtualport>
-      <target dev='vnet37'/>
+      <target dev='vnet41'/>
       <model type='virtio'/>
       <alias name='net0'/>
       <address type='pci' domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>
     </interface>
     <interface type='bridge'>
       <mac address='52:54:00:00:99:0d'/>
-      <source network='ovs-ot' portgroup='vlan99' portid='44f78112-3f54-4dd1-981c-4305b34e53e6' bridge='ovs-ot'/>
+      <source network='ovs-ot' portgroup='vlan99' portid='8f3858ec-6f1b-4b55-bd09-c738f28c3708' bridge='ovs-ot'/>
       <vlan>
         <tag id='99'/>
       </vlan>
       <virtualport type='openvswitch'>
-        <parameters interfaceid='13dc0af6-273d-4125-a35f-2289dd75ac65'/>
+        <parameters interfaceid='19809a48-3b68-4e06-9140-bb5a2c3fb3b9'/>
       </virtualport>
-      <target dev='vnet38'/>
+      <target dev='vnet42'/>
       <model type='virtio'/>
       <alias name='net1'/>
       <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
     </interface>
     <serial type='pty'>
-      <source path='/dev/pts/5'/>
+      <source path='/dev/pts/2'/>
       <target type='isa-serial' port='0'>
         <model name='isa-serial'/>
       </target>
       <alias name='serial0'/>
     </serial>
-    <console type='pty' tty='/dev/pts/5'>
-      <source path='/dev/pts/5'/>
+    <console type='pty' tty='/dev/pts/2'>
+      <source path='/dev/pts/2'/>
       <target type='serial' port='0'/>
       <alias name='serial0'/>
     </console>
     <channel type='unix'>
-      <source mode='bind' path='/run/libvirt/qemu/channel/11-lab-plc/org.qemu.guest_agent.0'/>
+      <source mode='bind' path='/run/libvirt/qemu/channel/13-lab-plc/org.qemu.guest_agent.0'/>
       <target type='virtio' name='org.qemu.guest_agent.0' state='disconnected'/>
       <alias name='channel0'/>
       <address type='virtio-serial' controller='0' bus='0' port='1'/>

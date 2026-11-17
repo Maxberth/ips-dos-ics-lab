@@ -12,7 +12,7 @@ ncheck(){ local name=$1; shift; if "$@" >/tmp/ips-lab-check.out 2>&1; then echo 
 echo "# check_chain $(date -u +%FT%TZ) plataforma=$PLATFORM repo=$(git -C "$REPO" rev-parse --short HEAD)"
 
 echo "## P06 red y aislamiento"
-check "ovs-ot sin puertos físicos (enp2s0/wlan0/tailscale0)" sh -c "! ip -o link show master ovs-system | grep -qE 'enp|wlan|tailscale|eth'"
+check "ovs-ot sin puertos físicos (enp2s0/wlan0/tailscale0)" sh -c "! ip -o link show master ovs-system | awk -F': ' '{print \$2}' | grep -qE '^(enp|wlan|wlp|eth|tailscale)'"
 check "el host no tiene IP en VLAN 10/20/30" sh -c "! ip -4 -br addr | grep -qE '192\.168\.(10|20|30)\.'"
 ssh_all(){ for v in lab-attacker lab-fw lab-ips lab-plc lab-scada; do lab_ssh "$v" true || return 1; done; }
 check "SSH de gestión a las 5 VMs" ssh_all
@@ -32,7 +32,8 @@ check "SCADA lee Modbus del PLC (10 lecturas)" lab_ssh lab-scada "python3 -I /op
 lab_ssh lab-attacker "ping -c 3 -W 2 192.168.30.10" | tail -1 | sed 's/^/          RTT ping atacante->PLC (router): /'
 
 echo "## P09 NFQUEUE y prueba de drop real (ping 1 pps x 5 desde SCADA)"
-count_plc_icmp(){ lab_ssh lab-plc "sudo timeout 9 tcpdump -ni v30 -c 100 'icmp[icmptype]==icmp-echo and src 192.168.20.20' 2>/dev/null | wc -l" & sleep 2; lab_ssh lab-scada "ping -c 5 -i 1 -W 1 192.168.30.10 >/dev/null 2>&1; true"; wait; }
+# Cuenta solo líneas de paquetes "ICMP echo request" (no las líneas de estado de tcpdump).
+count_plc_icmp(){ lab_ssh lab-plc "sudo timeout 9 tcpdump -lni v30 'icmp[icmptype]==icmp-echo and src 192.168.20.20' 2>/dev/null | grep -c 'ICMP echo request'" & sleep 2; lab_ssh lab-scada "ping -c 5 -i 1 -W 1 192.168.30.10 >/dev/null 2>&1; true"; wait; }
 "$REPO/lab/harness/ips_mode.sh" test-alert > /tmp/ips-lab-mode.out 2>&1 || { cat /tmp/ips-lab-mode.out; }
 check "suricata -T valida config y reglas (test-alert)" grep -q 'ips_mode=test-alert suricata=active' /tmp/ips-lab-mode.out
 n_alert=$(count_plc_icmp | tail -1)

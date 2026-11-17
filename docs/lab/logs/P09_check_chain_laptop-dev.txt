@@ -1,0 +1,28 @@
+# check_chain 2026-11-17T18:46:45Z plataforma=laptop-dev repo=727750c
+## P06 red y aislamiento
+CUMPLE    ovs-ot sin puertos físicos (enp2s0/wlan0/tailscale0)
+CUMPLE    el host no tiene IP en VLAN 10/20/30
+CUMPLE    SSH de gestión a las 5 VMs
+CUMPLE    aislamiento: atacante (VLAN 10) no llega a SCADA por capa 2 (ARP directo)
+CUMPLE    aislamiento: SCADA (VLAN 20) no llega al PLC por capa 2
+CUMPLE    misma VLAN: SCADA ve al IPS (192.168.20.2)
+CUMPLE    VMs sin ruta por defecto (sin Internet)
+CUMPLE    atacante no alcanza la gestión de otra VM (VLAN 99)
+CUMPLE    atacante no alcanza la gestión vía firewall (VLAN 10 -> 99)
+## P08/P09 ruta con el IPS en modo router
+CUMPLE    atacante -> fw (192.168.10.1)
+CUMPLE    atacante -> PLC a través de fw e ips
+CUMPLE    SCADA -> PLC a través del ips
+CUMPLE    SCADA lee Modbus del PLC (10 lecturas)
+          RTT ping atacante->PLC (router): rtt min/avg/max/mdev = 0.680/0.893/1.232/0.242 ms
+## P09 NFQUEUE y prueba de drop real (ping 1 pps x 5 desde SCADA)
+CUMPLE    suricata -T valida config y reglas (test-alert)
+          ecos que llegan al PLC con regla alert: 5 de 5
+CUMPLE    alert: llegan los 5 ecos al PLC
+          ecos que llegan al PLC con regla drop: 0 de 5
+CUMPLE    drop: no llega ningún eco al PLC
+CUMPLE    eve.json registra el bloqueo (sid 1000099, action blocked)
+CUMPLE    SCADA sigue leyendo Modbus con Suricata en línea
+CUMPLE    fail-closed: sin Suricata la cola corta el tráfico
+CUMPLE    tras volver a modo router el tráfico se restaura
+## Resultado: 0 pruebas en NO CUMPLE

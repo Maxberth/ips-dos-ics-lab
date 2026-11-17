@@ -26,7 +26,7 @@ python3 - <<'EOF'
 import sqlite3
 db = sqlite3.connect("openplc.db"); c = db.cursor()
 for k, v in (("Modbus_port", "502"), ("Start_run_mode", "true"), ("Dnp3_port", "disabled"),
-             ("Enip_port", "disabled"), ("Pstorage_polling", "disabled")):
+             ("Enip_port", "disabled"), ("Pstorage_polling", "disabled"), ("snap7", "false")):
     c.execute("UPDATE Settings SET Value=? WHERE Key=?", (v, k))
 c.execute("DELETE FROM Programs WHERE file='tank_sim.st'")
 c.execute("INSERT INTO Programs (Name, Description, File, Date_upload) VALUES ('tank_sim','IPS lab','tank_sim.st',strftime('%s','now'))")

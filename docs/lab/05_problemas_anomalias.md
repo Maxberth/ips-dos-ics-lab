@@ -34,3 +34,9 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
 
 ## A8. cloud-init queda en `status: error` en lab-fw
 - Ocurrió porque cloud-init intentó instalar paquetes sin red (A5). La VM funciona y los paquetes se instalaron después por el proxy. Las VMs creadas después ya no piden paquetes a cloud-init.
+
+## A9. Primera versión de check_chain contaba líneas en vez de paquetes (resuelta)
+- **Síntoma:** "ecos que llegan al PLC" dio 6/5 con alert y 1/5 con drop.
+- **Evidencia:** con la captura completa en lab-plc, el modo drop mostró `0 packets captured`, y eve.json registró los 5 ecos con `action: blocked`.
+- **Causa:** `wc -l` contaba también una línea que no era un paquete. Ahora se cuentan solo las líneas `ICMP echo request`. Con la corrección: alert 5/5 y drop 0/5.
+- El chequeo de OVS confundía `link/ether` con una interfaz `eth`; ahora mira solo el nombre de la interfaz.
