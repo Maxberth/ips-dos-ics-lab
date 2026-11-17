@@ -14,3 +14,10 @@
   - `check_chain.sh`: 23 pruebas en CUMPLE (`docs/lab/logs/P09_check_chain_laptop-dev.txt`).
   - Problemas resueltos: arranque sin VGA (A4), ufw (A5, proxy por SSH), `sg` (A6), conteo de la prueba (A9).
 - 2026-11-17 18:49–19:00 UTC (laptop-dev): **interrupción de unos 55 min.** Durante la primera corrida con ataque (E1 SYN piloto) el post-proceso con tshark agotó la RAM del host. El guardián destruyó las VMs (ABORT 18:51:07) y systemd-oomd mató la app de Claude (18:52:52), lo que cortó la sesión. Detalle y correcciones en A10. Se rehízo solo el conteo de la captura (con `pcap_count.py` en un scope de 1 GiB); la corrida queda como `partial` en `runs.csv`. Se borró el ABORT, se reiniciaron el guardián y las VMs, y se repitió `check_chain.sh`.
+- 2026-11-17 19:00–20:10 UTC (laptop-dev): piloto P12. Problemas encontrados y corregidos: A11–A18.
+  - La saturación de NFQUEUE se separa por contadores; se pasa a 2 colas (D18).
+  - La matriz se tragaba el stdin (corregido, y `--resume`).
+  - OpenPLC caído tras el Modbus flood: 9 corridas invalidadas y salud del PLC en cada corrida.
+  - Suricata bloqueaba sin reglas por `exception-policy` y `stream.drop-invalid` (D19).
+  - Piloto final con 14 corridas válidas y auditoría: puerta de calidad superada para pasar a pc-miguel.
+  - Corrida piloto: 64–93 s, mediana 76 s.

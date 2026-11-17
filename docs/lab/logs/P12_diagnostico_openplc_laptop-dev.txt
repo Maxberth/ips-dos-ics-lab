@@ -1,0 +1,20 @@
+# Diagnóstico de la caída de OpenPLC (A15/A18)  2026-11-17T20:01:07Z  plataforma=laptop-dev  IPS en modo router
+## prueba: conns=1 rate=50 req/s (0 = sin límite) seconds=5
+antes: 10/10 respuestas
+enviadas 256 recibidos_bytes 4352
+después: 10/10 respuestas; proceso: 4492 ./core/openplc
+## prueba: conns=1 rate=0 req/s (0 = sin límite) seconds=2
+antes: 10/10 respuestas
+enviadas 536736 recibidos_bytes 8513246
+después: 0/10 respuestas; proceso: sin-core
+## prueba: conns=8 rate=50 req/s (0 = sin límite) seconds=5
+antes: 10/10 respuestas
+enviadas 224 recibidos_bytes 544
+después: 10/10 respuestas; proceso: 4956 ./core/openplc
+## prueba: conns=1 rate=10 req/s (0 = sin límite) seconds=3
+antes: 10/10 respuestas
+enviadas 32 recibidos_bytes 544
+después: 10/10 respuestas; proceso: 5026 ./core/openplc
+## estado final: 10/10
+pid=5131 estado=S exit_code=0
+PIPE

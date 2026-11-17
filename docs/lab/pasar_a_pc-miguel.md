@@ -37,12 +37,31 @@ mkdir -p ~/.cache/ips-lab && cd ~/.cache/ips-lab && curl -fLO https://cloud.debi
 
 `latest` cambia con el tiempo. Para tener exactamente la misma imagen que laptop-dev, comparar el SHA512 con el de `docs/lab/02_software_versiones.md`. Si no coincide, usar la carpeta con fecha de cloud.debian.org que corresponda, o copiar el archivo desde laptop-dev.
 
+## 2b. Lo que ya se sabe por laptop-dev (no hay que redescubrirlo)
+
+- **ufw u otro firewall del host:** no hace falta tocarlo. Las VMs instalan paquetes por túnel SSH (D12), sin red NAT.
+- **Grupos nuevos sin cerrar sesión:** libvirt va por polkit y la captura por `newgrp` (D13).
+- **Las VMs necesitan `--video vga`** o el kernel de Debian 13 se reinicia en bucle (A4). Ya está en `create_vm.sh`.
+- **Nunca procesar capturas grandes fuera de un scope:** el arnés ya lo hace (A10). No ejecutes tshark a mano sobre capturas de floods.
+- **OpenPLC puede morir con el Modbus flood** sin que systemd lo note (A15). El arnés comprueba el PLC antes y después de cada corrida y lo reinicia si hace falta.
+- **El techo del IPS:** con un atacante de una sola IP, Suricata usa una sola cola NFQUEUE. En laptop-dev procesa ~58–95 kpps frente a ~150 kpps de ataque. El resto lo descarta el kernel sin distinguir el tráfico legítimo (A11, A14). En pc-miguel hay que medir su propio techo y reportar `nfq_queue_dropped` aparte de `ips.blocked`.
+- **Suricata con `exception-policy: ignore`** (D19). Con `auto`, el parser Modbus bloquea el flood en E2 sin reglas (A16).
+- **Guardián en pc-miguel:** escritorio sin batería (`GUARD_REQUIRE_AC=0`). Si usa zram con `swappiness` alta como laptop-dev, subir `GUARD_ABORT_SWAP_GROWTH_MIB` (D15).
+
+## 2c. Tiempos medidos en laptop-dev
+
+- Montaje con `lab_up.sh` (5 VMs + paquetes + OpenPLC): unos 15 min de máquina, sin contar la depuración.
+- Corrida `piloto` (5 + 30 + 10 s): **64–93 s reales, mediana 76 s** (n = 20). Incluye el cambio de modo del IPS, el enfriamiento hasta Tctl ≤ 65 °C, el conteo de la captura y la validación.
+- Estimación para el perfil `final` (15 + 60 + 15 s): unos 120–140 s por corrida, a confirmar en el piloto de pc-miguel.
+  - Matriz completa ×10 (E0 + 3 escenarios × 4 ataques = 130 corridas): unas 4,5–5 h.
+  - Recorte recomendado si no alcanza: E0, E1 y E3 × {syn, modbus} × 10 = 50 corridas, unas 2 h; después udp e icmp; E2 al final.
+
 ## 3. Laboratorio (sin sudo)
 
 ```bash
 cd ~/code/articulo/ips-dos-ics-lab && export PROFILE=lab/config/profile_pc-miguel.env
 lab/guard/guard-start.sh $PROFILE
-lab/setup/lab_up.sh            # redes libvirt, 5 VMs, aprovisionamiento, OpenPLC, quita la NIC NAT
+lab/setup/lab_up.sh            # redes libvirt, 5 VMs, paquetes por túnel SSH, OpenPLC (commit fijado)
 lab/guard/lab-status.sh
 ```
 
@@ -63,7 +82,10 @@ lab/harness/run_matrix.sh --run-profile piloto --reps 1
 ## 5. Corridas finales
 
 ```bash
-lab/harness/run_matrix.sh --run-profile final --reps 10 --seed 2027
+# recorte prioritario primero (unas 2 h), luego el resto con --resume
+lab/harness/run_matrix.sh --run-profile final --reps 10 --seed 2027 --scenarios "E0 E1 E3" --attacks "syn modbus"
+lab/harness/run_matrix.sh --run-profile final --reps 10 --seed 2027 --resume
+python3 -I lab/analysis/summarize_runs.py --platform pc-miguel --profile final
 ```
 
 Cada corrida queda en `data/raw/runs/<run_id>/` con `platform=pc-miguel` en `data/raw/runs.csv`. Hacer commit y push de `data/raw/` al terminar cada bloque.

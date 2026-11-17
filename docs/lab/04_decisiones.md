@@ -77,3 +77,8 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Elección:** `queue num 0-1` en nftables (reparto por hash de flujo entre colas; `fanout` reparte por CPU y desequilibra, ver A13) y `suricata -q 0 -q 1`: una cola por vCPU del IPS (2 en los dos perfiles). Sigue sin `bypass` (D11).
 - **Se mide en cada corrida:** `queue_dropped` por cola. En el paper se reportan por separado los descartes por regla (`ips.blocked`, `drop_reason.rules`) y por desbordamiento (`queue_dropped`).
 - La corrida E3 con una cola queda en `data/raw` como evidencia, marcada en `notes`.
+
+## D19. `exception-policy: ignore` en Suricata y regla Modbus sin depender del parser
+- **Contexto:** A16. Con `auto`, un error del parser en modo IPS descarta el flujo aunque la regla esté en alert. Así no se puede atribuir el bloqueo a las reglas (obs. 10) y E2 deja de ser "solo detección".
+- **Elección:** `exception-policy: ignore` y `stream.drop-invalid: no` (A17) en `suricata-lab*.yaml`. Regla 1000004 rev 2 con `dsize:>0` y `detection_filter` por origen.
+- **Consecuencia:** el laboratorio mide la prevención por reglas. Lo que haría la configuración por defecto (`auto`) queda medido en las corridas previas a D19 y se reporta como hallazgo aparte.

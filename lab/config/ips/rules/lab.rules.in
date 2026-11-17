@@ -4,4 +4,5 @@
 ACTION tcp any any -> 192.168.30.10 502 (msg:"LAB SYN flood to Modbus/TCP 502"; flags:S,12; detection_filter:track by_src, count 100, seconds 1; classtype:attempted-dos; sid:1000001; rev:1;)
 ACTION udp any any -> 192.168.30.10 any (msg:"LAB UDP flood to PLC"; detection_filter:track by_src, count 100, seconds 1; classtype:attempted-dos; sid:1000002; rev:1;)
 ACTION icmp any any -> 192.168.30.10 any (msg:"LAB ICMP echo flood to PLC"; itype:8; detection_filter:track by_src, count 50, seconds 1; classtype:attempted-dos; sid:1000003; rev:1;)
-ACTION tcp any any -> 192.168.30.10 502 (msg:"LAB Modbus/TCP request flood"; flow:to_server,established; app-layer-protocol:modbus; detection_filter:track by_src, count 100, seconds 1; classtype:attempted-dos; sid:1000004; rev:1;)
+# 1000004 rev 2: segmentos con datos al 502 por origen; no depende del parser Modbus (A16).
+ACTION tcp any any -> 192.168.30.10 502 (msg:"LAB Modbus/TCP request flood"; flow:to_server,established; dsize:>0; detection_filter:track by_src, count 100, seconds 1; classtype:attempted-dos; sid:1000004; rev:2;)

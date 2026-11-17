@@ -1,0 +1,2 @@
+Running as unit: suricata-lab.service; invocation ID: fa1c7a5d46fb47aca3c5f3d6f504d1d6
+ips_mode=alert suricata=active rules_sha256=1600df04abd33bbc

@@ -250,7 +250,7 @@ unix-command:
   filename: /var/run/suricata-command.socket
 legacy:
   uricontent: enabled
-exception-policy: auto
+exception-policy: ignore
 engine-analysis:
   rules-fast-pattern: true
   rules: true
@@ -331,6 +331,7 @@ stream:
     toserver-chunk-size: 2560
     toclient-chunk-size: 2560
     randomize-chunk-size: true
+  drop-invalid: false
 host:
   hash-size: 4096
   prealloc: 1000

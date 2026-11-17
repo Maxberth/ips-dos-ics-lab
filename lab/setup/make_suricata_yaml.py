@@ -7,6 +7,7 @@ Cambios (documentados en docs/lab/04_decisiones.md, D11-D12):
   - HOME_NET = 192.168.20.0/24 y 192.168.30.0/24
   - Modo NFQUEUE: mode accept, fail-open no (fail-closed)
   - Parser Modbus activado (puerto 502)
+  - exception-policy: ignore y stream.drop-invalid: no (D19)
   - Salidas: solo eve.json con alert, drop y stats cada 1 s, y stats.log; sin fast.log ni otros eventos
 """
 import sys, yaml
@@ -20,6 +21,12 @@ c = yaml.safe_load(body)
 c["vars"]["address-groups"]["HOME_NET"] = "[192.168.20.0/24,192.168.30.0/24]"
 c["vars"]["address-groups"]["EXTERNAL_NET"] = "!$HOME_NET"
 c["nfq"] = {"mode": "accept", "fail-open": False}
+# D19: solo las reglas deciden. Con "auto" (por defecto), en modo IPS un error del parser (p. ej. el límite
+# request-flood de Modbus) descarta el flujo incluso en E2 (alert), lo que mezcla la atribución (A16).
+c["exception-policy"] = "ignore"
+# D19 (ampliación): en modo IPS el motor TCP descarta paquetes "inválidos" (stream.drop-invalid=yes por
+# defecto) sin ninguna regla; en E2 (alert) eso bloqueó 2,7 M SYN (A17). Solo deciden las reglas.
+c.setdefault("stream", {})["drop-invalid"] = False
 c.setdefault("app-layer", {}).setdefault("protocols", {})["modbus"] = {
     "enabled": "yes", "detection-ports": {"dp": 502}, "stream-depth": 0}
 c["stats"] = {"enabled": True, "interval": 1}

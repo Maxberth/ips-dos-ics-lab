@@ -89,3 +89,26 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
 - **Es también un hallazgo:** sin IPS, un Modbus flood de una sola fuente tumba el runtime de OpenPLC (commit b5d41356). Hay que comprobar si se repite (E1 modbus ×10) y si el IPS lo evita (E3 modbus).
 - **Corrección del arnés:** antes de cada corrida, `run_once.sh` comprueba el PLC con 1 s de sondeo (≥ 8/10 respuestas). Si no responde, reinicia OpenPLC y lo anota. Al final de la corrida vuelve a comprobarlo y guarda `alive_after=yes|no` en `plc_health.txt`. "PLC caído tras la corrida" pasa a ser un resultado del escenario.
 - **Lección:** el validador debe tratar como FALLO una disponibilidad del 0 % con `ConnectionRefused` desde el inicio, no como un resultado.
+
+## A16. En modo alert (E2), Suricata descartó el Modbus flood por su política de excepciones, no por una regla
+- **Corridas:** `20261117T192925Z_…_E2_modbus` y `20261117T193310Z_…_E3_modbus`. El atacante solo escribió unas 18 500 solicitudes (617/s) frente a ~9,5 M en E1. Suricata: `applayer_error` 7 (uno por conexión), `flow_drop` 222, `rules` 0, `alert` 0. El SCADA no se vio afectado (450/450).
+- **Causa:** el parser Modbus de Suricata 7 tiene un límite de solicitudes sin respuesta (`request-flood`, 500 por defecto) que marca error de protocolo. Con `exception-policy: auto` (por defecto), en modo IPS ese error descarta el flujo, incluso si las reglas están en `alert`. La regla 1000004 (rev 1) dependía de `app-layer-protocol:modbus` y no llegó a evaluarse.
+- **Hallazgo para el paper:** Suricata con su configuración por defecto frena un Modbus flood de una sola fuente sin ninguna regla, por la validación del parser. Es distinto de "detección por reglas" y debe reportarse aparte.
+- **Corrección del diseño (D19):** `exception-policy: ignore`, para que en E2 solo se alerte y en E3 decidan solo las reglas. Regla 1000004 rev 2: cuenta segmentos TCP con datos al 502 por origen (`dsize:>0`), sin depender del parser. Las corridas E2/E3 anteriores quedan con la nota "configuración previa a D19".
+
+## A17. En modo alert (E2), el motor TCP de Suricata descartó 2,7 M SYN como "inválidos" (corregida en D19)
+- **Corrida:** `20261117T194312Z_laptop-dev_E2_syn_piloto_r1` (ya con `exception-policy: ignore`). `ips.blocked` = 2 715 625, todo en `drop_reason.stream_error`. Captura: 5 165 262 paquetes de ataque antes del IPS y 172 142 después (97 % eliminado en modo "alert").
+- **Causa:** en modo IPS, `stream.drop-invalid` (activo por defecto) descarta paquetes TCP que el motor TCP considera inválidos. Con hping3 los puertos de origen se reutilizan y el kernel del atacante envía RST, así que muchos SYN quedan como inválidos. Es independiente de las reglas y de la política de excepciones.
+- **Hallazgo para el paper:** con la configuración por defecto, Suricata en línea frena buena parte de un SYN flood de una sola fuente por la validación de estado TCP, sin reglas. Hay que separarlo de la detección por reglas.
+- **Corrección:** `stream.drop-invalid: no` (ampliación de D19). Las corridas E2/E3 de 19:38–19:48 UTC quedan con la nota "configuración intermedia".
+
+## A18. Diagnóstico de la caída de OpenPLC (continuación de A15)
+- **Reproducible y dependiente del volumen** (`docs/lab/logs/P12_diagnostico_openplc_laptop-dev.txt`, IPS en modo router):
+  - 1 conexión a 50 solicitudes/s, 5 s (256 solicitudes): sobrevive.
+  - 8 conexiones a 50/s, 5 s: sobrevive.
+  - 1 conexión a 10/s: sobrevive.
+  - 1 conexión sin límite, 2 s (536 736 solicitudes escritas): **el runtime termina**.
+- **Patrón:** en las corridas, el SCADA deja de obtener respuesta justo al terminar el ataque, cuando el atacante cierra sus conexiones con respuestas pendientes. El proceso `core/openplc` queda zombi. `/proc/<pid>/stat` da `exit_code=0` (ninguna señal registrada) y no hay rastro en dmesg. `openplc.service` sigue `active` porque vigila `start_openplc.sh`.
+- **Hipótesis descartada:** un SIGPIPE al escribir en un socket cerrado dejaría la señal 13 en el código de salida, y no aparece. **No se determinó la causa en el código de OpenPLC**; no se afirma ninguna.
+- **En E3 (drop) también cayó una vez tras el ataque** (`20261117T195929Z`), aunque el SCADA tuvo 100 % de disponibilidad durante el ataque. La regla 1000004 deja pasar los primeros 100 segmentos/s por origen (`detection_filter`), y cada segmento del flood lleva 32 solicitudes, así que llegan hasta ~3 200 solicitudes/s. Ajustar el umbral, o medir por solicitudes en lugar de segmentos, es una decisión pendiente para pc-miguel; se registra el resultado tal cual.
+- **Consecuencia para el diseño:** "el PLC sigue vivo tras la corrida" (`alive_after` en `plc_health.txt`) es un resultado del escenario y el arnés lo registra. El reinicio previo garantiza que cada corrida empiece con el PLC sano.
