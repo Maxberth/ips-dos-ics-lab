@@ -1,0 +1,23 @@
+alive_after=no
+3341 /bin/bash /opt/lab/OpenPLC_v3/start_openplc.sh
+3347 [openplc] <defunct>
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: client ID: 21 has closed the connection
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: Something is wrong with the  client ID: 31 message Size : -1
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: Something is wrong with the  client ID: 6 message Size : -1
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: client ID: 33 has closed the connection
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: Something is wrong with the  client ID: 26 message Size : -1
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: client ID: 30 has closed the connection
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: Something is wrong with the  client ID: 18 message Size : -1
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: Something is wrong with the  client ID: 32 message Size : -1
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: client ID: 24 has closed the connection
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Modbus Server: Something is wrong with the  client ID: 28 message Size : -1
+Nov 17 22:30:46 plc start_openplc.sh[3347]: Terminating Modbus connections thread

@@ -1,0 +1,23 @@
+alive_after=no
+1685 /bin/bash /opt/lab/OpenPLC_v3/start_openplc.sh
+1692 [openplc] <defunct>
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: Something is wrong with the  client ID: 10 message Size : -1
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: Something is wrong with the  client ID: 6 message Size : -1
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: client ID: 12 has closed the connection
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: client ID: 9 has closed the connection
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: Something is wrong with the  client ID: 11 message Size : -1
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: Something is wrong with the  client ID: 4 message Size : -1
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: Something is wrong with the  client ID: 8 message Size : -1
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: client ID: 7 has closed the connection
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Modbus Server: client ID: 14 has closed the connection
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Terminating Modbus connections thread
+Nov 17 21:56:36 plc start_openplc.sh[1692]: Server: Client accepted! Creating thread for the new client ID: 4...

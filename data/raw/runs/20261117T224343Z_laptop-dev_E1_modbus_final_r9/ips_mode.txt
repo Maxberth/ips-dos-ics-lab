@@ -1,0 +1,1 @@
+ips_mode=router suricata=inactive rules_sha256=6c3f4565e04f6030

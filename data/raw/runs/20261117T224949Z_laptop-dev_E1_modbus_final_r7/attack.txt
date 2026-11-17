@@ -1,0 +1,16 @@
+{"sent_requests": 17929216, "sent_bytes": 215150592, "recv_bytes": 311175882, "connect_ok": 7, "connect_fail": 1, "socket_errors": 0, "reconnects": 0, "duration_s": 60.0, "conns": 8, "burst": 32, "rate_target": 0, "requests_per_s": 298819.4, "cmd": "/opt/lab/modbus_flood.py --plc 192.168.30.10 --conns 8 --seconds 60 --out /tmp/modbus_flood.json"}
+{
+ "sent_requests": 17929216,
+ "sent_bytes": 215150592,
+ "recv_bytes": 311175882,
+ "connect_ok": 7,
+ "connect_fail": 1,
+ "socket_errors": 0,
+ "reconnects": 0,
+ "duration_s": 60.0,
+ "conns": 8,
+ "burst": 32,
+ "rate_target": 0,
+ "requests_per_s": 298819.4,
+ "cmd": "/opt/lab/modbus_flood.py --plc 192.168.30.10 --conns 8 --seconds 60 --out /tmp/modbus_flood.json"
+}
