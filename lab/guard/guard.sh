@@ -34,6 +34,7 @@ SWAP0="$(swap_used)"
 PAUSE_TEMP_LATCH=0
 
 destroy_lab_vms(){
+  systemctl --user stop 'ips-lab-job-*.scope' >/dev/null 2>&1   # trabajos pesados del host (captura, conteos)
   local c="virsh -c qemu:///system"
   for d in $($c list --name 2>/dev/null | grep '^lab-'); do $c destroy $d >/dev/null 2>&1; done
 }

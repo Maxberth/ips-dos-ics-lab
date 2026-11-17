@@ -51,8 +51,10 @@ def main():
     c = os.path.join(d, "capture_stats.txt")
     if os.path.exists(c):
         txt = open(c).read()
-        m = re.findall(r"Packets dropped[^:]*:\s*(\d+)", txt) or re.findall(r"dropped[^\d]*(\d+)", txt)
-        drops = sum(int(x) for x in m)
+        # dumpcap: "Packets received/dropped on interface 'mir20': 1361/0 (...)"
+        m = re.findall(r"received/dropped on interface '[^']+': (\d+)/(\d+)", txt)
+        drops = sum(int(d) for _, d in m)
+        info.append("captura=" + "+".join(r for r, _ in m))
         if drops:
             warns.append(f"captura descartó {drops} paquetes")
     else:

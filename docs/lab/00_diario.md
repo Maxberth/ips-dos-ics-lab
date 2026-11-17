@@ -13,3 +13,4 @@
   - **P10:** OpenPLC (commit b5d41356) en RUN con `tank_sim.st` y SCADA leyendo Modbus.
   - `check_chain.sh`: 23 pruebas en CUMPLE (`docs/lab/logs/P09_check_chain_laptop-dev.txt`).
   - Problemas resueltos: arranque sin VGA (A4), ufw (A5, proxy por SSH), `sg` (A6), conteo de la prueba (A9).
+- 2026-11-17 18:49–19:00 UTC (laptop-dev): **interrupción de unos 55 min.** Durante la primera corrida con ataque (E1 SYN piloto) el post-proceso con tshark agotó la RAM del host. El guardián destruyó las VMs (ABORT 18:51:07) y systemd-oomd mató la app de Claude (18:52:52), lo que cortó la sesión. Detalle y correcciones en A10. Se rehízo solo el conteo de la captura (con `pcap_count.py` en un scope de 1 GiB); la corrida queda como `partial` en `runs.csv`. Se borró el ABORT, se reiniciaron el guardián y las VMs, y se repitió `check_chain.sh`.

@@ -17,7 +17,7 @@
 #     suricata_stats.jsonl, suricata_alerts_by_sid.txt            Suricata (eve.json, ventana de la corrida)
 #     plc_pidstat.txt    CPU del proceso PLC dentro de la VM
 #     capture_stats.txt  estadísticas de dumpcap (capturados/descartados)
-#     pcap_counts_mir20.txt / _mir30.txt   conteos por segundo de la captura (tshark io,stat)
+#     pcap_counts.csv    conteos por segundo e interfaz de la captura (pcap_count.py, streaming)
 #   La captura .pcapng va a data/captures/ (fuera de Git) y su sha256 a data/captures/manifest.csv.
 set -uo pipefail
 source "$(dirname "$0")/../setup/lib.sh"
@@ -64,10 +64,10 @@ EVE_LINES0=$(lab_ssh lab-ips "sudo sh -c 'wc -l < /var/log/suricata/eve.json' 2>
 
 # --- 3. Arranque de mediciones ---
 T0_NS=$(date +%s%N)
-in_group wireshark dumpcap -q -i mir20 -i mir30 -s 128 -B 64 -a duration:$((TOTAL + 2)) -w "$CAP" \
+in_group wireshark "$REPO/lab/guard/limited-run.sh" 768M 200 -- dumpcap -q -i mir20 -i mir30 -s 64 -B 256 -a duration:$((TOTAL + 2)) -w "$CAP" \
   > "$OUT/capture_stats.txt" 2>&1 &
 CAP_PID=$!
-python3 -I "$REPO/lab/harness/host_sampler.py" --seconds "$((TOTAL + 2))" --out "$OUT/ts_host.csv" &
+"$REPO/lab/guard/limited-run.sh" 256M 200 -- python3 -I "$REPO/lab/harness/host_sampler.py" --seconds "$((TOTAL + 2))" --out "$OUT/ts_host.csv" &
 HS_PID=$!
 lab_ssh lab-scada "nohup python3 -I /opt/lab/scada_poller.py --plc $PLC --hz $SCADA_HZ --seconds $TOTAL --out /tmp/polls.csv > /tmp/poller.log 2>&1 &" || fail "poller"
 lab_ssh lab-plc "nohup sh -c 'pidstat -h -u -r -p \$(pgrep -d, -f \"$PLC_PROCESS_PATTERN\" || echo 1) 1 $TOTAL' > /tmp/pidstat.txt 2>&1 &"
@@ -109,14 +109,9 @@ if [ "$MODE" != router ]; then
 fi
 
 # --- 6. Conteos de la captura (segunda fuente) ---
-ATT_SRC=192.168.10.100; SCADA=192.168.20.20
-for ifc in mir20 mir30; do
-  in_group wireshark tshark -r "$CAP" -q -z "io,stat,1,COUNT(frame)frame,\
-COUNT(frame)frame.interface_name==\"$ifc\" && ip.src==$ATT_SRC && ip.dst==$PLC,\
-COUNT(frame)frame.interface_name==\"$ifc\" && ip.src==$SCADA && ip.dst==$PLC && tcp.dstport==502,\
-COUNT(frame)frame.interface_name==\"$ifc\" && ip.src==$PLC && ip.dst==$SCADA" \
-    > "$OUT/pcap_counts_$ifc.txt" 2>&1 || fail "tshark $ifc"
-done
+# Streaming y memoria constante, dentro de un scope con tope (anomalía A10: tshark agotó la RAM del host).
+"$REPO/lab/guard/limited-run.sh" 1G 50 -- python3 -I "$REPO/lab/harness/pcap_count.py" "$CAP" \
+  --t0 "$((T0_NS / 1000000000))" --out "$OUT/pcap_counts.csv" > "$OUT/pcap_count.log" 2>&1 || fail "pcap_count (ver pcap_count.log)"
 CAP_SHA=$(sha256sum "$CAP" | cut -d' ' -f1); CAP_SIZE=$(stat -c %s "$CAP")
 [ -s "$REPO/data/captures/manifest.csv" ] || echo "run_id,file,sha256,bytes,kept" > "$REPO/data/captures/manifest.csv"
 KEEP=yes; [ "$CAP_SIZE" -gt $((CAPTURE_KEEP_MAX_MB * 1024 * 1024)) ] && KEEP=no
@@ -125,7 +120,7 @@ echo "$RUN_ID,$(basename "$CAP"),$CAP_SHA,$CAP_SIZE,$KEEP" >> "$REPO/data/captur
 
 # --- 7. Metadatos y fila de runs.csv ---
 T_END_TCTL=$(awk -F, 'END{print $7}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null)
-GMAX=$(awk -F, -v t0="$(date -u -d @$((T0_NS/1000000000)) +%FT%T)" '$1>=t0{print $10}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null | sort -u | paste -sd'|')
+GMAX=$(awk -F, -v t0="$(date -u -d @$((T0_NS/1000000000)) +%FT%T)" 'NR>1 && $1>=t0{print $10}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null | sort -u | paste -sd'|')
 TMAX=$(awk -F, '$2=="host" && $4=="tctl_c"{if($5>m)m=$5}END{print m}' "$OUT/ts_host.csv")
 RULES_SHA=$( [ "$MODE" != router ] && sha256sum "$CACHE/active.rules" | cut -c1-16 || echo -)
 YAML_SHA=$(sha256sum "$REPO/lab/config/ips/suricata-lab.yaml" 2>/dev/null | cut -c1-16)

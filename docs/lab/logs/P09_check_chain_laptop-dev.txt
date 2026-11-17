@@ -1,4 +1,4 @@
-# check_chain 2026-11-17T18:46:45Z plataforma=laptop-dev repo=727750c
+# check_chain 2026-11-17T19:01:34Z plataforma=laptop-dev repo=c8fe0f7
 ## P06 red y aislamiento
 CUMPLE    ovs-ot sin puertos físicos (enp2s0/wlan0/tailscale0)
 CUMPLE    el host no tiene IP en VLAN 10/20/30
@@ -14,7 +14,7 @@ CUMPLE    atacante -> fw (192.168.10.1)
 CUMPLE    atacante -> PLC a través de fw e ips
 CUMPLE    SCADA -> PLC a través del ips
 CUMPLE    SCADA lee Modbus del PLC (10 lecturas)
-          RTT ping atacante->PLC (router): rtt min/avg/max/mdev = 0.680/0.893/1.232/0.242 ms
+          RTT ping atacante->PLC (router): rtt min/avg/max/mdev = 0.515/0.652/0.744/0.099 ms
 ## P09 NFQUEUE y prueba de drop real (ping 1 pps x 5 desde SCADA)
 CUMPLE    suricata -T valida config y reglas (test-alert)
           ecos que llegan al PLC con regla alert: 5 de 5
