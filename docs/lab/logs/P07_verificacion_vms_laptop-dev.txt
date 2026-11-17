@@ -1,0 +1,81 @@
+# P07 verificación de VMs  2026-11-17T18:41:58Z  plataforma=laptop-dev
+## lab-attacker
+State:          running
+CPU(s):         2
+Max memory:     1310720 KiB
+Used memory:    1310720 KiB
+hard_limit     : 1703936
+swap_hard_limit: unlimited
+ 0      2
+ 1      3
+
+ vnet35      bridge   ovs-ot   virtio   52:54:00:00:10:64
+ vnet36      bridge   ovs-ot   virtio   52:54:00:00:99:0a
+portgroup='vlan10' portgroup='vlan99'
+## lab-fw
+State:          running
+CPU(s):         1
+Max memory:     524288 KiB
+Used memory:    524288 KiB
+hard_limit     : 917504
+swap_hard_limit: unlimited
+ 0      4
+
+ vnet24      bridge   ovs-ot   virtio   52:54:00:00:10:01
+ vnet25      bridge   ovs-ot   virtio   52:54:00:00:20:01
+ vnet26      bridge   ovs-ot   virtio   52:54:00:00:99:0b
+portgroup='vlan10' portgroup='vlan20' portgroup='vlan99'
+## lab-ips
+State:          running
+CPU(s):         2
+Max memory:     1572864 KiB
+Used memory:    1572864 KiB
+hard_limit     : 1966080
+swap_hard_limit: unlimited
+ 0      6
+ 1      7
+
+ vnet28      bridge   ovs-ot   virtio   52:54:00:00:20:02
+ vnet29      bridge   ovs-ot   virtio   52:54:00:00:30:01
+ vnet30      bridge   ovs-ot   virtio   52:54:00:00:99:0c
+portgroup='vlan20' portgroup='vlan30' portgroup='vlan99'
+## lab-plc
+State:          running
+CPU(s):         1
+Max memory:     1572864 KiB
+Used memory:    1572864 KiB
+hard_limit     : 1966080
+swap_hard_limit: unlimited
+ 0      8
+
+ vnet39      bridge   ovs-ot   virtio   52:54:00:00:30:0a
+ vnet40      bridge   ovs-ot   virtio   52:54:00:00:99:0d
+portgroup='vlan30' portgroup='vlan99'
+## lab-scada
+State:          running
+CPU(s):         1
+Max memory:     786432 KiB
+Used memory:    786432 KiB
+hard_limit     : 1179648
+swap_hard_limit: unlimited
+ 0      9
+
+ vnet33      bridge   ovs-ot   virtio   52:54:00:00:20:14
+ vnet34      bridge   ovs-ot   virtio   52:54:00:00:99:0e
+portgroup='vlan20' portgroup='vlan99'
+## machine.slice
+MemoryCurrent=3678625792
+MemoryHigh=6442450944
+MemoryMax=6979321856
+## Suricata en lab-ips
+This is Suricata version 7.0.10 RELEASE
+Features: NFQ PCAP_SET_BUFF AF_PACKET HAVE_PACKET_FANOUT LIBCAP_NG LIBNET1.1 HAVE_HTP_URI_NORMALIZE_HOOK PCRE_JIT HAVE_NSS HTTP2_DECOMPRESSION HAVE_LUA HAVE_JA3 HAVE_JA4 HAVE_LUAJIT HAVE_LIBJANSSON TLS TLS_C11 MAGIC RUST POPCNT64 
+  NFQueue support:                         yes
+  Hyperscan support:                       yes
+nftables 1.1.3-1
+suricata 1:7.0.10-1+deb13u4
+emulatorpin lab-attacker:  *: 10-11 
+emulatorpin lab-fw:  *: 10-11 
+emulatorpin lab-ips:  *: 10-11 
+emulatorpin lab-plc:  *: 10-11 
+emulatorpin lab-scada:  *: 10-11 

@@ -14,12 +14,14 @@ echo "# check_chain $(date -u +%FT%TZ) plataforma=$PLATFORM repo=$(git -C "$REPO
 echo "## P06 red y aislamiento"
 check "ovs-ot sin puertos físicos (enp2s0/wlan0/tailscale0)" sh -c "! ip -o link show master ovs-system | grep -qE 'enp|wlan|tailscale|eth'"
 check "el host no tiene IP en VLAN 10/20/30" sh -c "! ip -4 -br addr | grep -qE '192\.168\.(10|20|30)\.'"
-check "SSH de gestión a las 5 VMs" sh -c "for v in lab-attacker lab-fw lab-ips lab-plc lab-scada; do $(declare -f lab_ssh mgmt_ip vm_field); SSH_KEY=$SSH_KEY CACHE=$CACHE REPO=$REPO lab_ssh \$v true || exit 1; done"
+ssh_all(){ for v in lab-attacker lab-fw lab-ips lab-plc lab-scada; do lab_ssh "$v" true || return 1; done; }
+check "SSH de gestión a las 5 VMs" ssh_all
 ncheck "aislamiento: atacante (VLAN 10) no llega a SCADA por capa 2 (ARP directo)" lab_ssh lab-attacker "sudo arping -c 2 -w 3 -I v10 192.168.20.20"
 ncheck "aislamiento: SCADA (VLAN 20) no llega al PLC por capa 2" lab_ssh lab-scada "sudo arping -c 2 -w 3 -I v20 192.168.30.10"
 check  "misma VLAN: SCADA ve al IPS (192.168.20.2)" lab_ssh lab-scada "ping -c 2 -W 2 192.168.20.2"
 ncheck "VMs sin ruta por defecto (sin Internet)" lab_ssh lab-attacker "ping -c 1 -W 2 1.1.1.1"
-ncheck "atacante no alcanza la gestión de otra VM" lab_ssh lab-attacker "ping -c 1 -W 2 -I v10 192.168.99.13"
+ncheck "atacante no alcanza la gestión de otra VM (VLAN 99)" lab_ssh lab-attacker "ping -c 1 -W 2 192.168.99.13"
+ncheck "atacante no alcanza la gestión vía firewall (VLAN 10 -> 99)" lab_ssh lab-attacker "ping -c 1 -W 2 -I v10 192.168.99.13"
 
 echo "## P08/P09 ruta con el IPS en modo router"
 "$REPO/lab/harness/ips_mode.sh" router >/dev/null

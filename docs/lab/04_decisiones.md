@@ -54,3 +54,14 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 
 ## D14. Sistema de las VMs: Debian 13 con vídeo VGA mínimo
 - Cada VM lleva `--video vga` (A4). Sin pantalla gráfica (`--graphics none`); la consola es el puerto serie.
+
+## D15. Umbral de crecimiento de swap en laptop-dev: 3 GiB
+- **Contexto:** con las 5 VMs encendidas, el guardián pasó a WARN por swap +884 MiB (el ABORT estaba en +1024). Al mismo tiempo, el PSI de memoria era 0,3 % y había 4,3 GiB disponibles.
+- **Causa:** laptop-dev usa zram (swap comprimido en RAM) con `vm.swappiness=150`: el kernel manda páginas frías a zram aunque haya memoria. El crecimiento de swap no indica presión en esta configuración.
+- **Elección:** en el perfil laptop-dev, ABORT por swap sube a +3072 MiB. Los criterios principales siguen siendo RAM disponible (PAUSE < 3 GiB, ABORT < 2 GiB) y PSI (PAUSE > 20 %). pc-miguel mantiene 1024 MiB hasta medir su configuración de swap.
+- Evidencia: `data/raw/guard/guard_laptop-dev_20261117.csv` (18:41 UTC).
+
+## D16. Aislamiento de la VLAN 99 de gestión en cada VM
+- **Contexto:** todas las VMs tienen una NIC en la VLAN 99 para que el host las gestione por SSH. Sin más, el atacante podría alcanzar a las demás VMs por esa VLAN, saltándose el firewall y el IPS.
+- **Elección:** tabla nftables `mgmtguard` (`lab/config/mgmt-guard.nft`) en todas las VMs: por la interfaz `mgmt` solo entra y sale tráfico con el host (192.168.99.1). En fw e ips va incluida en sus archivos de reglas.
+- **Verificación:** `check_chain.sh` comprueba que el atacante no llega a la gestión de otra VM ni por la VLAN 99 ni a través del firewall.

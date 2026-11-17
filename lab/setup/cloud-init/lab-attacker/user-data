@@ -1,0 +1,14 @@
+#cloud-config
+hostname: attacker
+fqdn: attacker.lab
+users:
+  - name: lab
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    lock_passwd: true
+    ssh_authorized_keys: ["<clave pública de ~/.ssh/ips-lab_ed25519.pub>"]
+ssh_pwauth: false
+timezone: UTC
+runcmd:
+  - [systemctl, disable, --now, apt-daily.timer, apt-daily-upgrade.timer, man-db.timer, e2scrub_all.timer, fstrim.timer]
+  - [sh, -c, 'echo done > /var/lib/cloud/lab-ready']

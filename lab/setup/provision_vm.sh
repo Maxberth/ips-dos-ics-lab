@@ -38,6 +38,13 @@ WantedBy=multi-user.target
 EOF
 lab_ssh "$VM" "sudo systemctl daemon-reload && sudo systemctl enable --now lab-offload.service >/dev/null 2>&1 || true"
 
+# Aislamiento de la gestión en todas las VMs (lab/config/mgmt-guard.nft).
+lab_scp "$REPO/lab/config/mgmt-guard.nft" "lab@$IP:/tmp/"
+lab_ssh "$VM" "sudo install -d /etc/nftables.d && sudo install -m 0644 /tmp/mgmt-guard.nft /etc/nftables.d/mgmt-guard.nft"
+if [ "$ROLE" != FW ] && [ "$ROLE" != IPS ]; then
+  lab_ssh "$VM" "printf '#!/usr/sbin/nft -f\nflush ruleset\ninclude \"/etc/nftables.d/mgmt-guard.nft\"\n' | sudo tee /etc/nftables.conf >/dev/null && sudo systemctl enable --now nftables >/dev/null 2>&1 && sudo nft -f /etc/nftables.conf && echo mgmt-guard ok"
+fi
+
 case $ROLE in
   FW)
     lab_scp "$REPO/lab/config/fw/nftables-e1.conf" "lab@$IP:/tmp/"

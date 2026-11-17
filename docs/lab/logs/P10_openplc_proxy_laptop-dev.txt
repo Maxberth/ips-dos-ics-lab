@@ -1,0 +1,7 @@
+proxy escuchando en 127.0.0.1:3128
+proxy: CONNECT github.com:443
+proxy: CONNECT deb.debian.org:443
+proxy: CONNECT pypi.org:443
+proxy: CONNECT files.pythonhosted.org:443
+proxy: CONNECT pypi.org:443
+proxy: CONNECT files.pythonhosted.org:443

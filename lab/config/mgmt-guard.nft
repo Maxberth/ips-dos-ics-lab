@@ -1,0 +1,15 @@
+#!/usr/sbin/nft -f
+# Aislamiento de la red de gestión (VLAN 99): cada VM solo acepta tráfico de gestión del host
+# (192.168.99.1). Evita que el atacante use la VLAN 99 para llegar a otras VMs.
+table inet mgmtguard {
+  counter c_mgmt_drop { }
+  chain input {
+    type filter hook input priority -10; policy accept;
+    iifname "mgmt" ip saddr != 192.168.99.1 counter name c_mgmt_drop drop
+    iifname "mgmt" ip6 saddr != fe80::/64 drop
+  }
+  chain output {
+    type filter hook output priority -10; policy accept;
+    oifname "mgmt" ip daddr != 192.168.99.1 drop
+  }
+}

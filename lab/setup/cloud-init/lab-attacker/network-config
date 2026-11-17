@@ -1,0 +1,11 @@
+version: 2
+ethernets:
+  v10:
+    match: {macaddress: "52:54:00:00:10:64"}
+    set-name: v10
+    addresses: [192.168.10.100/24]
+    routes: [{to: 192.168.20.0/24, via: 192.168.10.1}, {to: 192.168.30.0/24, via: 192.168.10.1}]
+  mgmt:
+    match: {macaddress: "52:54:00:00:99:0a"}
+    set-name: mgmt
+    addresses: [192.168.99.10/24]

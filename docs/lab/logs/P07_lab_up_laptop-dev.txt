@@ -56,3 +56,106 @@ Starting install...
 Creating domain...                                          |         00:00     
 Domain creation completed.
 creada lab-plc (mem=1536MiB vcpus=1 pin=8 mgmt=192.168.99.13)
+== lab-plc (PLC): esperando a cloud-init
+status: done
+== lab-plc: apt-get install git build-essential pkg-config bison flex autoconf automake libtool make cmake sqlite3 curl python3-venv python3-pip openssl tcpdump sysstat jq (vía proxy SOCKS inverso)
+autoconf 2.72-3.1
+automake 1:1.17-4
+bison 2:3.8.2+dfsg-1+b2
+build-essential 12.12
+cmake 3.31.6-2
+curl 8.14.1-2+deb13u7
+flex 2.6.4-8.2+b4
+git 1:2.47.3-0+deb13u1
+jq 1.7.1-6+deb13u4
+libtool 2.5.4-4
+make 4.4.1-2
+openssl 3.5.7-1~deb13u3
+pkg-config 1.8.1-4
+python3-pip 25.1.1+dfsg-1
+python3-venv 3.13.5-1
+sqlite3 3.46.1-7+deb13u2
+sysstat 12.7.5-2
+tcpdump 4.99.5-2
+OpenPLC se instala aparte: lab_ssh lab-plc 'bash /tmp/plc_install_openplc.sh' (compila; tarda).
+6.12.117+deb13-cloud-amd64
+Debian GNU/Linux 13 (trixie)
+v30              UP             192.168.30.10/24 fe80::5054:ff:fe00:300a/64 
+mgmt             UP             192.168.99.13/24 fe80::5054:ff:fe00:990d/64 
+192.168.10.0/24 via 192.168.30.1 dev v30 proto static 
+192.168.20.0/24 via 192.168.30.1 dev v30 proto static 
+192.168.30.0/24 dev v30 proto kernel scope link src 192.168.30.10 
+192.168.99.0/24 dev mgmt proto kernel scope link src 192.168.99.13 
+== 2026-11-17T18:35:11Z
+               total        used        free      shared  buff/cache   available
+Mem:           15161        9171        1564         104        4867        5989
+Swap:          15160        2829       12331
+WARNING  Requested memory 768 MiB is less than the recommended 1024 MiB for OS debian13
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+creada lab-scada (mem=768MiB vcpus=1 pin=9 mgmt=192.168.99.14)
+== lab-scada (SCADA): esperando a cloud-init
+status: done
+== lab-scada: apt-get install python3-pymodbus tcpdump sysstat jq iperf3 (vía proxy SOCKS inverso)
+iperf3 3.18-2+deb13u2
+jq 1.7.1-6+deb13u4
+python3-pymodbus 3.8.6-2
+sysstat 12.7.5-2
+tcpdump 4.99.5-2
+6.12.117+deb13-cloud-amd64
+Debian GNU/Linux 13 (trixie)
+v20              UP             192.168.20.20/24 fe80::5054:ff:fe00:2014/64 
+mgmt             UP             192.168.99.14/24 fe80::5054:ff:fe00:990e/64 
+192.168.10.0/24 via 192.168.20.1 dev v20 proto static 
+192.168.20.0/24 dev v20 proto kernel scope link src 192.168.20.20 
+192.168.30.0/24 via 192.168.20.2 dev v20 proto static 
+192.168.99.0/24 dev mgmt proto kernel scope link src 192.168.99.14 
+== 2026-11-17T18:36:03Z
+               total        used        free      shared  buff/cache   available
+Mem:           15161       10102        1322         102        4176        5058
+Swap:          15160        2828       12332
+
+Starting install...
+Creating domain...                                          |         00:00     
+Domain creation completed.
+creada lab-attacker (mem=1280MiB vcpus=2 pin=2 3 mgmt=192.168.99.10)
+== lab-attacker (ATTACKER): esperando a cloud-init
+status: done
+== lab-attacker: apt-get install hping3 python3-scapy python3-pymodbus tcpdump iperf3 sysstat jq (vía proxy SOCKS inverso)
+hping3 3.a2.ds2-10.1
+iperf3 3.18-2+deb13u2
+jq 1.7.1-6+deb13u4
+python3-pymodbus 3.8.6-2
+python3-scapy 2.6.1+dfsg-1
+sysstat 12.7.5-2
+tcpdump 4.99.5-2
+6.12.117+deb13-cloud-amd64
+Debian GNU/Linux 13 (trixie)
+v10              UP             192.168.10.100/24 fe80::5054:ff:fe00:1064/64 
+mgmt             UP             192.168.99.10/24 fe80::5054:ff:fe00:990a/64 
+192.168.10.0/24 dev v10 proto kernel scope link src 192.168.10.100 
+192.168.20.0/24 via 192.168.10.1 dev v10 proto static 
+192.168.30.0/24 via 192.168.10.1 dev v10 proto static 
+192.168.99.0/24 dev mgmt proto kernel scope link src 192.168.99.10 
+== 2026-11-17T18:37:27Z
+               total        used        free      shared  buff/cache   available
+Mem:           15161       10721        1045          82        3814        4439
+Swap:          15160        2893       12267
+Domain 'lab-plc' is being shutdown
+
+
+
+
+Domain 'lab-plc' started
+
+Interface detached successfully
+
+lab-fw: NIC NAT 52:54:00:00:00:0b quitada
+lab-fw ruta por defecto: ninguna
+lab-ips ruta por defecto: ninguna
+lab-scada ruta por defecto: ninguna
+lab-attacker ruta por defecto: ninguna
+lab-plc ruta por defecto: ninguna
+== lab_up terminado 2026-11-17T18:40:48Z
