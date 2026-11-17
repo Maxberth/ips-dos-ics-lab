@@ -1,0 +1,34 @@
+# P04 pruebas del guardián  2026-11-17T17:48:22Z  plataforma=laptop-dev
+# Las simulaciones escriben en un CSV temporal fuera de data/raw (no son datos del laboratorio).
+## (a) lectura normal con el perfil laptop-dev
+OK  mem=9817 tctl=47.2 psi=0.01 ac=1
+## (b) WARN simulado (GUARD_WARN_MEM_MIB=99999)
+WARN mem<99999 mem=9816 tctl=47.5 psi=0.01 ac=1
+STATE
+## (c) PAUSE simulado (GUARD_PAUSE_MEM_MIB=99999)
+PAUSE mem<99999 mem=9814 tctl=47.6 psi=0.01 ac=1
+archivo PAUSE: 2026-11-17T17:48:22Z mem<99999
+## (d) vuelta a OK: se borra PAUSE
+OK  mem=9814 tctl=47.9 psi=0.01 ac=1
+STATE
+## (e) PAUSE por presión de memoria (GUARD_PAUSE_PSI=-1)
+PAUSE psi>-1 mem=9815 tctl=48.0 psi=0.01 ac=1
+## (e2) PAUSE por temperatura (GUARD_PAUSE_TCTL=1)
+PAUSE tctl>=1 mem=9815 tctl=48.1 psi=0.01 ac=1
+## (f) ABORT simulado (GUARD_ABORT_MEM_MIB=99999), sin VMs del laboratorio
+ABORT mem<99999 mem=9816 tctl=48.1 psi=0.01 ac=1
+archivo ABORT: 2026-11-17T17:48:23Z mem<99999
+ABORT
+PAUSE
+STATE
+## (g) ABORT queda fijado aunque desaparezca la condición
+ABORT fijado mem=9814 tctl=48.4 psi=0.01 ac=1
+## (h) lab-stop.sh --clear sin VMs
+lab-stop: VMs apagadas: ninguna; guardián detenido
+restos: 
+## (i) scope con MemoryMax=256M que escribe 600 MiB: solo muere el scope
+exit=137 (137 = SIGKILL por OOM dentro del scope)
+## (j) el escritorio sigue vivo
+Hyprland procesos: 1
+Mem:           15161        4839        4181         138        6616       10321
+## (k) no probado: PAUSE por batería (GUARD_REQUIRE_AC=1) requiere desenchufar el cargador; la regla usa /sys/class/power_supply/*/online del tipo Mains = 1

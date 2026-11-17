@@ -1,0 +1,11 @@
+<!-- Red libvirt sobre el bridge Open vSwitch ovs-ot (sin puertos físicos). Cada VM elige su VLAN con portgroup. -->
+<network>
+  <name>ovs-ot</name>
+  <forward mode='bridge'/>
+  <bridge name='ovs-ot'/>
+  <virtualport type='openvswitch'/>
+  <portgroup name='vlan10'><vlan><tag id='10'/></vlan></portgroup>
+  <portgroup name='vlan20'><vlan><tag id='20'/></vlan></portgroup>
+  <portgroup name='vlan30'><vlan><tag id='30'/></vlan></portgroup>
+  <portgroup name='vlan99'><vlan><tag id='99'/></vlan></portgroup>
+</network>

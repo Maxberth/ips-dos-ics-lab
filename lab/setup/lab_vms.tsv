@@ -1,0 +1,6 @@
+# nombre	rol	nics (vlan:ip/prefijo, separadas por coma; 99 = gestión)	rutas (destino>gateway, separadas por coma)	paquetes apt
+lab-attacker	ATTACKER	10:192.168.10.100/24,99:192.168.99.10/24	192.168.20.0/24>192.168.10.1,192.168.30.0/24>192.168.10.1	hping3 python3-scapy python3-pymodbus tcpdump iperf3 sysstat jq
+lab-fw	FW	10:192.168.10.1/24,20:192.168.20.1/24,99:192.168.99.11/24	192.168.30.0/24>192.168.20.2	nftables tcpdump sysstat conntrack jq
+lab-ips	IPS	20:192.168.20.2/24,30:192.168.30.1/24,99:192.168.99.12/24	192.168.10.0/24>192.168.20.1	suricata nftables tcpdump sysstat jq ethtool
+lab-plc	PLC	30:192.168.30.10/24,99:192.168.99.13/24	192.168.10.0/24>192.168.30.1,192.168.20.0/24>192.168.30.1	git build-essential tcpdump sysstat python3-pymodbus jq
+lab-scada	SCADA	20:192.168.20.20/24,99:192.168.99.14/24	192.168.30.0/24>192.168.20.2,192.168.10.0/24>192.168.20.1	python3-pymodbus tcpdump sysstat jq iperf3
