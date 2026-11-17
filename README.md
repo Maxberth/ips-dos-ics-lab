@@ -2,7 +2,7 @@
 
 Laboratorio reproducible y documentación del artículo **ICITS'27**: *Implementation of an Intrusion Prevention System for Mitigating DoS Attacks in Industrial Control Networks*. Repositorio **privado** por ahora.
 
-El objetivo de este repo es dejar todo documentado: resultados, cómo recrearlos, arquitectura, hardware, scripts y datos crudos. El texto del paper (LaTeX) vive aparte, en `../paper/`, fuera de Git.
+El objetivo de este repo es dejar todo documentado: resultados, cómo recrearlos, arquitectura, hardware, scripts y datos crudos. El texto del paper (LaTeX, plantilla Springer LNCS) vive en otro repositorio privado: [`Maxberth/ips-dos-ics-paper`](https://github.com/Maxberth/ips-dos-ics-paper) (en el equipo, `../paper/`). Las figuras y tablas de `figures/` y `tables/` se copian allí cuando entran al artículo, y su `observaciones/registro_cambios.md` dice qué observaciones están resueltas.
 
 ## Estructura
 ```
