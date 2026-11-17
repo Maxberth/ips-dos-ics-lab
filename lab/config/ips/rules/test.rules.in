@@ -1,0 +1,2 @@
+# Regla de prueba de P09: un ping a 1 pps desde SCADA al PLC. Solo para verificar que "drop" descarta de verdad.
+ACTION icmp 192.168.20.20 any -> 192.168.30.10 any (msg:"LAB TEST icmp scada->plc"; itype:8; sid:1000099; rev:1;)
