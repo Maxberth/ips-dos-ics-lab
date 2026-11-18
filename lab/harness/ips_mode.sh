@@ -4,20 +4,22 @@
 #   alert   : NFQUEUE 0 + Suricata con lab.rules en "alert"          (E2)
 #   drop    : NFQUEUE 0 + Suricata con lab.rules en "drop"           (E3)
 #   test-alert / test-drop : igual, pero con test.rules (prueba de P09)
+#   calib-alert : como alert (lab.rules) pero con eve.json completo de alertas, solo para calibraciones (A22); no entra en la tanda
 # Uso: PROFILE=... lab/harness/ips_mode.sh <modo>
 set -euo pipefail
 source "$(dirname "$0")/../setup/lib.sh"
-MODE="${1:?router|alert|drop|test-alert|test-drop}"
+MODE="${1:?router|alert|drop|test-alert|test-drop|calib-alert}"
 CFG="$REPO/lab/config/ips"
 case $MODE in
   router) ACTION=""; SET="";;
   alert|drop) ACTION=$MODE; SET=lab;;
   test-alert) ACTION=alert; SET=test;;
   test-drop) ACTION=drop; SET=test;;
+  calib-alert) ACTION=alert; SET=lab;;
   *) echo "modo desconocido"; exit 1;;
 esac
 # Corridas (alert/drop): eve solo con stats; pruebas (test-*): eve con alert y drop (D17).
-case $MODE in test-*) YAML=suricata-lab.yaml;; *) YAML=suricata-lab-measure.yaml;; esac
+case $MODE in test-*|calib-*) YAML=suricata-lab.yaml;; *) YAML=suricata-lab-measure.yaml;; esac
 lab_scp "$CFG/nftables-router.conf" "$CFG/nftables-nfq.conf" "lab@$(mgmt_ip lab-ips):/tmp/"
 lab_scp "$CFG/$YAML" "lab@$(mgmt_ip lab-ips):/tmp/suricata-lab.yaml"
 if [ -n "$SET" ]; then

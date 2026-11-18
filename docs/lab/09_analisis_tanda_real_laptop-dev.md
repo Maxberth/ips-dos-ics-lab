@@ -1,7 +1,7 @@
 # Análisis de la tanda real (laptop-dev, perfil `final`)
 
 - **Fecha:** 2026-11-18 (UTC). **Plataforma:** `laptop-dev` (Ryzen 5 6600H, 14,8 GiB). **Datos:** 130 corridas `status=ok` del 2026-11-17 21:26 al 2026-11-18 04:15 UTC (10 por celda: E1 y E3 × syn, udp, icmp, modbus; E2 × los mismos cuatro; E0 sin ataque).
-- **Alcance (L3):** son datos de **calibración**. No se mezclan con `pc-miguel` ni van a tablas o figuras del paper.
+- **Alcance (L3):** `laptop-dev` es la única plataforma del estudio (decisión del 2026-11-18). Estas 130 corridas del perfil `final` son la base de los resultados del paper, con los límites de L1 y L3. Las corridas piloto y reducidas no entran.
 - **Reproducible:** todo sale de `data/raw/` y `data/processed/run_summary_laptop-dev_final.csv` con `python3 -I lab/analysis/analisis_final.py --platform laptop-dev --profile final` (tabla agregada en `data/processed/analisis_laptop-dev_final.csv`) y `lab/analysis/stats_tables.py`. Ningún número de este texto está fuera de esos archivos.
 - **Definiciones:** `docs/lab/definiciones_metricas.md`. Disponibilidad = % de solicitudes Modbus del SCADA (10 Hz) con respuesta válida en ≤ 500 ms durante los 60 s de ataque.
 
@@ -63,12 +63,12 @@ Reglas en `lab/config/ips/rules/lab.rules.in` (`detection_filter` por origen: sy
 
 - **Detección a nivel de corrida:** las reglas alertan en las 80 corridas E2/E3, sin falsos negativos por corrida.
 - **Límites de la tasa por paquete:** `decoder.pkts` incluye también el sentido inverso (respuestas del PLC, ver A21) y el tráfico del SCADA, así que `alertas/paquetes` en E2 syn/icmp (≈73 %) no es una tasa de detección del ataque; en E3, donde casi no hay respuestas, sí se acerca a 100 % para syn e icmp.
-- **UDP es distinto (A22, sin explicar):** el número de alertas es casi constante (~65,5 k, rango 65 302–65 638) aunque a Suricata lleguen 4,9–5,7 M de paquetes, tanto en E2 como en E3. Una cuenta por paquete daría millones, como en syn e icmp. No se afirma la causa; hay que mirarla antes de reportar una tasa de detección de UDP.
+- **UDP es distinto (A22, explicada con una corrida de calibración):** el número de alertas es casi constante (~65,5 k, rango 65 302–65 638) aunque a Suricata lleguen 4,9–5,7 M de paquetes porque **se genera una alerta por flujo UDP (por puerto de origen distinto)** y no una por paquete (en la calibración: 64 982 alertas UDP, 64 982 puertos de origen distintos, todas en los primeros ~5 s). Por eso para UDP se reporta detección por corrida (10/10) y por flujo, no por paquete. No se explica por qué Suricata no vuelve a alertar en un flujo ya visto.
+- **Posible falso positivo (A23, abierta):** en esa misma calibración la regla Modbus alertó 216 veces contra tráfico legítimo del SCADA al final del ataque. Una sola corrida, sin cuantificar en la tanda.
 - **Qué no se puede medir con estos datos:** `eve.json` solo guarda estadísticas cada segundo, no cada alerta, así que no hay tiempo hasta la primera alerta ni falsos positivos por paquete del tráfico legítimo.
 
 ## 6. Qué falta
 1. Decidir si se añade un contador de descartes por sentido (hoy no separable) para citar la saturación en E2.
-2. Explicar A22 (alertas UDP constantes).
+2. Investigar A23 (alertas de la regla Modbus sobre el SCADA) con una calibración en modo `drop`, por si afecta la disponibilidad de E3.
 3. (Descartado) No se repiten ni se añaden corridas por A20.
-4. Repetir el análisis con `pc-miguel`; los números del paper salen solo de esa plataforma.
 5. Revisar `07_resultados_auditados.md` con estos resultados y los WARN.

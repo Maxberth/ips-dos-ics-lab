@@ -39,7 +39,7 @@ while [ $# -gt 0 ]; do case $1 in
 RP=${RP:-$RUN_PROFILE_DEFAULT}
 eval "WARM=\$${RP}_WARM ATT=\$${RP}_ATTACK COOL=\$${RP}_COOL"
 [ "$SCEN" = E0 ] && ATTACK=none
-case $SCEN in E0|E1) MODE=router;; E2) MODE=alert;; E3) MODE=drop;; *) echo "escenario?"; exit 1;; esac
+case $SCEN in E0|E1) MODE=router;; E2) MODE=alert;; E3) MODE=drop;; C2) MODE=calib-alert;; *) echo "escenario?"; exit 1;; esac
 TOTAL=$((WARM + ATT + COOL))
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)_${PLATFORM}_${SCEN}_${ATTACK}_${RP}_r${REP}"
 OUT="$REPO/data/raw/runs/$RUN_ID"; mkdir -p "$OUT" "$REPO/data/captures"
@@ -125,6 +125,10 @@ if [ "$MODE" != router ]; then
   lab_ssh lab-ips "sudo tail -n +$((EVE_LINES0 + 1)) /var/log/suricata/eve.json | jq -c 'select(.event_type==\"stats\") | {timestamp, uptime:.stats.uptime, decoder_pkts:.stats.decoder.pkts, ips:.stats.ips, nfq:.stats.capture, alert:.stats.detect.alert, flow_memcap:.stats.flow.memcap, tcp_syn:.stats.tcp.syn}'" \
     > "$OUT/suricata_stats.jsonl" 2>/dev/null || fail "suricata stats"
   lab_ssh lab-ips "ls -l /var/log/suricata/eve.json; df -h / | tail -1" > "$OUT/suricata_disk.txt" 2>&1
+  if [ "$MODE" = calib-alert ]; then  # calibración A22: se guardan TODAS las alertas y los contadores completos (primer y último stats)
+    lab_ssh lab-ips "sudo tail -n +$((EVE_LINES0 + 1)) /var/log/suricata/eve.json | jq -c 'select(.event_type==\"alert\") | {timestamp, flow_id, proto, src_ip, src_port, dest_ip, dest_port, sid:.alert.signature_id, action:.alert.action}' | gzip -c" > "$OUT/eve_alerts.jsonl.gz" 2>/dev/null || fail "eve alertas"
+    lab_ssh lab-ips "sudo tail -n +$((EVE_LINES0 + 1)) /var/log/suricata/eve.json | jq -c 'select(.event_type==\"stats\")' | sed -n '1p;\$p'" > "$OUT/eve_stats_primero_ultimo.jsonl" 2>/dev/null || fail "eve stats completos"
+  fi
   lab_ssh lab-ips "systemctl is-active suricata-lab" > "$OUT/suricata_state_post.txt" 2>&1
 fi
 
@@ -150,7 +154,7 @@ TMAX=$(tr -d '\r' < "$OUT/ts_host.csv" | awk -F, '$2=="host" && $4=="tctl_c"{if(
 RULES_SHA=$( [ "$MODE" != router ] && sha256sum "$CACHE/active.rules" | cut -c1-16 || echo -)
 YAML_SHA=$(sha256sum "$REPO/lab/config/ips/suricata-lab-measure.yaml" 2>/dev/null | cut -c1-16)
 [ -s "$OUT/polls.csv" ] || fail "polls vacío"
-validate=$(python3 -I "$REPO/lab/harness/validate_run.py" "$OUT" --attack "$ATTACK" --mode "$MODE" 2>&1 | tail -1)
+validate=$(python3 -I "$REPO/lab/harness/validate_run.py" "$OUT" --attack "$ATTACK" --mode "${MODE#calib-}" 2>&1 | tail -1)
 H="$REPO/data/raw/runs.csv"
 [ -s "$H" ] || echo "run_id,platform,scenario,attack,ips_mode,run_profile,rep,warm_s,attack_s,cool_s,t0_unix_ns,t_attack_start_ns,t_attack_end_ns,tctl_start_c,tctl_max_c,tctl_end_c,guard_states,status,validate,repo_commit,repo_dirty,rules_sha16,suricata_yaml_sha16,capture_sha256,notes" > "$H"
 DIRTY=$(git -C "$REPO" status --porcelain -- lab | wc -l)

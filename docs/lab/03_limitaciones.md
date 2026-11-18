@@ -14,8 +14,8 @@ Todo corre en una sola máquina física: VMs con QEMU/KVM y un switch Open vSwit
 | HMI/SCADA gráfico | Cliente `pymodbus` a 10 Hz | Medición por solicitud y RAM (D4) |
 | PLC en 192.168.1.10 | PLC en 192.168.30.10 (VLAN 30) | Topología Purdue de P06; la LAN de casa del host es 192.168.1.0/24 |
 
-## L3. laptop-dev solo calibra
-laptop-dev (Ryzen 5 6600H, 14,8 GiB) tiene menos RAM que pc-miguel y es una laptop: puede bajar la frecuencia por temperatura. Sus VMs tienen menos RAM (perfil `laptop-dev`). Sus datos son de calibración y no se usan en tablas ni figuras del paper ni se mezclan con los de pc-miguel.
+## L3. Una sola plataforma física: laptop-dev
+Desde el 2026-11-18 la única plataforma del estudio es `laptop-dev` (Ryzen 5 6600H, 14,8 GiB), una laptop, y no se usarán pc-miguel ni pc-alem. Los números del paper salen de sus datos. Límites que deben declararse: una sola máquina y una sola réplica de plataforma (sin comprobar si los resultados se repiten en otro hardware); sus VMs tienen menos RAM (perfil `laptop-dev`); una laptop puede bajar la frecuencia por temperatura (en la tanda real no hubo throttling, A19 y figura `a5`); el RTT y la disponibilidad dependen de ese hardware y no se extrapolan a un PLC físico (L1). Las corridas piloto y reducidas anteriores a la tanda real son de calibración y no entran en tablas ni figuras del paper.
 
 ## L4. Límites de RAM y temperatura condicionan las corridas
 El guardián pausa (PAUSE) o aborta (ABORT) según la RAM disponible, la presión de memoria, el swap, la temperatura y, en laptop-dev, si el cargador está conectado. Puede alargar las corridas (enfriamiento entre repeticiones) y obliga a perfiles de corrida más cortos si el equipo no aguanta el perfil `final`.
