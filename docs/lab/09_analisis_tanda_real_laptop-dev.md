@@ -40,12 +40,14 @@ Figuras: `figures/laptop-dev_final_a1_disponibilidad.png`, `a2_rtt_p95.png`, `a3
 - Todas las corridas finales tienen `status=ok`, pero la mayoría trae WARN: descarte de la captura (dumpcap) y huecos >250 ms en el poller. **El descarte llega a 13,8 % en E1 syn y 9,5 % en E1 icmp**, por lo que `% eliminado` en E1 (≈2 %) refleja el descarte de la captura y no un efecto del IPS (en router no elimina nada). En E2/E3 el descarte máximo es 2,2 %.
 - **A20 (arranque frío en 6 corridas, y 1 más con campos vacíos):** ver `05_problemas_anomalias.md` y L7. La comparación con el resto no mostró diferencia en E1; en E3 ICMP la disponibilidad fue algo menor (n pequeño, rangos solapados; figura `a6`). No se concluye nada y no se repitieron.
 
-## 4. Segunda fuente y anomalía abierta (A21)
+## 4. Segunda fuente y anomalía A21 (explicada)
 
-El cociente entre los descartes que ve Suricata/NFQUEUE y los paquetes que desaparecen entre la VLAN 20 y la 30 en la captura es 1,00 en E3 y en E2 udp, pero **1,29–1,39 en E2 syn e icmp (A21, sin explicar)**. Hasta resolverla, el "% de ataque eliminado" y la parte por saturación de esas dos celdas (figura `a4_eliminacion_ips.png`) no deben citarse como resultado. La disponibilidad y el RTT no dependen de esos contadores.
+El cociente entre los descartes de Suricata/NFQUEUE y los paquetes que desaparecen entre la VLAN 20 y la 30 en la captura era 1,00 en E3 y E2 udp y 1,29–1,39 en E2 syn e icmp. **La causa es el sentido del tráfico:** las colas reciben también las respuestas del PLC y la captura solo cuenta atacante→PLC. Comprobación independiente en las 80 corridas E2/E3: entradas a la cola (`c_fwd_v20_v30 + c_fwd_v30_v20`) = `queue_dropped + blocked + accepted`, con cociente 1,0000–1,0001 (`data/processed/conservacion_nfq_laptop-dev_final.csv`). Los tres conjuntos de contadores son coherentes.
+
+Consecuencias: el "% de ataque eliminado" válido es el de la captura (figura `a4_eliminacion_ips.png`). La parte "por saturación" (`sat_pct`) solo es utilizable en E3 syn/udp/icmp (sentido inverso casi nulo); en E2 syn/icmp mezcla ambos sentidos y no se cita. Detalle en A21.
 
 ## 5. Qué falta
-1. Explicar A21 comparando captura, nftables y NFQUEUE corrida por corrida.
+1. Decidir si se añade un contador de descartes por sentido (hoy no separable) para citar la saturación en E2.
 2. Tasa de detección por regla (`detect.alert` / paquetes entregados a Suricata) en E2/E3, aún sin analizar aquí.
 3. Decidir si se añaden corridas E3 ICMP adicionales (reps 11+) para cerrar la duda de A20.
 4. Repetir el análisis con `pc-miguel`; los números del paper salen solo de esa plataforma.

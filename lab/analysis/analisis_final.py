@@ -101,13 +101,8 @@ for j, s in enumerate(["E1", "E2", "E3"]):
     for a in AT:
         v = [f(r, "cap_removed_pct") for r in by.get((s, a), [])]; v = [x for x in v if x is not None]; ys.append(st.mean(v) if v else 0)
     ax.bar([i + (j - 1) * w for i in range(len(AT))], ys, w, color=COL[s], label=NOM[s])
-    if s != "E1":
-        for i, a in enumerate(AT):
-            sat = lambda r: (lambda D, C: 100 * D / (D + C) if D is not None and C is not None and D + C > 0 else None)(f(r, "nfq_queue_dropped"), f(r, "suri_ips_blocked"))
-            v = [f(r, "cap_removed_pct") * sat(r) / 100 for r in by.get((s, a), []) if f(r, "cap_removed_pct") is not None and sat(r) is not None]
-            if v: ax.bar(i + (j - 1) * w, st.mean(v), w, color="#000", alpha=.35)
 ax.set_xticks(range(len(AT))); ax.set_xticklabels(AT); ax.set_ylabel("ataque eliminado (%)"); ax.set_ylim(0, 105)
-ax.set_title("Paquetes de ataque eliminados por el IPS (zona oscura: parte descartada por saturación de la cola, no por regla)", loc="left", fontsize=9)
+ax.set_title("Paquetes de ataque eliminados por el IPS (captura, solo atacante→PLC; la saturación de la cola mezcla sentidos, ver A21)", loc="left", fontsize=9)
 ax.legend(frameon=False, fontsize=8); fig.tight_layout(); fig.savefig(f"{FIG}/{A.platform}_{A.profile}_a4_eliminacion_ips.png"); plt.close(fig)
 
 # ---- a5: térmica por corrida, en orden cronológico ----
