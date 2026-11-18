@@ -31,3 +31,7 @@ Sirven para corregir el §3.4 del paper (observaciones 6, 7 y 8). Todas se calcu
 - El poller tiene una sola solicitud en vuelo, como un SCADA real: si una respuesta tarda (hasta 500 ms), la siguiente se retrasa. Por eso, bajo ataque hay menos de 10 solicitudes por segundo. Los huecos > 250 ms quedan en el veredicto de `validate_run.py`. La disponibilidad se calcula sobre las solicitudes realmente enviadas.
 - La primera solicitud de cada corrida incluye la conexión TCP y la resolución ARP. No entra en la ventana de ataque, porque cae en el calentamiento.
 - Sin pruebas estadísticas no se usa la palabra "significativo" (obs. 23). Con 10 repeticiones se reportan media ± DE e IC 95 % (t de Student, n−1 gl).
+
+## Complemento (A24): respuestas válidas respecto a las solicitudes programadas
+El poller es de lazo cerrado y deja de emitir solicitudes mientras espera respuestas (timeout 0,5 s), así que en celdas saturadas emite menos de las 600 programadas (10 Hz × 60 s). Además de la disponibilidad (respondidas / emitidas), se reporta **respondidas válidas / programadas** (`polls_ok` / 600) y el número de solicitudes emitidas (`polls_attack_window`). Ambas salen de `polls.csv` (`lab/analysis/analisis_final.py`, columnas `resp_vs_programadas_pct` y `polls_emitidas_pct`).
+

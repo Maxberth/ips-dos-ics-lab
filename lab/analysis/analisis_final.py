@@ -12,6 +12,7 @@ Salidas:
   figures/<plat>_<perfil>_a3_disponibilidad_en_el_tiempo.png   disponibilidad por segundo respecto al inicio del ataque
   figures/<plat>_<perfil>_a4_eliminacion_ips.png     % del ataque eliminado y parte por saturación
   figures/<plat>_<perfil>_a5_termica.png             Tctl y frecuencia de CPU por corrida (¿throttling?)
+  figures/<plat>_<perfil>_a7_respuestas_vs_programadas.png   respuestas válidas / solicitudes programadas (A24)
   figures/<plat>_<perfil>_a6_a20_e3_icmp.png         corridas afectadas por A20 frente a las de referencia (E3 ICMP)
   data/processed/analisis_<plat>_<perfil>.csv        tabla agregada (n, media, DE, IC95, mín, máx)
 Uso: python3 -I lab/analysis/analisis_final.py --platform laptop-dev --profile final
@@ -38,6 +39,10 @@ for p in glob.glob(f"{REPO}/data/processed/runs_guard_muestras_{P}.csv"):
     for r in csv.DictReader(open(p)): tc[r["run_id"]] = r
 AFF = set(tc)  # corridas con algún campo térmico vacío por A20
 FRIA = {k for k, v in tc.items() if "tctl_start_c" in v["campos_vacios_en_runs_csv"]}  # esperaron ~20 min: arranque frío
+HZ = float([l.split("=")[1].split("#")[0] for l in open(f"{REPO}/lab/config/experiment.env") if l.startswith("SCADA_HZ=")][0])
+for r in S:  # respuestas válidas respecto a las solicitudes PROGRAMADAS (HZ x segundos de ataque), no solo las emitidas (A24)
+    r["resp_vs_programadas_pct"] = 100 * float(r["polls_ok"]) / (HZ * float(runs[r["run_id"]]["attack_s"]))
+    r["polls_emitidas_pct"] = 100 * float(r["polls_attack_window"]) / (HZ * float(runs[r["run_id"]]["attack_s"]))
 by = defaultdict(list)
 for r in S: by[(r["scenario"], r["attack"])].append(r)
 
@@ -51,7 +56,7 @@ def agg(v):
     return dict(n=n, mean=m, sd=sd, ci95=tcrit(n) * sd / math.sqrt(n) if n > 1 else float("nan"), min=min(v), max=max(v), median=st.median(v))
 
 # ---- tabla agregada ----
-MET = ["availability_pct", "rtt_median_ms", "rtt_p95_ms", "attacker_pps", "cap_removed_pct", "tctl_max_c", "cpu_mhz_attack", "suri_alerts", "suri_decoder_pkts"]
+MET = ["availability_pct", "rtt_median_ms", "rtt_p95_ms", "attacker_pps", "cap_removed_pct", "tctl_max_c", "cpu_mhz_attack", "suri_alerts", "suri_decoder_pkts", "resp_vs_programadas_pct", "polls_emitidas_pct"]
 with open(f"{REPO}/data/processed/analisis_{P}.csv", "w", newline="") as fh:
     w = csv.writer(fh); w.writerow(["scenario", "attack", "metric", "n", "mean", "sd", "ci95", "min", "median", "max", "plc_alive_after_no"])
     for (s, a), rs in sorted(by.items()):
@@ -76,6 +81,7 @@ def strip(metric, ylabel, fname, log=False, title=""):
     ax.set_title(title, loc="left", fontsize=10); ax.legend(frameon=False, fontsize=8, ncol=4, loc="upper center", bbox_to_anchor=(.5, -.1))
     fig.tight_layout(); fig.savefig(f"{FIG}/{A.platform}_{A.profile}_{fname}.png"); plt.close(fig)
 strip("availability_pct", "Disponibilidad del SCADA durante el ataque (%)", "a1_disponibilidad", title=f"Disponibilidad por escenario y ataque ({A.platform}, perfil {A.profile}; punto = corrida, línea = media)")
+strip("resp_vs_programadas_pct", "Respuestas válidas / solicitudes programadas (%)", "a7_respuestas_vs_programadas", title="Respuestas válidas respecto a las solicitudes programadas (10 Hz x 60 s); las no emitidas cuentan como sin respuesta")
 strip("rtt_p95_ms", "RTT p95 (ms, escala log)", "a2_rtt_p95", log=True, title="Latencia (RTT p95) del tráfico legítimo durante el ataque")
 
 # ---- a3: disponibilidad por segundo respecto al inicio del ataque (de polls.csv) ----

@@ -1,0 +1,2 @@
+Running as unit: suricata-lab.service; invocation ID: 94112f4c2b1c45cd977b004e3e37ccf0
+ips_mode=calib-drop suricata=active rules_sha256=6c3f4565e04f6030

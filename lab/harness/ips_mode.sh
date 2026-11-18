@@ -4,11 +4,12 @@
 #   alert   : NFQUEUE 0 + Suricata con lab.rules en "alert"          (E2)
 #   drop    : NFQUEUE 0 + Suricata con lab.rules en "drop"           (E3)
 #   test-alert / test-drop : igual, pero con test.rules (prueba de P09)
+#   calib-drop : como drop (lab.rules) pero con eve.json completo de alertas y drops, solo calibraciones (A23)
 #   calib-alert : como alert (lab.rules) pero con eve.json completo de alertas, solo para calibraciones (A22); no entra en la tanda
 # Uso: PROFILE=... lab/harness/ips_mode.sh <modo>
 set -euo pipefail
 source "$(dirname "$0")/../setup/lib.sh"
-MODE="${1:?router|alert|drop|test-alert|test-drop|calib-alert}"
+MODE="${1:?router|alert|drop|test-alert|test-drop|calib-alert|calib-drop}"
 CFG="$REPO/lab/config/ips"
 case $MODE in
   router) ACTION=""; SET="";;
@@ -16,6 +17,7 @@ case $MODE in
   test-alert) ACTION=alert; SET=test;;
   test-drop) ACTION=drop; SET=test;;
   calib-alert) ACTION=alert; SET=lab;;
+  calib-drop) ACTION=drop; SET=lab;;
   *) echo "modo desconocido"; exit 1;;
 esac
 # Corridas (alert/drop): eve solo con stats; pruebas (test-*): eve con alert y drop (D17).

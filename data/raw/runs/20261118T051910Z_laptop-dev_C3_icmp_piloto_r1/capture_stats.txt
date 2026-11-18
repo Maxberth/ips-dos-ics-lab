@@ -1,0 +1,5 @@
+Capturing on 'mir20' and 'mir30'
+File: /home/maxberth/.cache/ips-lab/captures/20261118T051910Z_laptop-dev_C3_icmp_piloto_r1.pcapng
+Packets captured: 3958798
+Packets received/dropped on interface 'mir20': 3954878/8580 (pcap:0/dumpcap:8579/flushed:1/ps_ifdrop:0) (99.8%)
+Packets received/dropped on interface 'mir30': 3920/0 (pcap:0/dumpcap:0/flushed:0/ps_ifdrop:0) (100.0%)

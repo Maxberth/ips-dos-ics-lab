@@ -1,0 +1,6 @@
+run_id,modo,ataque,disponibilidad_pct,alertas_total,alertas_sid1000004_total,alertas_sid1000004_desde_scada,acciones_desde_scada,eventos_drop_total,eventos_drop_desde_scada,pkts_ataque_flujos_distintos
+20261118T050513Z_laptop-dev_C2_udp_piloto_r1,calib-alert,udp,83.93,65198,216,216,allowed=216,0,0,64984
+20261118T051221Z_laptop-dev_C3_udp_piloto_r1,calib-drop,udp,44.32,64984,133,133,blocked=133,1961267,133,64879
+20261118T051433Z_laptop-dev_C3_udp_piloto_r2,calib-drop,udp,50.52,64965,133,133,blocked=133,1988574,133,64859
+20261118T051644Z_laptop-dev_C3_syn_piloto_r1,calib-drop,syn,24.68,907135,162,162,blocked=162,907135,162,65582
+20261118T051910Z_laptop-dev_C3_icmp_piloto_r1,calib-drop,icmp,25.97,797365,140,140,blocked=140,797365,140,31
