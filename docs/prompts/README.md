@@ -1,5 +1,7 @@
 # Prompts del laboratorio ICITS'27 (IPS contra DoS en redes de control industrial)
 
+> **Documento histórico:** estos prompts se usaron para construir el laboratorio y su plan inicial difiere del resultado final: no se usó Kali (el atacante es Debian 13 con `hping3` y un script de Python), no se usó pfSense (el firewall es nftables), Snort no se evaluó y las mediciones salieron de `laptop-dev`. El estado real está en `docs/lab/00_diario.md`.
+
 Serie de prompts **secuenciales** para pegar en Claude Code, uno a la vez, dentro del repo `ips-dos-ics-lab` (carpeta `articulo/`, junto a `paper/`). Los prompts montan y ejecutan el laboratorio; no los he ejecutado, solo están redactados. Cada uno termina con una verificación y no debe pasarse al siguiente si algo queda en "NO CUMPLE".
 
 ## Arquitectura acordada (una sola máquina, todo virtual, 100 % libre)

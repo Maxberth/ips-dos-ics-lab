@@ -1,5 +1,7 @@
 # Prompt para pc-alem
 
+> **Documento histórico:** no aplica al estudio final: desde el 2026-11-18 la única plataforma es `laptop-dev` (ver `CLAUDE.md` y `docs/lab/03_limitaciones.md`, L3). Se conserva como registro de cómo se planeó el trabajo.
+
 Lo pega Alem en Claude Code, en su PC de escritorio (pc-alem). pc-miguel no está disponible.
 
 ## PROMPT (copiar desde aquí)

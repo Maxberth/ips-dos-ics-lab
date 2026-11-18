@@ -1,4 +1,4 @@
 # tables
 
-Generados por `lab/analysis/stats_tables.py`. El prefijo indica la plataforma y el perfil.
-**Los archivos `laptop-dev_*` / `stats_laptop-dev_*` son de calibración y NO van al paper.** Los del paper deben ser `pc-miguel_final*`.
+- `tables/paper/`: tablas LaTeX que entran al artículo, generadas por `lab/analysis/tablas_paper.py` desde `data/raw/` y `data/processed/` (resultados, pruebas estadísticas, intensidad del ataque, detección, versiones del software y máquinas virtuales).
+- `tables/stats_laptop-dev_*.tex`: tablas antiguas de `lab/analysis/stats_tables.py` de la calibración (perfiles piloto y reducido y primera versión del perfil final). No van al artículo.

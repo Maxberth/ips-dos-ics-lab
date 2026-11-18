@@ -1,5 +1,7 @@
 # Comparación de plataformas: laptop-dev vs. pc-miguel
 
+> **Documento histórico:** no aplica al estudio final: desde el 2026-11-18 la única plataforma es `laptop-dev` (ver `CLAUDE.md` y `docs/lab/03_limitaciones.md`, L3). Se conserva como registro de cómo se planeó el trabajo.
+
 - Los datos de laptop-dev se midieron el 2026-11-17 ([ficha](laptop-dev.md), [logs](../logs/)).
 - Los de pc-miguel son los que reportó el usuario ([ficha](pc-miguel.md)); no hay logs crudos.
 - «No medido» quiere decir que no hay dato. **No se compara rendimiento**: no hay mediciones de carga en ninguna de las dos.

@@ -1,5 +1,7 @@
 # Plataforma: pc-miguel
 
+> **Documento histórico:** no aplica al estudio final: desde el 2026-11-18 la única plataforma es `laptop-dev` (ver `CLAUDE.md` y `docs/lab/03_limitaciones.md`, L3). Se conserva como registro de cómo se planeó el trabajo.
+
 PC de escritorio donde se harán las mediciones finales del laboratorio.
 
 **Origen de los datos:** el usuario pasó el resultado de un chequeo solo lectura hecho **en pc-miguel** (prompt P02, 2026-11-16 o 17). No se midió desde la laptop, y aquí no hay logs crudos de esa máquina. Cuando se trabaje en pc-miguel, conviene guardar sus salidas en `docs/lab/logs/pc-miguel_P02_*.txt` con el mismo script que se usó para la laptop: `lab/setup/inventario_plataforma.sh pc-miguel`.

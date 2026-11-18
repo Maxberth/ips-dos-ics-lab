@@ -1,5 +1,7 @@
 # Mapa de observaciones
 
+> **Documento histórico:** mapa inicial de observaciones por paso del plan. Sus estados de «medir en pc-miguel» quedaron superados; el estado vigente de cada observación está en `10_seguimiento_revisores.md`.
+
 Observación del revisor (0–26, ver `docs/observaciones_icits27.md`) → evidencia → sección del paper.
 
 | Obs. | Evidencia en este repo | Paso | Estado |

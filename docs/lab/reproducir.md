@@ -1,6 +1,6 @@
 # Cómo reproducir el laboratorio desde cero
 
-Igual en cualquier plataforma; solo cambia el perfil (`lab/config/profile_<plataforma>.env`). Los pasos para pc-miguel están en [`pasar_a_pc-miguel.md`](pasar_a_pc-miguel.md).
+La plataforma del estudio es `laptop-dev` (`lab/config/profile_laptop-dev.env`); en otra máquina solo cambia el perfil. [`pasar_a_pc-miguel.md`](pasar_a_pc-miguel.md) es histórico.
 
 ## 1. Host (una vez, con sudo)
 ```bash
@@ -39,3 +39,16 @@ Cada corrida deja sus datos crudos en `data/raw/runs/<run_id>/` y una fila en `d
 lab/guard/lab-stop.sh          # apaga VMs y guardián
 lab/guard/lab-stop.sh --clear  # además borra PAUSE/ABORT
 ```
+
+## 6. Regenerar resultados, tablas y figuras (sin correr el laboratorio)
+Todo sale de `data/raw/` y no necesita VMs. Con Python 3 y SciPy/matplotlib:
+```bash
+python3 -I lab/analysis/summarize_runs.py --platform laptop-dev --profile final      # métricas por corrida
+python3 -I lab/analysis/verificar_figuras.py --platform laptop-dev --profile final   # recálculo independiente (debe decir COHERENTE)
+python3 -I lab/analysis/verificar_conservacion_nfq.py --platform laptop-dev --profile final
+python3 -I lab/analysis/tablas_paper.py --platform laptop-dev --profile final        # tablas LaTeX y pruebas estadísticas
+python3 -I lab/analysis/figuras_paper.py --platform laptop-dev --profile final --layout acm
+python3 -I lab/analysis/figuras_arquitectura.py --platform laptop-dev --layout acm
+```
+Las figuras quedan en `figures/paper_acm/` (dos columnas) y `figures/paper/` (una columna), y las tablas en `tables/paper/`. La versión de este repositorio que cita el artículo es la etiqueta `icits27-final`.
+

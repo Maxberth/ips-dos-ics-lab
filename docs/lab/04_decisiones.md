@@ -83,7 +83,7 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Elección:** `exception-policy: ignore` y `stream.drop-invalid: no` (A17) en `suricata-lab*.yaml`. Regla 1000004 rev 2 con `dsize:>0` y `detection_filter` por origen.
 - **Consecuencia:** el laboratorio mide la prevención por reglas. Lo que haría la configuración por defecto (`auto`) queda medido en las corridas previas a D19 y se reporta como hallazgo aparte.
 
-## D20. Regla Modbus: umbral 20 segmentos/s por origen (rev 3). Decisión abierta para pc-miguel
+## D20. Regla Modbus: umbral 20 segmentos/s por origen (rev 3). Cerrada por D22 (se mantiene y se declara como limitación)
 - **Contexto:** con la rev 2 (100 segmentos/s), E3 mantuvo al SCADA al 100 % durante el ataque, pero OpenPLC cayó al final en 3 de 3 corridas `reduced`. Cada segmento del flood lleva 32 solicitudes, así que pasaban ~3 200 solicitudes/s antes del umbral.
 - **Calibración en laptop-dev (perfil `reduced`, datos en `data/raw/runs/*E3_modbus_reduced*`):**
   - rev 2 (100/s): SCADA 100 %, PLC caído al final 3/3.
@@ -93,7 +93,7 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Conclusión honesta:** con un único atacante y reglas por umbral, Suricata **protege la disponibilidad del SCADA durante el ataque, pero no evita que OpenPLC caiga al terminar el flood**. La causa en OpenPLC no está determinada (A18).
 - **Opciones para decidir antes de las corridas finales:**
   1. Reportarlo tal cual: el resultado del escenario incluye "PLC caído tras el ataque".
-  2. Probar en pc-miguel `reject` (RST al atacante) en lugar de `drop`.
+  2. (No se hizo; pc-miguel no se usó) Probar `reject` (RST al atacante) en lugar de `drop`.
   3. Aislar la causa en OpenPLC (fuera del alcance del plazo).
 
 ## D21. Tanda real (perfil `final`) en laptop-dev

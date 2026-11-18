@@ -1,5 +1,7 @@
 # Variante cloud: el mismo laboratorio en un servidor (EC2 u otro)
 
+> **Documento histórico:** no aplica al estudio final: desde el 2026-11-18 la única plataforma es `laptop-dev` (ver `CLAUDE.md` y `docs/lab/03_limitaciones.md`, L3). Se conserva como registro de cómo se planeó el trabajo.
+
 **Prioridad: OPCIONAL** (la ruta principal es la PC local con CachyOS). Útil si la PC no aguanta térmicamente o si quieres correr las 40+ corridas sin riesgo para el equipo.
 
 ## ¿Se puede? Sí, con tres matices
