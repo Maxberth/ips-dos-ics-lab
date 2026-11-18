@@ -23,6 +23,15 @@ set -uo pipefail
 source "$(dirname "$0")/../setup/lib.sh"
 source "$REPO/lab/config/experiment.env"
 
+# CSV vigente del guardián. El guardián fija el nombre del archivo al arrancar (fecha UTC de inicio) y no rota
+# a medianoche, así que NO se puede deducir de la fecha actual (A20). Se toma el más reciente de la plataforma y
+# solo si se está escribiendo (mtime < 30 s); si el guardián no escribe, devuelve vacío y el control de
+# temperatura sigue esperando (nunca da por bueno un dato ausente).
+guard_csv(){
+  local f; f=$(ls -t "$REPO"/data/raw/guard/guard_"${PLATFORM}"_*.csv 2>/dev/null | head -1)
+  [ -n "$f" ] && [ $(( $(date +%s) - $(stat -c %Y "$f") )) -lt 30 ] && echo "$f"
+}
+
 SCEN=""; ATTACK=none; RP=""; REP=1; NOTES=""
 while [ $# -gt 0 ]; do case $1 in
   --scenario) SCEN=$2; shift 2;; --attack) ATTACK=$2; shift 2;; --run-profile) RP=$2; shift 2;;
@@ -43,7 +52,7 @@ PLC=192.168.30.10
 # --- 0. Salud: guardián y enfriamiento ---
 for i in $(seq 600); do
   st=$(cut -d' ' -f1 "$LAB_RUN/STATE" 2>/dev/null)
-  t=$(awk -F, 'END{print int($7)}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null)
+  t=$(awk -F, 'END{print int($7)}' "$(guard_csv)" 2>/dev/null)
   { [ "$st" = OK ] || [ "$st" = WARN ]; } && [ "${t:-99}" -le "$COOLDOWN_TARGET_TCTL" ] && break
   [ "$st" = ABORT ] && { echo "Guardián en ABORT"; exit 3; }
   [ $((i % 15)) = 1 ] && log "esperando guardián/enfriamiento: estado=$st Tctl=$t"
@@ -135,8 +144,8 @@ echo "$RUN_ID,$(basename "$CAP"),$CAP_SHA,$CAP_SIZE,$KEEP" >> "$REPO/data/captur
 [ $KEEP = no ] && rm -f "$CAP"
 
 # --- 7. Metadatos y fila de runs.csv ---
-T_END_TCTL=$(awk -F, 'END{print $7}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null)
-GMAX=$(awk -F, -v t0="$(date -u -d @$((T0_NS/1000000000)) +%FT%T)" 'NR>1 && $1>=t0{print $10}' "$REPO/data/raw/guard/guard_${PLATFORM}_$(date -u +%Y%m%d).csv" 2>/dev/null | sort -u | paste -sd'|')
+T_END_TCTL=$(awk -F, 'END{print $7}' "$(guard_csv)" 2>/dev/null)
+GMAX=$(awk -F, -v t0="$(date -u -d @$((T0_NS/1000000000)) +%FT%T)" 'NR>1 && $1>=t0{print $10}' "$(guard_csv)" 2>/dev/null | sort -u | paste -sd'|')
 TMAX=$(tr -d '\r' < "$OUT/ts_host.csv" | awk -F, '$2=="host" && $4=="tctl_c"{if($5>m)m=$5}END{print m}')
 RULES_SHA=$( [ "$MODE" != router ] && sha256sum "$CACHE/active.rules" | cut -c1-16 || echo -)
 YAML_SHA=$(sha256sum "$REPO/lab/config/ips/suricata-lab-measure.yaml" 2>/dev/null | cut -c1-16)
