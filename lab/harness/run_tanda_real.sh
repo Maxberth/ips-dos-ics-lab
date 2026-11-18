@@ -11,10 +11,7 @@ block(){ # nombre escenarios ataques
   "$REPO/lab/harness/run_matrix.sh" --run-profile final --reps 10 --seed 2027 --scenarios "$2" --attacks "$3" --resume
   python3 -I lab/analysis/summarize_runs.py --platform "$PLATFORM" --profile final >/dev/null
   git add data/raw data/processed data/captures/manifest.csv
-  git commit -q -m "Tanda real ($PLATFORM): bloque $1
-
-Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_01MD4EbEt26yK6Naoy7bLuLD" && git push -q 2>&1 | tail -1
+  git commit -q -m "Tanda real ($PLATFORM): bloque $1" && git push -q 2>&1 | tail -1
   [ -e "$LAB_RUN/ABORT" ] && { echo "ABORT: tanda detenida"; exit 3; }
 }
 block "1 E1/E3 syn+modbus" "E1 E3" "syn modbus"
