@@ -77,6 +77,6 @@ Reglas en `lab/config/ips/rules/lab.rules.in` (`detection_filter` por origen: sy
 
 ## 6. Qué falta
 1. Decidir si se añade un contador de descartes por sentido (hoy no separable) para citar la saturación en E2.
-2. Decidir qué hacer con los falsos positivos de la regla Modbus (A23; ligado a D20): dejarlo declarado o recalibrar la regla, lo que obligaría a repetir los bloques E3.
+2. ~~Decidir qué hacer con los falsos positivos de la regla Modbus~~: decidido (D22): se mantiene la regla y se declara como limitación L8; no se repiten corridas.
 3. (Descartado) No se repiten ni se añaden corridas por A20.
 5. Revisar `07_resultados_auditados.md` con estos resultados y los WARN.

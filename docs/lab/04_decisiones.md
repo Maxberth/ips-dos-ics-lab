@@ -101,3 +101,10 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Alcance:** E0, E1 y E3 × {syn, modbus} × 10 repeticiones, perfil `final` (15 + 60 + 15 s), semilla 2027, regla Modbus rev 3 (D20, opción 1: "PLC caído tras el ataque" se reporta como resultado del escenario).
 - **Regla que se mantiene:** cada corrida lleva `platform=laptop-dev` y `run_profile=final`. Si luego se mide en otra plataforma (pc-alem), sus datos van en tablas y figuras aparte. Nunca se mezclan.
 - **Qué plataforma alimenta el paper** lo decide el usuario al final. Si es laptop-dev, se declaran sus limitaciones (L3: laptop, posible reducción de frecuencia por temperatura; techo del IPS de ~60–95 kpps).
+
+## D22. La regla Modbus (rev 3) se mantiene tal cual y sus falsos positivos se declaran como limitación (decisión de Alberth, 2026-11-18)
+- **Contexto:** A23. En modo `drop`, la regla 1000004 descarta paquetes legítimos del SCADA al final del ataque y en el enfriamiento (133–162 por corrida en las 4 calibraciones). Con D20 sigue abierto el umbral y el PLC cae tras el flood Modbus (E3: 6/10).
+- **Opciones valoradas:** (a) dejarla y declararla; (b) recalibrar la regla (umbral o lista del SCADA) y repetir E3; (c) estudio adicional "E3 recalibrada" sin reemplazar las 130 corridas.
+- **Elección:** (a). Las 130 corridas del perfil `final` usan una sola versión de reglas y de configuración (comprobado por hash), no se repiten corridas y el dataset queda homogéneo.
+- **Consecuencias:** los resultados de E3 incluyen el efecto de esos falsos positivos en la fase de recuperación; se declara en L8 y en la sección de E3. La recalibración de la regla queda como trabajo futuro.
+
