@@ -1,0 +1,2 @@
+-rw-r--r-- 1 root root 862512 Nov 18 00:22 /var/log/suricata/eve.json
+/dev/vda1       5.8G  961M  4.5G  18% /
