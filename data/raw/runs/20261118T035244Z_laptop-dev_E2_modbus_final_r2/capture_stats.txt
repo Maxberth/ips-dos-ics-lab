@@ -1,0 +1,5 @@
+Capturing on 'mir20' and 'mir30'
+File: /home/maxberth/.cache/ips-lab/captures/20261118T035244Z_laptop-dev_E2_modbus_final_r2.pcapng
+Packets captured: 1370416
+Packets received/dropped on interface 'mir20': 685211/0 (pcap:0/dumpcap:0/flushed:0/ps_ifdrop:0) (100.0%)
+Packets received/dropped on interface 'mir30': 685205/0 (pcap:0/dumpcap:0/flushed:0/ps_ifdrop:0) (100.0%)
