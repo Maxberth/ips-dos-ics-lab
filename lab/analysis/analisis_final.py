@@ -81,7 +81,7 @@ def strip(metric, ylabel, fname, log=False, title=""):
     ax.set_title(title, loc="left", fontsize=10); ax.legend(frameon=False, fontsize=8, ncol=4, loc="upper center", bbox_to_anchor=(.5, -.1))
     fig.tight_layout(); fig.savefig(f"{FIG}/{A.platform}_{A.profile}_{fname}.png"); plt.close(fig)
 strip("availability_pct", "Disponibilidad del SCADA durante el ataque (%)", "a1_disponibilidad", title=f"Disponibilidad por escenario y ataque ({A.platform}, perfil {A.profile}; punto = corrida, línea = media)")
-strip("resp_vs_programadas_pct", "Respuestas válidas / solicitudes programadas (%)", "a7_respuestas_vs_programadas", title="Respuestas válidas respecto a las solicitudes programadas (10 Hz x 60 s); las no emitidas cuentan como sin respuesta")
+strip("resp_vs_programadas_pct", "Respuestas válidas / solicitudes programadas (%)", "a7_respuestas_vs_programadas", title="Respuestas válidas / solicitudes programadas (10 Hz x 60 s)")
 strip("rtt_p95_ms", "RTT p95 (ms, escala log)", "a2_rtt_p95", log=True, title="Latencia (RTT p95) del tráfico legítimo durante el ataque")
 
 # ---- a3: disponibilidad por segundo respecto al inicio del ataque (de polls.csv) ----
