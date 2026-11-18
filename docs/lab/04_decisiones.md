@@ -23,7 +23,6 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 ## D5. Presupuesto de recursos por plataforma
 - Se define en `lab/config/profile_<plataforma>.env`. Los scripts no cambian entre plataformas.
 - **laptop-dev:** VMs 4,75 GiB (atacante 1,25, fw 0,5, ips 1,5, plc 0,75, scada 0,75). `machine.slice` MemoryHigh 6 GiB y MemoryMax 6,5 GiB, sin swap. Núcleo 0 (hilos 0-1) reservado al host.
-- **pc-miguel:** VMs 8 GiB, MemoryHigh 11 GiB, MemoryMax 12 GiB. Pendiente de confirmar con su inventario.
 
 ## D8. Sistema de las VMs: Debian 13 (trixie) genericcloud, atacante incluido
 - **Alternativas:** Kali (paper) para el atacante, Ubuntu Server 24.04 para el resto.
@@ -58,7 +57,7 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 ## D15. Umbral de crecimiento de swap en laptop-dev: 3 GiB
 - **Contexto:** con las 5 VMs encendidas, el guardián pasó a WARN por swap +884 MiB (el ABORT estaba en +1024). Al mismo tiempo, el PSI de memoria era 0,3 % y había 4,3 GiB disponibles.
 - **Causa:** laptop-dev usa zram (swap comprimido en RAM) con `vm.swappiness=150`: el kernel manda páginas frías a zram aunque haya memoria. El crecimiento de swap no indica presión en esta configuración.
-- **Elección:** en el perfil laptop-dev, ABORT por swap sube a +3072 MiB. Los criterios principales siguen siendo RAM disponible (PAUSE < 3 GiB, ABORT < 2 GiB) y PSI (PAUSE > 20 %). pc-miguel mantiene 1024 MiB hasta medir su configuración de swap.
+- **Elección:** en el perfil laptop-dev, ABORT por swap sube a +3072 MiB. Los criterios principales siguen siendo RAM disponible (PAUSE < 3 GiB, ABORT < 2 GiB) y PSI (PAUSE > 20 %).
 - Evidencia: `data/raw/guard/guard_laptop-dev_20261117.csv` (18:41 UTC).
 
 ## D16. Aislamiento de la VLAN 99 de gestión en cada VM
@@ -93,11 +92,10 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 - **Conclusión honesta:** con un único atacante y reglas por umbral, Suricata **protege la disponibilidad del SCADA durante el ataque, pero no evita que OpenPLC caiga al terminar el flood**. La causa en OpenPLC no está determinada (A18).
 - **Opciones para decidir antes de las corridas finales:**
   1. Reportarlo tal cual: el resultado del escenario incluye "PLC caído tras el ataque".
-  2. (No se hizo; pc-miguel no se usó) Probar `reject` (RST al atacante) en lugar de `drop`.
   3. Aislar la causa en OpenPLC (fuera del alcance del plazo).
 
 ## D21. Tanda real (perfil `final`) en laptop-dev
-- **Contexto:** pc-miguel no está disponible. El usuario pidió el 2026-11-17 a las 21:23 UTC intentar la tanda real en esta laptop: en el piloto, la RAM no fue el límite (Tctl máximo de 82,6 °C, por debajo del PAUSE de 88 °C).
+- **Contexto:** el usuario decidió el 2026-11-17 a las 21:23 UTC hacer la tanda real en esta laptop: en el piloto, la RAM no fue el límite (Tctl máximo de 82,6 °C, por debajo del PAUSE de 88 °C).
 - **Alcance:** E0, E1 y E3 × {syn, modbus} × 10 repeticiones, perfil `final` (15 + 60 + 15 s), semilla 2027, regla Modbus rev 3 (D20, opción 1: "PLC caído tras el ataque" se reporta como resultado del escenario).
 - **Regla que se mantiene:** cada corrida lleva `platform=laptop-dev` y `run_profile=final`. Si luego se mide en otra plataforma, sus datos van en tablas y figuras aparte. Nunca se mezclan.
 - **Qué plataforma alimenta el paper** lo decide el usuario al final. Si es laptop-dev, se declaran sus limitaciones (L3: laptop, posible reducción de frecuencia por temperatura; techo del IPS de ~60–95 kpps).

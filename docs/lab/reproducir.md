@@ -1,6 +1,6 @@
 # Cómo reproducir el laboratorio desde cero
 
-La plataforma del estudio es `laptop-dev` (`lab/config/profile_laptop-dev.env`); en otra máquina solo cambia el perfil. [`pasar_a_pc-miguel.md`](pasar_a_pc-miguel.md) es histórico.
+La plataforma del estudio es `laptop-dev` (`lab/config/profile_laptop-dev.env`); en otra máquina solo cambia el perfil.
 
 ## 1. Host (una vez, con sudo)
 ```bash

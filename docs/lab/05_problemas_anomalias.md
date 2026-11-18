@@ -80,7 +80,7 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
 - **Causa:** el balanceo de NFQUEUE calcula el hash con las direcciones IP de origen y destino, no con los puertos. Un atacante con una sola IP (L5) cae siempre en la misma cola.
 - **Consecuencia:** con un solo origen, el techo del IPS es una cola: Suricata procesó unos 95 kpps (2,87 M en 30 s) frente a unos 150 kpps de ataque en laptop-dev. El exceso lo descarta el kernel sin distinguir el tráfico legítimo.
 - **Variabilidad:** dos corridas casi iguales (D18) dieron 93,3 % y 88,5 % de disponibilidad del SCADA. Hacen falta repeticiones (perfil final ×10) para dar intervalos.
-- Se mantienen las 2 colas: no perjudican y ayudan con orígenes distintos. Para el paper: declarar el techo de rendimiento del IPS virtual y reportar `queue_dropped` aparte de los descartes por regla. En pc-miguel hay que medir el techo propio.
+- Se mantienen las 2 colas: no perjudican y ayudan con orígenes distintos. Para el paper: declarar el techo de rendimiento del IPS virtual y reportar `queue_dropped` aparte de los descartes por regla.
 
 ## A15. El Modbus/TCP flood sin IPS (E1) tumbó el runtime de OpenPLC; 9 corridas posteriores midieron un PLC caído
 - **Corrida:** `20261117T191113Z_laptop-dev_E1_modbus_piloto_r1`. El atacante abrió 8 conexiones Modbus y escribió unos 9,5 M de solicitudes en 30 s. El SCADA tuvo respuesta hasta la solicitud 352. A partir de la 353 (≈ 35 s desde t0, al terminar el ataque) recibió `ConnectionRefused`.
@@ -110,7 +110,7 @@ Todo lo raro, aunque se resuelva: síntoma, hipótesis, evidencia y resolución.
   - 1 conexión sin límite, 2 s (536 736 solicitudes escritas): **el runtime termina**.
 - **Patrón:** en las corridas, el SCADA deja de obtener respuesta justo al terminar el ataque, cuando el atacante cierra sus conexiones con respuestas pendientes. El proceso `core/openplc` queda zombi. `/proc/<pid>/stat` da `exit_code=0` (ninguna señal registrada) y no hay rastro en dmesg. `openplc.service` sigue `active` porque vigila `start_openplc.sh`.
 - **Hipótesis descartada:** un SIGPIPE al escribir en un socket cerrado dejaría la señal 13 en el código de salida, y no aparece. **No se determinó la causa en el código de OpenPLC**; no se afirma ninguna.
-- **En E3 (drop) también cayó una vez tras el ataque** (`20261117T195929Z`), aunque el SCADA tuvo 100 % de disponibilidad durante el ataque. La regla 1000004 deja pasar los primeros 100 segmentos/s por origen (`detection_filter`), y cada segmento del flood lleva 32 solicitudes, así que llegan hasta ~3 200 solicitudes/s. Ajustar el umbral, o medir por solicitudes en lugar de segmentos, es una decisión pendiente para pc-miguel; se registra el resultado tal cual.
+- **En E3 (drop) también cayó una vez tras el ataque** (`20261117T195929Z`), aunque el SCADA tuvo 100 % de disponibilidad durante el ataque. La regla 1000004 deja pasar los primeros 100 segmentos/s por origen (`detection_filter`), y cada segmento del flood lleva 32 solicitudes, así que llegan hasta ~3 200 solicitudes/s. Ajustar el umbral, o medir por solicitudes en lugar de segmentos, quedó como decisión posterior (D22: se mantiene la regla y se declara la limitación); se registra el resultado tal cual.
 - **Consecuencia para el diseño:** "el PLC sigue vivo tras la corrida" (`alive_after` en `plc_health.txt`) es un resultado del escenario y el arnés lo registra. El reinicio previo garantiza que cada corrida empiece con el PLC sano.
 
 ## A19. Calibración térmica de la tanda real en laptop-dev: sin throttling

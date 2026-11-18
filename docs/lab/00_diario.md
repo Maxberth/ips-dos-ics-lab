@@ -1,7 +1,7 @@
 # Diario del laboratorio (solo se añade al final)
 
 - 2026-11-17: se crea el repositorio con la documentación inicial, la arquitectura y la serie de prompts P01–P22. Aún no se ha ejecutado ningún paso del laboratorio.
-- 2026-11-17 17:45 UTC (laptop-dev): P01 hecho (CLAUDE.md, docs/lab/01–08, perfiles `laptop-dev` y `pc-miguel`). No había contenedores Docker en ejecución (`docs/lab/contenedores_apagados.md`). `sudo` pide contraseña: se preparó `lab/setup/root_setup.sh` para que el usuario lo ejecute una vez.
+- 2026-11-17 17:45 UTC (laptop-dev): P01 hecho (CLAUDE.md, docs/lab/01–08, perfil `laptop-dev`). No había contenedores Docker en ejecución (`docs/lab/contenedores_apagados.md`). `sudo` pide contraseña: se preparó `lab/setup/root_setup.sh` para que el usuario lo ejecute una vez.
 - 2026-11-17 17:48 UTC (laptop-dev): P04 parcial. Guardián (`lab/guard/`) escrito y probado con umbrales simulados: WARN, PAUSE (RAM, PSI, temperatura), ABORT fijado y `lab-stop.sh --clear` funcionan; un scope con MemoryMax=256M que escribe 600 MiB muere solo (exit 137) sin afectar al escritorio. Primer intento de esa prueba no detectó nada porque `bytearray` no toca las páginas (corregido). Las simulaciones escribían en `data/raw/guard/`: se borraron y ahora usan `GUARD_CSV` temporal. Guardián activo como `ips-lab-guard` (servicio de usuario). Pendiente: límites de `machine.slice` (lo aplica `root_setup.sh`) y prueba térmica con `stress-ng`.
 - 2026-11-17 17:47 UTC (laptop-dev): descargada la imagen Debian 13 genericcloud (344 MB) y verificada con SHA512SUMS. Decisiones D1–D5 y D8–D10, limitaciones L1–L4.
 - 2026-11-17 18:47 UTC (laptop-dev): P05 a P10 verificados.
@@ -19,7 +19,7 @@
   - La matriz se tragaba el stdin (corregido, y `--resume`).
   - OpenPLC caído tras el Modbus flood: 9 corridas invalidadas y salud del PLC en cada corrida.
   - Suricata bloqueaba sin reglas por `exception-policy` y `stream.drop-invalid` (D19).
-  - Piloto final con 14 corridas válidas y auditoría: puerta de calidad superada para pasar a pc-miguel.
+  - Piloto final con 14 corridas válidas y auditoría: puerta de calidad superada para pasar a las corridas finales.
   - Corrida piloto: 64–93 s, mediana 76 s.
 - 2026-11-17 20:05–20:47 UTC (laptop-dev): P13–P16 en versión reducida (perfil `reduced` ×3: E0, E1 y E3 × syn y modbus; 15 corridas, 71–100 s cada una) y estadística P20 (`lab/analysis/stats_tables.py` → `data/processed/stats_*`, `tables/stats_*.tex`, `figures/*`).
   - E1 modbus: PLC caído 3/3.

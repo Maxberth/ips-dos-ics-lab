@@ -1,6 +1,6 @@
 # Plataforma: laptop-dev
 
-Laptop del usuario. Sirve para calibrar el laboratorio: instalar, escribir y probar los scripts de red, VMs, firewall, Suricata y el arnés de medición. Así, en pc-miguel solo queda correr las pruebas.
+Laptop del usuario. Es la plataforma de todas las mediciones del estudio: en ella se instalaron y probaron los scripts de red, VM, firewall, Suricata y el arnés, y se hicieron las corridas piloto y las 130 finales.
 
 **Medido el 2026-11-17 a las 12:16 (hora de Perú)**, en modo solo lectura y sin sudo. Las salidas literales están en [`../logs/laptop_P02_*.txt`](../logs/).
 
@@ -43,7 +43,7 @@ Laptop del usuario. Sirve para calibrar el laboratorio: instalar, escribir y pro
 
 - **RAM al límite.** Con 14,8 GiB, 4 VMs del piloto entran solo cerrando aplicaciones. Las 5 VMs del escenario completo (10 GiB) no entran con margen. zram ayuda, pero si las VMs empiezan a usar swap, las mediciones salen distorsionadas.
 - **Es una laptop.** Bajo carga sostenida (floods + Suricata) puede bajar la frecuencia por temperatura o por el perfil de energía. No se midió bajo carga. Sirve para calibrar, no para los números finales.
-- **Suricata, Snort y pymodbus vienen de AUR** (compilación). Las versiones deben ser las mismas en pc-miguel, así que hay que fijarlas.
+- **Suricata, Snort y pymodbus vienen de AUR** (compilación). Las versiones se fijan y se registran en `data/raw/versions/`.
 - **Docker por socket.** Durante este inventario, `docker network ls` arrancó `dockerd` (12:16:46) por activación de socket. Sigue activo. No hay contenedores corriendo. Para medir, conviene detenerlo.
 - **La LAN de casa es 192.168.1.0/24.** El paper usaba direcciones 192.168.1.x para el PLC. El plan nuevo (P06) usa 192.168.10/20/30/99, así que no choca. No hay que volver a las direcciones del paper.
 - **Logs con datos del equipo.** Los logs incluyen MAC, IP local, IP de Tailscale y UUID del disco. El repositorio es privado. Si se publica, hay que anonimizarlos.

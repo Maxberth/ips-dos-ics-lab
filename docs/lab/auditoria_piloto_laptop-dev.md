@@ -100,14 +100,14 @@ Corridas incluidas: 14, de configuración final. E0 y E1 de todo el piloto, porq
 1. **Segunda fuente del bloqueo (obs. 1 y 20): CUMPLE.** En las 4 corridas E3, (a)−(b) coincide con (c)+(d) dentro del 5 %. En la corrida de A11 (1 cola), la cuenta firewall frente a Suricata + cola cuadró a 9 paquetes de 4,47 M.
 2. **El IPS se satura (hallazgo, no error de medición).** Con un atacante de una IP, toda la carga entra en una cola NFQUEUE (A14). En laptop-dev, entre el 34 % y el 43 % de lo eliminado en E3 fue desbordamiento de cola, y en E2 (alert) se perdió entre el 59 % y el 69 % del ataque por la misma razón. **En el paper hay que reportar por separado los descartes por regla y por saturación**, y declarar que la saturación también afecta al tráfico legítimo.
 3. **E1 (sin IPS): CUMPLE (a) ≈ (b)** en todos los ataques (eliminado < 1 %).
-4. **Tráfico legítimo / falsos positivos: INCIERTO sin evidencia en contra.** Las reglas usan `track by_src` con umbrales de 50–100/s y el SCADA envía 10 solicitudes/s desde otra IP, así que ninguna regla puede activarse con su tráfico. Las pérdidas del SCADA en E2/E3 coinciden con el desbordamiento de cola. Para confirmarlo por paquete, en pc-miguel conviene una corrida E3 con `suricata-lab.yaml` (alertas en eve) y comprobar que ninguna alerta tiene origen 192.168.20.20.
+4. **Tráfico legítimo / falsos positivos: INCIERTO sin evidencia en contra.** Las reglas usan `track by_src` con umbrales de 50–100/s y el SCADA envía 10 solicitudes/s desde otra IP, así que ninguna regla puede activarse con su tráfico. Las pérdidas del SCADA en E2/E3 coinciden con el desbordamiento de cola. Para confirmarlo por paquete conviene una corrida E3 con `suricata-lab.yaml` (alertas en eve) y comprobar que ninguna alerta tiene origen 192.168.20.20.
 5. **El ataque ocurrió:** 129–209 kpps según el ataque (kernel del atacante). La excepción es E3 modbus (148 pps): ahí el IPS descarta y las conexiones TCP del atacante se quedan sin avanzar. Es efecto del IPS, no un fallo del generador.
 6. **Captura:** dumpcap descarta del 1 % al 14 % a más de ~170 kpps (E1 syn, E1 icmp). Los conteos de la captura son una cota inferior en esas corridas. El contador del firewall y el del kernel del atacante no dependen de la captura.
 7. **Temperatura:** máximo de 82,6 °C, por debajo del PAUSE (88 °C). El guardián no pasó de OK/WARN durante las corridas válidas.
 8. **OpenPLC (A15, A18):** el Modbus flood sin prevención (E1 ×2, E2) dejó el runtime caído al terminar el ataque. Con E3, el SCADA mantuvo el 100 % durante el ataque, pero el PLC cayó una vez al final. Es un resultado del escenario (`alive_after`).
 9. **Variabilidad:** dos E3 syn casi iguales dieron un 88 % y un 93 % de disponibilidad. Hacen falta 10 repeticiones.
 
-**Veredicto de la puerta de calidad:** la cadena de medición es defendible: las fuentes cuadran, los fallos se detectan y no hay valores imposibles. Se puede pasar a las corridas finales **en pc-miguel**. Antes hay que decidir dos cosas:
+**Veredicto de la puerta de calidad:** la cadena de medición es defendible: las fuentes cuadran, los fallos se detectan y no hay valores imposibles. Se puede pasar a las corridas finales. Antes hay que decidir dos cosas:
 - el umbral de la regla Modbus (A18);
 - cómo se reporta la saturación del IPS en el paper.
 

@@ -49,4 +49,10 @@ figures/ tables/   figuras y tablas del artículo generadas por scripts (ver sus
 
 - Tanda real completa y analizada; los resultados, tablas y figuras del artículo salen de estos datos.
 - Limitaciones declaradas: una sola máquina física con VM, un switch virtual (no se evalúa hardware de switch industrial), regla Modbus no recalibrada y Snort no evaluado (`docs/lab/03_limitaciones.md`).
-- Aún no hay archivo de licencia: hay que elegir una (código y datos) antes de que otras personas reutilicen el repositorio.
+
+## Licencia y cómo citar
+
+- Código (`lab/`): licencia MIT (`LICENSE`).
+- Datos, figuras, tablas y documentación: CC BY 4.0 (`LICENSE-DATA.md`).
+- Para citar este repositorio, usa `CITATION.cff` (GitHub lo muestra como "Cite this repository") y cita también el artículo.
+

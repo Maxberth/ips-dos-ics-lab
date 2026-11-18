@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Inventario SOLO LECTURA de una plataforma del laboratorio (P02). No instala ni cambia nada. Sin sudo.
-# Uso: lab/setup/inventario_plataforma.sh pc-miguel   -> docs/lab/logs/pc-miguel_P02_*.txt (tarda ~45 s)
-PLATAFORMA="${1:?uso: $0 <nombre-plataforma>  (ej. laptop, pc-miguel)}"
+# Uso: lab/setup/inventario_plataforma.sh laptop-dev   -> docs/lab/logs/laptop-dev_P02_*.txt (tarda ~45 s)
+PLATAFORMA="${1:?uso: $0 <nombre-plataforma>  (ej. laptop-dev)}"
 D="$(cd "$(dirname "$0")/../.." && pwd)/docs/lab/logs"
 mkdir -p "$D"
 P="$D/${PLATAFORMA}_P02"

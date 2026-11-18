@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "Si usas este repositorio, cítalo junto con el artículo de ICITS'27."
+title: "ips-dos-ics-lab: virtual testbed, raw data and analysis scripts for an inline IPS against DoS attacks in industrial control networks"
+type: software
+authors:
+  - family-names: "Vigo Saldaña"
+    given-names: "Alberth Jesus"
+  - family-names: "Juarez Mayo"
+    given-names: "Manuel Oswaldo"
+  - family-names: "Valdez Reyes"
+    given-names: "Jose Alfredo"
+  - family-names: "Villegas Vidal"
+    given-names: "Javier Eduardo"
+  - family-names: "Villar Castillo"
+    given-names: "Jesús Moises Martin"
+repository-code: "https://github.com/Maxberth/ips-dos-ics-lab"
+version: "icits27-final"
+date-released: 2026-11-18
+license:
+  - MIT
+  - CC-BY-4.0
+keywords:
+  - industrial control systems
+  - intrusion prevention system
+  - denial of service
+  - Suricata
+  - OpenPLC
