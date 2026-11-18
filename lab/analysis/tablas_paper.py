@@ -43,6 +43,25 @@ for a, an in AT:
         rem = fmt(V(s, a, "cap_removed_pct")) if s != "E1" else fmt(V(s, a, "cap_removed_pct"))
         L.append(f"{an if s == 'E1' else ''} & {sn} & {fmt(V(s,a,'availability_pct'))} & {fmt(V(s,a,'resp_sch'))} & {fmt(V(s,a,'rtt_p95_ms'),0 if mci(V(s,a,'rtt_p95_ms'))[0] > 50 else 1)} & {rem} & {down}/10\\\\")
 L += ["\\bottomrule", "\\end{tabular}"]; open(f"{OUT}/t_results.tex", "w").write("\n".join(L) + "\n")
+
+# ---- t_attack: intensidad del ataque (paquetes por segundo del atacante, host) ----
+def kfmt(v):  # miles de paquetes por segundo
+    x = mci(v)
+    if x is None: return "--"
+    m, c = x[0] / 1000, x[1] / 1000
+    return f"{m:.2f} $\\pm$ {c:.2f}" if m < 1 else f"{m:.1f} $\\pm$ {c:.1f}"
+A_ = ["\\begin{tabular}{lrrr}", "\\toprule", "Attack & E1 & E2 & E3\\\\", "\\midrule"]
+for a, an in AT: A_.append(f"{an} & " + " & ".join(kfmt(V(s, a, "attacker_pps")) for s, _ in SC) + "\\\\")
+A_ += ["\\bottomrule", "\\end{tabular}"]; open(f"{OUT}/t_attack.tex", "w").write("\n".join(A_) + "\n")
+# ---- t_detection: alertas y paquetes procesados por Suricata (E2 y E3) ----
+D_ = ["\\begin{tabular}{llrrr}", "\\toprule", "Attack & Cond. & Alerts/run & Packets/run & Alerts/packets\\\\", " & & (thousands) & (millions) & (\\%)\\\\", "\\midrule"]
+for a, an in AT:
+    for s, sn in (("E2", "E2"), ("E3", "E3")):
+        rs = by[(s, a)]; al = [f(r, "suri_alerts") for r in rs]; pk = [f(r, "suri_decoder_pkts") for r in rs]
+        ratio = [100 * x / y for x, y in zip(al, pk) if x is not None and y]
+        D_.append(f"{an if s == 'E2' else ''} & {sn} & {st.mean(al) / 1000:.1f} & {st.mean(pk) / 1e6:.2f} & {st.mean(ratio):.1f}\\\\")
+    if a != AT[-1][0]: D_.append("\\midrule")
+D_ += ["\\bottomrule", "\\end{tabular}"]; open(f"{OUT}/t_detection.tex", "w").write("\n".join(D_) + "\n")
 # ---- pruebas ----
 def cliff(x, y):
     g = sum(1 for a in x for b in y if a > b); l = sum(1 for a in x for b in y if a < b); return (g - l) / (len(x) * len(y))
@@ -81,6 +100,22 @@ C = ["\\begin{tabular}{lllrr}", "\\toprule", "VM & Role / software & VLAN & vCPU
 for n, role, vl in (("ATTACKER", "Attacker: hping3, Python flood script", "10"), ("FW", "Firewall/router: nftables", "10/20"), ("SCADA", "SCADA client (Python, 10 Hz)", "20"), ("IPS", "Inline IPS: Suricata 7.0.10, NFQUEUE", "20/30"), ("PLC", "PLC: OpenPLC runtime (Modbus/TCP)", "30")):
     c, m = vm(n); C.append(f"{n.lower()} & {role} & {vl} & {c} & {m / 1024:g}\\\\")
 C += ["\\bottomrule", "\\end{tabular}"]; open(f"{OUT}/t_config.tex", "w").write("\n".join(C) + "\n")
+
+# ---- t_versions: versiones registradas del software (data/raw/versions) ----
+import glob
+vf = sorted(glob.glob(f"{REPO}/data/raw/versions/{A.platform}_*.txt"))[-1]; vt = open(vf).read()
+def ver(pat, grp=1):
+    m = re.search(pat, vt, re.M)
+    if not m: raise SystemExit(f"versión no encontrada: {pat}")
+    return m.group(grp)
+rows_v = [("Host kernel", ver(r"^## host\n(\S+)")), ("QEMU", ver(r"^qemu-system-x86 (\S+?)-\d+$")), ("libvirt", ver(r"^libvirt 1:(\S+?)-\d")),
+          ("Open vSwitch", ver(r"^openvswitch (\S+?)-\d")), ("dumpcap (Wireshark)", ver(r"^wireshark-cli (\S+?)-\d")),
+          ("Python / SciPy (host)", ver(r"^python (\S+?)-\d") + " / " + ver(r"^python-scipy (\S+?)-\d")),
+          ("Guests (kernel)", "Debian 13, " + ver(r"(6\.12\.\S+)")), ("nftables", ver(r"^nftables (\d\S*?)-\d")),
+          ("Suricata", ver(r"^This is Suricata version (\S+)")), ("OpenPLC (commit)", ver(r"openplc_commit=([0-9a-f]{7})")),
+          ("hping3", ver(r"^hping3 (\S+)")), ("Python (guests)", ver(r"^python3 (\S+?)-\d"))]
+Vt = ["\\begin{tabular}{ll}", "\\toprule", "Component & Version\\\\", "\\midrule"] + [f"{a} & {b.replace('_', chr(92) + '_')}\\\\" for a, b in rows_v] + ["\\bottomrule", "\\end{tabular}"]
+open(f"{OUT}/t_versions.tex", "w").write("\n".join(Vt) + "\n")
 # ---- reglas reales (modo drop) ----
 rules = [l.replace("ACTION ", "drop ") for l in open(f"{REPO}/lab/config/ips/rules/lab.rules.in") if l.startswith("ACTION ")]
 open(f"{OUT}/rules_drop.txt", "w").write("".join(rules))

@@ -13,8 +13,10 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-ap = argparse.ArgumentParser(); ap.add_argument("--platform", required=True); ap.add_argument("--lang", default="en"); A = ap.parse_args()
-DEST = f"{REPO}/figures/paper" + ("" if A.lang == "en" else "_es")
+ap = argparse.ArgumentParser(); ap.add_argument("--platform", required=True); ap.add_argument("--lang", default="en"); ap.add_argument("--layout", default="lncs", choices=["lncs", "acm"]); A = ap.parse_args()
+DEST = f"{REPO}/figures/paper" + ("_acm" if A.layout == "acm" else "") + ("" if A.lang == "en" else "_es")
+ACM = A.layout == "acm"; WF = 7.0 if ACM else E.W  # ancho de página completa (in)
+H = {"a0": (3.3, 3.2) if ACM else (3.6, 3.4), "a1": 2.3 if ACM else 3.1, "a2": 2.7 if ACM else 2.7, "a3": 2.2 if ACM else 3.1}
 E.aplicar(); plt.rcParams["axes.grid"] = False
 prof = open(f"{REPO}/lab/config/profile_{A.platform}.env").read(); exp = open(f"{REPO}/lab/config/experiment.env").read()
 def vm(n):
@@ -32,10 +34,10 @@ def arrow(ax, p, q, txt=None, c="#222", style="-|>", lw=.9, ls="-", off=(0, .02)
     ax.add_patch(FancyArrowPatch(p, q, arrowstyle=style, mutation_scale=7, lw=lw, color=c, ls=ls, shrinkA=0, shrinkB=0))
     if txt: ax.text((p[0] + q[0]) / 2 + off[0], (p[1] + q[1]) / 2 + off[1], txt, ha="center", va="bottom", fontsize=fs, color=c)
 def lienzo(h):
-    fig, ax = plt.subplots(figsize=(E.W, h)); ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off"); return fig, ax
+    fig, ax = plt.subplots(figsize=(WF, h)); ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off"); return fig, ax
 
 # ---------- A0: topología lógica propuesta (mismo formato que la Fig. 1 original: flujo vertical de cajas grises) ----------
-fig, ax = plt.subplots(figsize=(3.6, 3.4)); ax.set_xlim(0, 1); ax.set_ylim(-.04, 1.04); ax.axis("off")
+fig, ax = plt.subplots(figsize=H["a0"]); ax.set_xlim(0, 1); ax.set_ylim(-.04, 1.04); ax.axis("off")
 G = "#f2f2f2"
 nodos = [(.87, "Corporate / IT network\n(VLAN 10, attacker)" if EN else "Red corporativa / TI\n(VLAN 10, atacante)"),
          (.58, "Industrial DMZ\nSCADA/HMI (VLAN 20)" if EN else "DMZ industrial\nSCADA/HMI (VLAN 20)"),
@@ -49,7 +51,7 @@ ax.text(.99, .50, "Virtual industrial switch (Open vSwitch, 802.1Q VLANs)" if EN
 E.guardar(fig, DEST, "a0_logical_topology")
 
 # ---------- A1: banco de pruebas y puntos de medición ----------
-fig, ax = lienzo(3.1)
+fig, ax = lienzo(H["a1"])
 bw, bh, xs, y0 = .18, .30, [.01, .275, .54, .805], .44
 cajas = [("Attacker" if EN else "Atacante", "hping3,\nPython", "VLAN 10", "#fbe3d6"), ("Firewall", "nftables", "VLAN 10/20", "#ffffff"), ("IPS inline", "Suricata,\nNFQUEUE", "VLAN 20/30", "#fff2cc"), ("OpenPLC", "Modbus/TCP\n:502", "VLAN 30", "#dcefdc")]
 for x, (n, sw, vl_, c) in zip(xs, cajas):
@@ -70,7 +72,7 @@ ax.text(.5, .015, "Out-of-band measurement on the host: no packet passes through
 E.guardar(fig, DEST, "a1_topology")
 
 # ---------- A2: ruta de datos del IPS ----------
-fig, ax = lienzo(2.7); ax.set_xlim(-.02, 1.02)
+fig, ax = lienzo(H["a2"]); ax.set_xlim(-.02, 1.02); ax.set_ylim(-.09, 1)
 ax.add_patch(Rectangle((.125, .07), .755, .86, fc="#fffdf2", ec="#b8a64a", lw=.7, ls="--")); ax.text(.14, .895, "lab-ips (Debian 13)", fontsize=6.3, fontweight="bold", va="center")
 yT, yB, h = .56, .14, .20; vw = .085; xN, wN, xQ, wQ, xS, wS = .165, .17, .385, .17, .605, .18; xo = .905
 box(ax, .005, yT, vw, h, "v20", fc="#eaf1f8", fs=6); box(ax, xo, yT, vw, h, "v30", fc="#dcefdc", fs=6)
@@ -90,7 +92,7 @@ ax.text(.5, .02, "E1: router mode, no queue · E2: action alert · E3: action dr
 E.guardar(fig, DEST, "a2_ips_datapath")
 
 # ---------- A3: diseño experimental ----------
-fig, (axT, axM) = plt.subplots(2, 1, figsize=(E.W, 3.1), gridspec_kw=dict(height_ratios=[.8, 1.35]), constrained_layout=True)
+fig, (axT, axM) = plt.subplots(2, 1, figsize=(WF, H["a3"]), gridspec_kw=dict(height_ratios=[.8, 1.35]), constrained_layout=True)
 for a_ in (axT, axM): a_.axis("off")
 tot = warm + att + cool; axT.set_xlim(0, tot); axT.set_ylim(0, 1)
 for x0, w, c, t in ((0, warm, "#eaf1f8", "warm-up\n%d s" % warm if EN else "calentamiento\n%d s" % warm), (warm, att, "#f9d9cf", "attack\n%d s" % att if EN else "ataque\n%d s" % att), (warm + att, cool, "#dcefdc", "cool-down\n%d s" % cool if EN else "enfriamiento\n%d s" % cool)):

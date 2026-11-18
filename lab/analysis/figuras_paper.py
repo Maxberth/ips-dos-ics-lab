@@ -13,19 +13,20 @@ import estilo_figuras as E
 import matplotlib.pyplot as plt
 
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-ap = argparse.ArgumentParser(); ap.add_argument("--platform", required=True); ap.add_argument("--profile", default="final"); ap.add_argument("--lang", default="en")
-A = ap.parse_args(); P = f"{A.platform}_{A.profile}"; DEST = f"{REPO}/figures/paper" + ("" if A.lang == "en" else "_es")
+ap = argparse.ArgumentParser(); ap.add_argument("--platform", required=True); ap.add_argument("--profile", default="final"); ap.add_argument("--lang", default="en"); ap.add_argument("--layout", default="lncs", choices=["lncs", "acm"])
+A = ap.parse_args(); P = f"{A.platform}_{A.profile}"; DEST = f"{REPO}/figures/paper" + ("_acm" if A.layout == "acm" else "") + ("" if A.lang == "en" else "_es")
+ACM = A.layout == "acm"; WF = 7.0 if ACM else E.W; WC = 3.3 if ACM else E.W  # ancho de página completa y de columna (in)
 E.aplicar()
 T = {"en": dict(E1="E1 Router only (no IPS)", E2="E2 Suricata alert", E3="E3 Suricata drop", E0="E0 No attack",
                 syn="TCP SYN", udp="UDP", icmp="ICMP", modbus="Modbus/TCP",
-                av_iss="Valid replies / issued (%)", av_sch="Valid replies / scheduled (%)",
+                av_iss="Valid replies / issued (%)", av_y="Valid replies (%)", av_t1="replies / requests issued", av_t2="replies / requests scheduled", av_sch="Valid replies / scheduled (%)",
                 rtt="p95 round-trip time (ms)", t="Time from attack start (s)", resp="Valid replies (%)",
                 rem="Attack packets removed (%)", plcdown="Runs with PLC down\nafter the attack (of 10)",
                 cpu_ips="lab-ips VM", cpu_plc="lab-plc VM", cpu_y="vCPU time / (vCPUs x wall time) (%)", base="E0 mean", attack="attack window",
                 tmax="Peak Tctl (°C)", mhz="Mean CPU clock\nduring attack (MHz)", run="Run (chronological order)"),
      "es": dict(E1="E1 Solo router (sin IPS)", E2="E2 Suricata alert", E3="E3 Suricata drop", E0="E0 Sin ataque",
                 syn="TCP SYN", udp="UDP", icmp="ICMP", modbus="Modbus/TCP",
-                av_iss="Resp. válidas / emitidas (%)", av_sch="Resp. válidas / programadas (%)",
+                av_iss="Resp. válidas / emitidas (%)", av_y="Respuestas válidas (%)", av_t1="respuestas / emitidas", av_t2="respuestas / programadas", av_sch="Resp. válidas / programadas (%)",
                 rtt="RTT p95 (ms)", t="Tiempo desde el inicio del ataque (s)", resp="Respuestas válidas (%)",
                 rem="Paquetes de ataque eliminados (%)", plcdown="Corridas con PLC caído\ntras el ataque (de 10)",
                 cpu_ips="VM lab-ips", cpu_plc="VM lab-plc", cpu_y="tiempo de vCPU / (vCPUs x tiempo) (%)", base="Media E0", attack="ventana de ataque",
@@ -65,18 +66,23 @@ def puntos(ax, metrica, ylabel, ylog=False, e0=True):
     if ylog: ax.set_yscale("log")
 
 # R1: disponibilidad (a) por solicitud emitida y (b) respecto a lo programado
-fig, (a1, a2) = plt.subplots(2, 1, figsize=(E.W, 3.0), sharex=True, constrained_layout=True)
-puntos(a1, "availability_pct", T["av_iss"]); puntos(a2, "resp_sch", T["av_sch"])
-for ax, l in ((a1, "(a)"), (a2, "(b)")): ax.set_title(l, loc="left", fontweight="bold", fontsize=8, pad=2)
+if ACM:
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(WF, 2.3), sharey=True, constrained_layout=True)
+    puntos(a1, "availability_pct", T["av_y"]); puntos(a2, "resp_sch", T["av_y"]); a2.set_ylabel("")
+else:
+    fig, (a1, a2) = plt.subplots(2, 1, figsize=(E.W, 3.0), sharex=True, constrained_layout=True)
+    puntos(a1, "availability_pct", T["av_iss"]); puntos(a2, "resp_sch", T["av_sch"])
+for ax, l in ((a1, "(a) " + T["av_t1"] if ACM else "(a)"), (a2, "(b) " + T["av_t2"] if ACM else "(b)")): ax.set_title(l, loc="left", fontweight="bold", fontsize=7.5, pad=2)
 for ax in (a1, a2): ax.set_ylim(-4, 106)
 leyenda(fig, e0=True); E.guardar(fig, DEST, "r1_availability")
 
 # R2: RTT p95 (escala log)
-fig, ax = plt.subplots(figsize=(E.W, 2.7), constrained_layout=True)
+fig, ax = plt.subplots(figsize=(WC, 2.5), constrained_layout=True)
 puntos(ax, "rtt_p95_ms", T["rtt"], ylog=True); leyenda(fig, e0=True); E.guardar(fig, DEST, "r2_rtt_p95")
 
 # R3: serie por segundo (de polls.csv), 2x2
-fig, axs = plt.subplots(2, 2, figsize=(E.W, 2.5), sharex=True, sharey=True, constrained_layout=True)
+if ACM: fig, axs = plt.subplots(1, 4, figsize=(WF, 1.9), sharex=True, sharey=True, constrained_layout=True)
+else: fig, axs = plt.subplots(2, 2, figsize=(E.W, 2.5), sharex=True, sharey=True, constrained_layout=True)
 for ax, a in zip(axs.flat, AT):
     for s in SC:
         acc = defaultdict(lambda: [0, 0])
@@ -87,12 +93,12 @@ for ax, a in zip(axs.flat, AT):
                 if -10 <= b <= 70: acc[b][0] += p["ok"] == "1"; acc[b][1] += 1
         xs = sorted(acc); ax.plot(xs, [100 * acc[x][0] / acc[x][1] for x in xs], color=E.COL[s], lw=.9, ls={"E1": ":", "E2": "--", "E3": "-"}[s], label=T[s])
     ax.axvspan(0, 60, color="k", alpha=.05, lw=0); ax.set_title(T[a], loc="left", pad=2); ax.set_ylim(-4, 106)
-for ax in axs[1]: ax.set_xlabel(T["t"])
-for ax in axs[:, 0]: ax.set_ylabel(T["resp"])
+for ax in (axs if ACM else axs[1]): ax.set_xlabel(T["t"])
+for ax in (axs[:1] if ACM else axs[:, 0]): ax.set_ylabel(T["resp"])
 leyenda(fig, lines=True); E.guardar(fig, DEST, "r3_availability_timeseries")
 
 # R4: ataque eliminado (captura: solo atacante -> PLC), media e IC95
-fig, ax = plt.subplots(figsize=(E.W, 2.2), constrained_layout=True); w = .26
+fig, ax = plt.subplots(figsize=(WC, 2.2), constrained_layout=True); w = .26
 for j, s in enumerate(SC):
     ys, es = [], []
     for a in AT:
@@ -102,7 +108,7 @@ ax.set_xticks(range(4)); ax.set_xticklabels([T[a] for a in AT]); ax.set_ylabel(T
 leyenda(fig, patches=True); E.guardar(fig, DEST, "r4_attack_removed")
 
 # R5: PLC caído tras el ataque
-fig, ax = plt.subplots(figsize=(E.W, 2.2), constrained_layout=True)
+fig, ax = plt.subplots(figsize=(WC, 1.9), constrained_layout=True)
 for j, s in enumerate(SC):
     ys = [sum(r["plc_alive_after"] != "yes" for r in by.get((s, a), [])) for a in AT]
     b = ax.bar([i + (j - 1) * w for i in range(4)], ys, w, color=E.COL[s])
@@ -121,7 +127,7 @@ def cpu(rid, vm):
             pts.append((int(row["ts_unix_ns"]), float(row["value"])))
     if len(pts) < 2: return None
     return 100 * (pts[-1][1] - pts[0][1]) / ((pts[-1][0] - pts[0][0]) * VC[vm])
-fig, axs = plt.subplots(1, 2, figsize=(E.W, 2.3), sharey=True, constrained_layout=True)
+fig, axs = plt.subplots(1, 2, figsize=(WC, 2.3), sharey=True, constrained_layout=True)
 for ax, vm, lab in zip(axs, ("lab-ips", "lab-plc"), (T["cpu_ips"], T["cpu_plc"])):
     for j, s in enumerate(["E1", "E2", "E3"]):
         ys = []
@@ -132,7 +138,7 @@ for ax, vm, lab in zip(axs, ("lab-ips", "lab-plc"), (T["cpu_ips"], T["cpu_plc"])
 axs[0].set_ylabel(T["cpu_y"]); leyenda(fig, patches=True); E.guardar(fig, DEST, "r6_vm_cpu")
 
 # R7 (material suplementario): temperatura y frecuencia por corrida
-fig, (t1, t2) = plt.subplots(2, 1, figsize=(E.W, 3.2), sharex=True, constrained_layout=True)
+fig, (t1, t2) = plt.subplots(2, 1, figsize=(WC, 3.0), sharex=True, constrained_layout=True)
 for i, r in enumerate(sorted(S, key=lambda r: r["run_id"])):
     for ax, k in ((t1, "tctl_max_c"), (t2, "cpu_mhz_attack")):
         v = f(r, k)
