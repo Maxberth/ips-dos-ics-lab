@@ -1,7 +1,7 @@
 # Auditoría de los scripts de análisis y de las figuras (2026-11-18, UTC)
 
 **Alcance real:** revisé línea por línea `analisis_final.py`, `stats_tables.py`, `calibracion_alertas.py`, `verificar_conservacion_nfq.py`, `muestras_guard_por_corrida.py` y los scripts nuevos de figuras; y las partes de `summarize_runs.py`, `pcap_count.py`, `scada_poller.py`, `run_once.sh` e `ips_mode.sh` que determinan lo que se grafica. **No auditué a fondo** `host_sampler.py`, `modbus_flood.py`, `validate_run.py` ni `audit_pilot.py`.
-**Revisión visual:** abrí y miré cada PNG generado (10 en inglés y los diagramas en español) y corregí lo que vi. No se subió nada a un servicio externo: la revisión la hice con la herramienta de lectura de imágenes de esta sesión.
+**Revisión visual:** abrí y miré cada PNG generado (las 10 en inglés y los diagramas a1 y a2 en español) y corregí lo que vi. No se subió nada a un servicio externo: la revisión la hice con la herramienta de lectura de imágenes de esta sesión.
 
 ## Hallazgos y qué se hizo
 
@@ -13,7 +13,7 @@
 | 4 | **Texto desbordado en los diagramas** (nombres de VM, `c_fwd_v20_v30`, etiquetas de los espejos) y etiqueta "accept" montada en un cuadro. | Alta | Rediseñé la geometría, reduje el texto por caja y revisé las versiones en inglés y español. |
 | 5 | **Título cortado** (figura de respuestas/programadas) y títulos largos dentro de la imagen. | Media | Títulos fuera de la imagen (van en el caption de LaTeX); el título de panel es corto. |
 | 6 | **Rótulo "(b)" montado sobre la etiqueta del eje.** | Media | Etiquetas de eje más cortas y panel como título izquierdo. |
-| 7 | **Colores:** una paleta no apta para daltonismo y sin marcadores. | Media | Paleta Okabe-Ito y un marcador distinto por escenario (circulo, triángulo, rombo). Barras con parche en vez de marcador. |
+| 7 | **Colores:** una paleta no apta para daltonismo y sin marcadores. | Media | Paleta Okabe-Ito y un marcador distinto por escenario (círculo, triángulo, rombo). Barras con parche en vez de marcador. |
 | 8 | **Dos conjuntos de figuras** (`stats_tables.py` y `analisis_final.py`) con estilos distintos. | Media | `analisis_final.py` solo escribe la tabla; `stats_tables.py` solo dibuja con `--figures` (figuras antiguas); todas las del paper salen de `figuras_paper.py` y `figuras_arquitectura.py`. Eliminé las `laptop-dev_final_*` antiguas. |
 | 9 | **`docs/arquitectura.md` desactualizado:** Ryzen 5 5600X con 24 GB, pfSense y Snort E4, que no son lo medido. | Alta | Corregido a `laptop-dev` (Ryzen 5 6600H, 14,8 GiB), nftables y E4 no ejecutado. |
 | 10 | **Disponibilidad por solicitud emitida** (`summarize_runs.py`): sobreestima el servicio al saturarse (A24). | Alta | Documentado; las figuras muestran las dos métricas. No se cambió la definición oficial. |
