@@ -1,0 +1,7 @@
+corridas verificadas: 130
+  máx. diferencia disp_emitida: 0.0050
+  máx. diferencia disp_programada: 0.0000
+  máx. diferencia eliminado: 0.0049
+  máx. diferencia tctl_max: 0.0000
+  corridas con PLC vivo inconsistente: 0
+RESULTADO: COHERENTE
