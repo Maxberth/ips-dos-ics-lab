@@ -51,7 +51,7 @@ def agg(v):
     return dict(n=n, mean=m, sd=sd, ci95=tcrit(n) * sd / math.sqrt(n) if n > 1 else float("nan"), min=min(v), max=max(v), median=st.median(v))
 
 # ---- tabla agregada ----
-MET = ["availability_pct", "rtt_median_ms", "rtt_p95_ms", "attacker_pps", "cap_removed_pct", "tctl_max_c", "cpu_mhz_attack"]
+MET = ["availability_pct", "rtt_median_ms", "rtt_p95_ms", "attacker_pps", "cap_removed_pct", "tctl_max_c", "cpu_mhz_attack", "suri_alerts", "suri_decoder_pkts"]
 with open(f"{REPO}/data/processed/analisis_{P}.csv", "w", newline="") as fh:
     w = csv.writer(fh); w.writerow(["scenario", "attack", "metric", "n", "mean", "sd", "ci95", "min", "median", "max", "plc_alive_after_no"])
     for (s, a), rs in sorted(by.items()):

@@ -46,9 +46,29 @@ El cociente entre los descartes de Suricata/NFQUEUE y los paquetes que desaparec
 
 Consecuencias: el "% de ataque eliminado" válido es el de la captura (figura `a4_eliminacion_ips.png`). La parte "por saturación" (`sat_pct`) solo es utilizable en E3 syn/udp/icmp (sentido inverso casi nulo); en E2 syn/icmp mezcla ambos sentidos y no se cita. Detalle en A21.
 
-## 5. Qué falta
+## 5. Detección por regla (E2 y E3)
+
+Reglas en `lab/config/ips/rules/lab.rules.in` (`detection_filter` por origen: syn 100/s, udp 100/s, icmp 50/s, modbus 20/s). Datos: `suri_alerts` y `suri_decoder_pkts` por corrida, deltas de `suricata_stats.jsonl` (`data/processed/analisis_laptop-dev_final.csv`).
+
+| Escenario | Ataque | Corridas con ≥1 alerta | Alertas (media) | Paquetes de Suricata (media) | alertas / paquetes |
+|---|---|---|---|---|---|
+| E2 | syn | 10/10 | 3,37 M | 4,52 M | 74,6 % |
+| E2 | udp | 10/10 | 65 480 | 4,85 M | 1,35 % |
+| E2 | icmp | 10/10 | 3,73 M | 5,16 M | 72,3 % |
+| E2 | modbus | 10/10 | 163 110 | 0,67 M | 24,3 % |
+| E3 | syn | 10/10 | 5,89 M | 5,90 M | 99,8 % |
+| E3 | udp | 10/10 | 65 464 | 5,68 M | 1,15 % |
+| E3 | icmp | 10/10 | 5,87 M | 5,88 M | 99,9 % |
+| E3 | modbus | 10/10 | 860 | 0,01 M | 11,1 % |
+
+- **Detección a nivel de corrida:** las reglas alertan en las 80 corridas E2/E3, sin falsos negativos por corrida.
+- **Límites de la tasa por paquete:** `decoder.pkts` incluye también el sentido inverso (respuestas del PLC, ver A21) y el tráfico del SCADA, así que `alertas/paquetes` en E2 syn/icmp (≈73 %) no es una tasa de detección del ataque; en E3, donde casi no hay respuestas, sí se acerca a 100 % para syn e icmp.
+- **UDP es distinto (A22, sin explicar):** el número de alertas es casi constante (~65,5 k, rango 65 302–65 638) aunque a Suricata lleguen 4,9–5,7 M de paquetes, tanto en E2 como en E3. Una cuenta por paquete daría millones, como en syn e icmp. No se afirma la causa; hay que mirarla antes de reportar una tasa de detección de UDP.
+- **Qué no se puede medir con estos datos:** `eve.json` solo guarda estadísticas cada segundo, no cada alerta, así que no hay tiempo hasta la primera alerta ni falsos positivos por paquete del tráfico legítimo.
+
+## 6. Qué falta
 1. Decidir si se añade un contador de descartes por sentido (hoy no separable) para citar la saturación en E2.
-2. Tasa de detección por regla (`detect.alert` / paquetes entregados a Suricata) en E2/E3, aún sin analizar aquí.
-3. Decidir si se añaden corridas E3 ICMP adicionales (reps 11+) para cerrar la duda de A20.
+2. Explicar A22 (alertas UDP constantes).
+3. (Descartado) No se repiten ni se añaden corridas por A20.
 4. Repetir el análisis con `pc-miguel`; los números del paper salen solo de esa plataforma.
 5. Revisar `07_resultados_auditados.md` con estos resultados y los WARN.
