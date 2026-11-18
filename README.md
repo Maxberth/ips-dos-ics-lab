@@ -23,8 +23,9 @@ Repositorio público. El texto del artículo (LaTeX) está en [`Maxberth/ips-dos
 CLAUDE.md       reglas de trabajo del laboratorio (no inventar datos, una plataforma, guardián de recursos)
 docs/
   lab/          bitácora: hardware, versiones, limitaciones (L1–L8), decisiones (D1–D22), anomalías (A1–A24),
-                logros, resultados auditados, análisis de la tanda real, seguimiento de los revisores y auditoría
-  arquitectura.md, definiciones_metricas (en docs/lab/), reproducir.md (en docs/lab/)
+                logros, resultados auditados, análisis de la tanda real, seguimiento de los revisores, auditoría,
+                definiciones de métricas y cómo reproducir
+  arquitectura.md, observaciones_icits27.md (matriz inicial de observaciones, histórica)
   prompts/      prompts históricos con los que se construyó el laboratorio (ver su README)
 lab/
   config/       perfiles de plataforma, reglas de Suricata, configuración de nftables y de los experimentos

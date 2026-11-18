@@ -11,7 +11,7 @@ Qué quedó verificado y con qué evidencia.
 - **Arnés robusto:** límites de memoria para todo el post-proceso (A10), salud del PLC en cada corrida, `--resume` de la matriz y validación automática.
 
 ## laptop-dev, 2026-11-17 a 2026-11-18: tanda real y análisis
-- **Tanda real:** 130 corridas finales (E0, E1, E2 y E3 × SYN, UDP, ICMP y Modbus, 10 repeticiones), todas `status=ok`, en 5 bloques con commit por bloque; 6 h 29 min de ejecución (`09_analisis_tanda_real_laptop-dev.md`).
+- **Tanda real:** 130 corridas finales (E0, E1, E2 y E3 × SYN, UDP, ICMP y Modbus, 10 repeticiones), todas `status=ok`, en 5 bloques con commit por bloque; 6 h 28 min de ejecución (`09_analisis_tanda_real_laptop-dev.md`).
 - **Defecto del control térmico (A20):** el arnés buscaba el CSV del guardián por la fecha UTC y no lo encontraba pasada la medianoche; corregido, con 7 corridas con campos térmicos vacíos que se declaran (L7).
 - **Segunda fuente:** conservación de paquetes entre nftables, NFQUEUE y Suricata verificada en las 80 corridas E2/E3 (A21) y recálculo independiente de las métricas de las 130 corridas (`verificar_figuras.py`, resultado COHERENTE).
 - **Calibraciones con registro completo de alertas:** UDP genera una alerta por flujo (A22) y la regla Modbus descarta paquetes del SCADA al final del ataque (A23).
