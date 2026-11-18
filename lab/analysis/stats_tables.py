@@ -24,7 +24,7 @@ def tcrit(n):
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--platform", required=True); ap.add_argument("--profile", required=True)
-    a = ap.parse_args()
+    ap.add_argument("--figures", action="store_true", help="figuras antiguas (sustituidas por figuras_paper.py)"); a = ap.parse_args()
     src = f"{REPO}/data/processed/run_summary_{a.platform}_{a.profile}.csv"
     runs = [r for r in csv.DictReader(open(src)) if r["status"] == "ok"]
     vr = {r["run_id"]: r["validate"] for r in csv.DictReader(open(f"{REPO}/data/raw/runs.csv"))}
@@ -75,19 +75,20 @@ def main():
     L += ["\\bottomrule", "\\end{tabular}", "\\end{table}"]
     open(f"{REPO}/tables/stats_{a.platform}_{a.profile}.tex", "w").write("\n".join(L) + "\n")
     # Figuras
-    import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
-    os.makedirs(f"{REPO}/figures", exist_ok=True)
-    for k, lab in (("availability_pct", "Disponibilidad del SCADA (%)"), ("rtt_p95_ms", "RTT p95 (ms)")):
-        rr = [r for r in rows if k + "_mean" in r]
-        names = [f"{r['scenario']}\n{r['attack']}" for r in rr]
-        ys = [r[k + "_mean"] for r in rr]
-        es = [0 if math.isnan(r[k + "_ci95"]) else r[k + "_ci95"] for r in rr]
-        fig, ax = plt.subplots(figsize=(max(4, 0.7 * len(rr) + 1), 3.2))
-        ax.bar(range(len(rr)), ys, yerr=es, capsize=3, color="#4C78A8")
-        ax.set_xticks(range(len(rr))); ax.set_xticklabels(names, fontsize=7)
-        ax.set_ylabel(lab); ax.set_title(f"{a.platform}, perfil {a.profile} (media ± IC 95 %)", fontsize=8)
-        ax.grid(axis="y", alpha=.3); fig.tight_layout()
-        fig.savefig(f"{REPO}/figures/{a.platform}_{a.profile}_{k}.png", dpi=200); plt.close(fig)
+    if a.figures:  # figuras antiguas, sustituidas por figuras_paper.py (ancho LNCS, inglés, leyendas fuera de los datos)
+        import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+        os.makedirs(f"{REPO}/figures", exist_ok=True)
+        for k, lab in (("availability_pct", "Disponibilidad del SCADA (%)"), ("rtt_p95_ms", "RTT p95 (ms)")):
+            rr = [r for r in rows if k + "_mean" in r]
+            names = [f"{r['scenario']}\n{r['attack']}" for r in rr]
+            ys = [r[k + "_mean"] for r in rr]
+            es = [0 if math.isnan(r[k + "_ci95"]) else r[k + "_ci95"] for r in rr]
+            fig, ax = plt.subplots(figsize=(max(4, 0.7 * len(rr) + 1), 3.2))
+            ax.bar(range(len(rr)), ys, yerr=es, capsize=3, color="#4C78A8")
+            ax.set_xticks(range(len(rr))); ax.set_xticklabels(names, fontsize=7)
+            ax.set_ylabel(lab); ax.set_title(f"{a.platform}, perfil {a.profile} (media ± IC 95 %)", fontsize=8)
+            ax.grid(axis="y", alpha=.3); fig.tight_layout()
+            fig.savefig(f"{REPO}/figures/{a.platform}_{a.profile}_{k}.png", dpi=200); plt.close(fig)
     print(p)
     return 0
 
