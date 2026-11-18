@@ -23,5 +23,5 @@ def aplicar():
 def guardar(fig, dest, nombre):
     os.makedirs(dest, exist_ok=True)
     for ext in ("png", "pdf"):
-        fig.savefig(f"{dest}/{nombre}.{ext}")
+        fig.savefig(f"{dest}/{nombre}.{ext}", bbox_inches="tight", pad_inches=0.03)
     plt.close(fig)

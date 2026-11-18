@@ -3,7 +3,7 @@
 
 Los datos que aparecen (VLAN, subredes, hosts, reglas de nftables, repeticiones, duración de las fases) se leen de
 lab/config (profile_<plataforma>.env, experiment.env, nftables-nfq.conf) para que no se desincronicen del laboratorio.
-Salida: figures/paper/a1_topology, a2_ips_datapath, a3_experiment_design (.png 300 dpi y .pdf).
+Salida: figures/paper/a0_logical_topology, a1_topology, a2_ips_datapath, a3_experiment_design (.png 300 dpi y .pdf).
 Uso: python3 -I lab/analysis/figuras_arquitectura.py --platform laptop-dev [--lang en|es]
 """
 import argparse, os, re, sys
@@ -34,43 +34,59 @@ def arrow(ax, p, q, txt=None, c="#222", style="-|>", lw=.9, ls="-", off=(0, .02)
 def lienzo(h):
     fig, ax = plt.subplots(figsize=(E.W, h)); ax.set_xlim(0, 1); ax.set_ylim(0, 1); ax.axis("off"); return fig, ax
 
-# ---------- A1: topología ----------
-fig, ax = lienzo(3.0)
-ax.add_patch(Rectangle((.005, .30), .99, .69, fc="#f7f7f7", ec="#777", lw=.7, ls="--"))
-ax.text(.015, .96, "Host: KVM/libvirt + Open vSwitch (ovs-ot, " + ("no physical ports)" if EN else "sin puertos físicos)"), fontsize=6.3, va="center", fontweight="bold")
-bands = [(.015, .22, "VLAN 10 · IT", "192.168.10.0/24"), (.365, .255, "VLAN 20 · DMZ/SCADA", "192.168.20.0/24"), (.75, .235, "VLAN 30 · " + ("Plant" if EN else "Planta"), "192.168.30.0/24")]
-for x, w, t, n in bands:
-    ax.add_patch(Rectangle((x, .33), w, .58, fc="#eaf1f8", ec="#9db7d1", lw=.6)); ax.text(x + w / 2, .875, t, ha="center", fontsize=6, fontweight="bold"); ax.text(x + w / 2, .83, n, ha="center", fontsize=5.8, color="#444")
-box(ax, .03, .46, .19, .27, ("Attacker\nhping3, Scapy\n" if EN else "Atacante\nhping3, Scapy\n") + vm("ATTACKER").replace("\n", ", "), fc="#fbe3d6", fs=5.8)
-box(ax, .25, .46, .10, .27, "Firewall\nnftables\n" + vm("FW"), fs=5.8)
-box(ax, .627, .46, .115, .27, "IPS\nSuricata\nNFQUEUE\n" + vm("IPS"), fc="#fff2cc", fs=5.3)
-box(ax, .385, .36, .215, .17, "SCADA\npymodbus %d Hz\n" % hz + vm("SCADA").replace("\n", ", "), fs=5.8)
-box(ax, .765, .46, .205, .27, "OpenPLC\nModbus/TCP\n" + vm("PLC").replace("\n", ", "), fc="#dcefdc", fs=5.8)
-arrow(ax, (.22, .595), (.25, .595)); arrow(ax, (.35, .66), (.627, .66)); arrow(ax, (.742, .595), (.765, .595))
-arrow(ax, (.60, .445), (.627, .50), c="#555", lw=.7)
-box(ax, .015, .075, .30, .15, "dumpcap +\ncounters of nftables,\nNFQUEUE and Suricata" if EN else "dumpcap +\ncontadores de nftables,\nNFQUEUE y Suricata", fc="#eeeeee", fs=5.8)
-box(ax, .345, .075, .30, .15, "mir20: mirror of VLAN 20\n(before the IPS)" if EN else "mir20: espejo de\nla VLAN 20\n(antes del IPS)", fc="#eeeeee", fs=5.8)
-box(ax, .675, .075, .31, .15, "mir30: mirror of VLAN 30\n(after the IPS)" if EN else "mir30: espejo de\nla VLAN 30\n(después del IPS)", fc="#eeeeee", fs=5.8)
-arrow(ax, (.49, .33), (.49, .225), c="#777", ls=":", lw=.7, style="-"); arrow(ax, (.83, .33), (.83, .225), c="#777", ls=":", lw=.7, style="-")
-ax.text(.5, .03, "Out-of-band measurement on the host: no packet passes through it" if EN else "Medición fuera de banda en el host: ningún paquete pasa por ella", ha="center", fontsize=5.8, color="#444")
+# ---------- A0: topología lógica propuesta (mismo formato que la Fig. 1 original: flujo vertical de cajas grises) ----------
+fig, ax = plt.subplots(figsize=(3.6, 3.4)); ax.set_xlim(0, 1); ax.set_ylim(-.04, 1.04); ax.axis("off")
+G = "#f2f2f2"
+nodos = [(.87, "Corporate / IT network\n(VLAN 10, attacker)" if EN else "Red corporativa / TI\n(VLAN 10, atacante)"),
+         (.58, "Industrial DMZ\nSCADA/HMI (VLAN 20)" if EN else "DMZ industrial\nSCADA/HMI (VLAN 20)"),
+         (.29, "PLC network (VLAN 30)\nOpenPLC, Modbus/TCP" if EN else "Red del PLC (VLAN 30)\nOpenPLC, Modbus/TCP"),
+         (.00, "Simulated industrial\nprocess" if EN else "Proceso industrial\nsimulado")]
+for y, t in nodos: box(ax, .04, y, .56, .13, t, fc=G, ec="#555", fs=7)
+for (y1, _), (y2, _), lab in zip(nodos[:-1], nodos[1:], ("Firewall (nftables)" if EN else "Firewall (nftables)", "Inline IPS (Suricata, NFQUEUE)" if EN else "IPS en línea (Suricata, NFQUEUE)", "Modbus/TCP :502" if EN else "Modbus/TCP :502")):
+    arrow(ax, (.32, y1), (.32, y2 + .13), c="#333", lw=.9); ax.text(.35, (y1 + y2 + .13) / 2, lab, fontsize=6.3, va="center", ha="left", color="#333")
+ax.add_patch(Rectangle((.905, .03), .04, .94, fc="#dbe8f4", ec="#8fb0d1", lw=.6))
+ax.text(.99, .50, "Virtual industrial switch (Open vSwitch, 802.1Q VLANs)" if EN else "Switch industrial virtual (Open vSwitch, VLAN 802.1Q)", rotation=90, fontsize=6.3, va="center", ha="center", color="#33597d")
+E.guardar(fig, DEST, "a0_logical_topology")
+
+# ---------- A1: banco de pruebas y puntos de medición ----------
+fig, ax = lienzo(3.1)
+bw, bh, xs, y0 = .18, .30, [.01, .275, .54, .805], .44
+cajas = [("Attacker" if EN else "Atacante", "hping3,\nPython", "VLAN 10", "#fbe3d6"), ("Firewall", "nftables", "VLAN 10/20", "#ffffff"), ("IPS inline", "Suricata,\nNFQUEUE", "VLAN 20/30", "#fff2cc"), ("OpenPLC", "Modbus/TCP\n:502", "VLAN 30", "#dcefdc")]
+for x, (n, sw, vl_, c) in zip(xs, cajas):
+    ax.add_patch(FancyBboxPatch((x, y0), bw, bh, boxstyle="round,pad=0.005,rounding_size=0.012", fc=c, ec="#333", lw=.7))
+    ax.text(x + bw / 2, y0 + bh - .06, n, ha="center", va="center", fontsize=6.8, fontweight="bold"); ax.text(x + bw / 2, y0 + bh / 2 - .005, sw, ha="center", va="center", fontsize=5.8, linespacing=1.2); ax.text(x + bw / 2, y0 + .045, vl_, ha="center", va="center", fontsize=5.8, color="#444")
+for x in xs[:-1]: arrow(ax, (x + bw, y0 + bh / 2), (x + bw + .085, y0 + bh / 2))
+box(ax, .28, .86, .26, .12, "SCADA (VLAN 20)\nPython client, %d Hz" % hz, fs=5.8)
+arrow(ax, (.54, .90), (.62, y0 + bh), c="#555", lw=.8)
+ax.add_patch(FancyBboxPatch((.01, .30), .98, .08, boxstyle="round,pad=0.003,rounding_size=0.01", fc="#dbe8f4", ec="#8fb0d1", lw=.6))
+ax.text(.5, .34, "Open vSwitch ovs-ot: VLAN 10/20/30, no physical ports" if EN else "Open vSwitch ovs-ot: VLAN 10/20/30, sin puertos físicos", ha="center", va="center", fontsize=6)
+for x in xs: arrow(ax, (x + bw / 2, y0), (x + bw / 2, .38), c="#8fb0d1", lw=.7, style="-")
+box(ax, .01, .06, .30, .16, "mir20: mirror of\nVLAN 20\n(before the IPS)" if EN else "mir20: espejo de\nla VLAN 20\n(antes del IPS)", fc="#eeeeee", fs=5.8)
+box(ax, .69, .06, .30, .16, "mir30: mirror of\nVLAN 30\n(after the IPS)" if EN else "mir30: espejo de\nla VLAN 30\n(después del IPS)", fc="#eeeeee", fs=5.8)
+box(ax, .385, .06, .23, .16, "dumpcap +\ncounters" if EN else "dumpcap +\ncontadores", fc="#eeeeee", fs=5.8)
+arrow(ax, (.16, .30), (.16, .22), c="#777", ls=":", lw=.8, style="-"); arrow(ax, (.84, .30), (.84, .22), c="#777", ls=":", lw=.8, style="-")
+arrow(ax, (.31, .14), (.385, .14), c="#555", lw=.8); arrow(ax, (.69, .14), (.615, .14), c="#555", lw=.8)
+ax.text(.5, .015, "Out-of-band measurement on the host: no packet passes through it" if EN else "Medición fuera de banda en el host: ningún paquete pasa por ella", ha="center", fontsize=5.8, color="#444")
 E.guardar(fig, DEST, "a1_topology")
 
 # ---------- A2: ruta de datos del IPS ----------
-fig, ax = lienzo(3.0); ax.set_xlim(-.02, 1.02)
-ax.add_patch(Rectangle((.135, .07), .74, .86, fc="#fffdf2", ec="#b8a64a", lw=.7, ls="--")); ax.text(.145, .90, "lab-ips (Debian 13)", fontsize=6, fontweight="bold", va="center")
-yT, yB, h = .60, .16, .20
-box(ax, .005, yT, .10, h, "v20\nVLAN 20", fc="#eaf1f8", fs=5.3); box(ax, .895, yT, .10, h, "v30\nVLAN 30", fc="#dcefdc", fs=5.3)
-box(ax, .15, yT, .21, h, ("nftables forward\ncounter\nc_fwd_v20_v30\nqueue num %s" if EN else "nftables forward\ncontador\nc_fwd_v20_v30\nqueue num %s") % q, fs=5.5)
-box(ax, .41, yT, .19, h, "NFQUEUE %s\nqueue_dropped\n(queue full)" % q if EN else "NFQUEUE %s\nqueue_dropped\n(cola llena)" % q, fc="#f3e5f5", fs=5.5)
-box(ax, .65, yT, .21, h, "Suricata\nrules + verdict\naccept / drop" if EN else "Suricata\nreglas + veredicto\naccept / drop", fc="#fff2cc", fs=5.5)
-arrow(ax, (.105, yT + h / 2), (.15, yT + h / 2)); arrow(ax, (.36, yT + h / 2), (.41, yT + h / 2)); arrow(ax, (.60, yT + h / 2), (.65, yT + h / 2)); arrow(ax, (.86, yT + h / 2), (.895, yT + h / 2), c="#2e7d32")
-ax.text(.945, yT - .045, "accept", fontsize=5.5, color="#2e7d32", ha="center")
-arrow(ax, (.755, yT), (.755, .50), c="#c62828"); ax.text(.755, .44, ("drop: ips.blocked\n(rule match)" if EN else "drop: ips.blocked\n(coincide regla)"), fontsize=5.5, color="#c62828", ha="center", va="center")
-box(ax, .005, yB, .10, h, "v30\nVLAN 30", fc="#dcefdc", fs=5.3); box(ax, .895, yB, .10, h, "v20\nVLAN 20", fc="#eaf1f8", fs=5.3)
-box(ax, .15, yB, .21, h, ("nftables forward\ncounter\nc_fwd_v30_v20\nqueue num %s" if EN else "nftables forward\ncontador\nc_fwd_v30_v20\nqueue num %s") % q, fs=5.5)
-box(ax, .41, yB, .45, h, ("same NFQUEUE %s and Suricata\n(replies of the PLC, A21)" if EN else "mismas NFQUEUE %s y Suricata\n(respuestas del PLC, A21)") % q, fc="#f3e5f5", fs=5.5, ls="--")
-arrow(ax, (.105, yB + h / 2), (.15, yB + h / 2)); arrow(ax, (.36, yB + h / 2), (.41, yB + h / 2)); arrow(ax, (.86, yB + h / 2), (.895, yB + h / 2))
-ax.text(.5, .025, "E1: router mode, no queue · E2: action alert (rules only log) · E3: action drop" if EN else "E1: modo router, sin cola · E2: acción alert (las reglas solo registran) · E3: acción drop", ha="center", fontsize=5.8, color="#333")
+fig, ax = lienzo(2.7); ax.set_xlim(-.02, 1.02)
+ax.add_patch(Rectangle((.125, .07), .755, .86, fc="#fffdf2", ec="#b8a64a", lw=.7, ls="--")); ax.text(.14, .895, "lab-ips (Debian 13)", fontsize=6.3, fontweight="bold", va="center")
+yT, yB, h = .56, .14, .20; vw = .085; xN, wN, xQ, wQ, xS, wS = .165, .17, .385, .17, .605, .18; xo = .905
+box(ax, .005, yT, vw, h, "v20", fc="#eaf1f8", fs=6); box(ax, xo, yT, vw, h, "v30", fc="#dcefdc", fs=6)
+box(ax, xN, yT, wN, h, "nftables\nforward\nc_fwd_v20_v30\nqueue num %s" % q if EN else "nftables\nforward\nc_fwd_v20_v30\nqueue num %s" % q, fs=5.6)
+box(ax, xQ, yT, wQ, h, "NFQUEUE\n%s\nqueue_dropped" % q, fc="#f3e5f5", fs=5.3)
+box(ax, xS, yT, wS, h, "Suricata\nrules +\nverdict" if EN else "Suricata\nreglas +\nveredicto", fc="#fff2cc", fs=5.6)
+cy = yT + h / 2
+arrow(ax, (.005 + vw, cy), (xN, cy)); arrow(ax, (xN + wN, cy), (xQ, cy)); arrow(ax, (xQ + wQ, cy), (xS, cy)); arrow(ax, (xS + wS, cy), (xo, cy), c="#2e7d32")
+ax.text((xS + wS + xo) / 2, cy + .045, "accept", fontsize=5.5, color="#2e7d32", ha="center")
+arrow(ax, (xS + wS / 2, yT), (xS + wS / 2, .50), c="#c62828"); ax.text(xS + wS / 2, .445, "drop\n(ips.blocked)" if EN else "drop\n(ips.blocked)", fontsize=5.5, color="#c62828", ha="center", va="center")
+box(ax, .005, yB, vw, h, "v30", fc="#dcefdc", fs=6); box(ax, xo, yB, vw, h, "v20", fc="#eaf1f8", fs=6)
+box(ax, xN, yB, wN, h, "nftables\nforward\nc_fwd_v30_v20\nqueue num %s" % q, fs=5.6)
+box(ax, xQ, yB, xS + wS - xQ, h, ("same NFQUEUE and Suricata\n(PLC replies)" if EN else "mismas NFQUEUE y Suricata\n(respuestas del PLC)"), fc="#f3e5f5", fs=5.6, ls="--")
+cb = yB + h / 2
+arrow(ax, (.005 + vw, cb), (xN, cb)); arrow(ax, (xN + wN, cb), (xQ, cb)); arrow(ax, (xS + wS, cb), (xo, cb))
+ax.text(.5, .02, "E1: router mode, no queue · E2: action alert · E3: action drop" if EN else "E1: modo router, sin cola · E2: acción alert · E3: acción drop", ha="center", fontsize=5.8, color="#333")
 E.guardar(fig, DEST, "a2_ips_datapath")
 
 # ---------- A3: diseño experimental ----------

@@ -43,3 +43,7 @@ Estados: **Hecho**, **Laboratorio hecho; manuscrito pendiente** (hay datos y scr
 
 ## Cómo se mantiene
 Al cerrar un punto en el manuscrito, cambiar su estado aquí y en `registro_cambios.md` (con el hash del commit). Cualquier número del paper debe salir de `data/processed/analisis_laptop-dev_final.csv` y de los scripts de `lab/analysis/`.
+
+
+## Actualización 2026-11-18 (manuscrito reescrito en el repo del paper)
+Todas las observaciones numéricas con evidencia de laboratorio se incorporaron al manuscrito LNCS (ver `observaciones/registro_cambios.md` del repo del paper, con los hashes). Decisiones: Snort se quita de la comparación (obs. 3); el título pasa a "...Based on PLC Protection and VLAN Segmentation" y el abstract declara el alcance (obs. 4 y 25); el throughput se elimina como métrica y se sustituye por la tasa del ataque y el % de paquetes eliminados (obs. 7); las pruebas de hipótesis (Mann-Whitney con Holm, delta de Cliff, Fisher) salen de `lab/analysis/tablas_paper.py` (obs. 5 y 23). Pendiente fuera del laboratorio: hacer públicos los dos repositorios, revisión de inglés por una persona y confirmar el límite de páginas.

@@ -7,11 +7,11 @@ flowchart LR
   subgraph HOST["Host CachyOS: KVM/libvirt + Open vSwitch (ovs-ot, sin NIC físicas)"]
     direction LR
     subgraph V10["VLAN 10 · IT · 192.168.10.0/24"]
-      K["Kali<br/>hping3 / scapy<br/>.100"]
+      K["Kali<br/>hping3 / Python (modbus_flood.py)<br/>.100"]
     end
     subgraph V20["VLAN 20 · DMZ/SCADA · 192.168.20.0/24"]
       FW["Firewall<br/>nftables<br/>.10.1 / .20.1"]
-      SC["SCADA/HMI<br/>pymodbus 10 Hz<br/>.20"]
+      SC["SCADA/HMI<br/>cliente Python 10 Hz<br/>.20"]
     end
     IPS["IPS en línea (enrutado)<br/>Suricata · NFQUEUE<br/>.20.2 / .30.1"]
     subgraph V30["VLAN 30 · Planta · 192.168.30.0/24"]
