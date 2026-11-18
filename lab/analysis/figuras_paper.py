@@ -45,8 +45,9 @@ def ci95(v):
     from scipy import stats
     return stats.t.ppf(.975, len(v) - 1) * st.stdev(v) / math.sqrt(len(v)) if len(v) > 1 else 0
 
-def leyenda(fig, ncol=3, y=None, patches=False, e0=False):
-    if patches: h = [plt.Rectangle((0, 0), 1, 1, fc=E.COL[s], label=T[s]) for s in SC]
+def leyenda(fig, ncol=3, y=None, patches=False, e0=False, lines=False):
+    if lines: h = [plt.Line2D([], [], color=E.COL[s], ls={"E1": ":", "E2": "--", "E3": "-"}[s], lw=1.2, label=T[s]) for s in SC]
+    elif patches: h = [plt.Rectangle((0, 0), 1, 1, fc=E.COL[s], label=T[s]) for s in SC]
     else: h = [plt.Line2D([], [], marker=E.MARK[s], color=E.COL[s], ls="", ms=4.5, label=T[s]) for s in SC]
     if e0: h.append(plt.Line2D([], [], color=E.COL["E0"], ls="--", lw=.8, label=T["base"]))
     fig.legend(handles=h, loc="outside upper center", ncol=ncol if not e0 else 4, frameon=False, columnspacing=1.0, handletextpad=.3)
@@ -64,7 +65,7 @@ def puntos(ax, metrica, ylabel, ylog=False, e0=True):
     if ylog: ax.set_yscale("log")
 
 # R1: disponibilidad (a) por solicitud emitida y (b) respecto a lo programado
-fig, (a1, a2) = plt.subplots(2, 1, figsize=(E.W, 3.7), sharex=True, constrained_layout=True)
+fig, (a1, a2) = plt.subplots(2, 1, figsize=(E.W, 3.0), sharex=True, constrained_layout=True)
 puntos(a1, "availability_pct", T["av_iss"]); puntos(a2, "resp_sch", T["av_sch"])
 for ax, l in ((a1, "(a)"), (a2, "(b)")): ax.set_title(l, loc="left", fontweight="bold", fontsize=8, pad=2)
 for ax in (a1, a2): ax.set_ylim(-4, 106)
@@ -75,7 +76,7 @@ fig, ax = plt.subplots(figsize=(E.W, 2.7), constrained_layout=True)
 puntos(ax, "rtt_p95_ms", T["rtt"], ylog=True); leyenda(fig, e0=True); E.guardar(fig, DEST, "r2_rtt_p95")
 
 # R3: serie por segundo (de polls.csv), 2x2
-fig, axs = plt.subplots(2, 2, figsize=(E.W, 3.1), sharex=True, sharey=True, constrained_layout=True)
+fig, axs = plt.subplots(2, 2, figsize=(E.W, 2.5), sharex=True, sharey=True, constrained_layout=True)
 for ax, a in zip(axs.flat, AT):
     for s in SC:
         acc = defaultdict(lambda: [0, 0])
@@ -84,11 +85,11 @@ for ax, a in zip(axs.flat, AT):
             for p in csv.DictReader(open(f"{REPO}/data/raw/runs/{r['run_id']}/polls.csv")):
                 b = (int(p["ts_send_unix_ns"]) - t0) // 10**9
                 if -10 <= b <= 70: acc[b][0] += p["ok"] == "1"; acc[b][1] += 1
-        xs = sorted(acc); ax.plot(xs, [100 * acc[x][0] / acc[x][1] for x in xs], color=E.COL[s], lw=.9, label=T[s])
+        xs = sorted(acc); ax.plot(xs, [100 * acc[x][0] / acc[x][1] for x in xs], color=E.COL[s], lw=.9, ls={"E1": ":", "E2": "--", "E3": "-"}[s], label=T[s])
     ax.axvspan(0, 60, color="k", alpha=.05, lw=0); ax.set_title(T[a], loc="left", pad=2); ax.set_ylim(-4, 106)
 for ax in axs[1]: ax.set_xlabel(T["t"])
 for ax in axs[:, 0]: ax.set_ylabel(T["resp"])
-leyenda(fig); E.guardar(fig, DEST, "r3_availability_timeseries")
+leyenda(fig, lines=True); E.guardar(fig, DEST, "r3_availability_timeseries")
 
 # R4: ataque eliminado (captura: solo atacante -> PLC), media e IC95
 fig, ax = plt.subplots(figsize=(E.W, 2.2), constrained_layout=True); w = .26
