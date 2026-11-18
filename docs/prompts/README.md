@@ -48,7 +48,6 @@ Leyenda: **I** = imprescindible, **R** = recomendado, **O** = opcional.
 | [P20](P20_estadistica_y_graficos.md) | Scripts de estadística, tablas LaTeX y gráficos | I | 5, 16, 18, 19, 21, 23 |
 | [P21](P21_insumos_articulo.md) | Insumos redactados para el paper (tabla de configuración, métricas, reglas, limitaciones) | I | 4, 6–9, 11, 12, 24, 25 |
 | [P22](P22_auditoria_final_y_mapeo.md) | Auditoría final y mapa observación → evidencia → sección | I | 0–26 |
-| [PC-ALEM](PROMPT_pc-alem.md) | Preparar pc-alem (escritorio, reemplaza a pc-miguel): inventario, perfil y guía propios; se detiene antes de ejecutar | I | 5, 11 |
 | [CLOUD](CLOUD_variante_EC2.md) | Variante para servidor EC2/KVM/contenedores y diferencias de comandos | O | 11, 24 |
 
 Las observaciones solo de texto, plantilla o bibliografía (0, 9, 12–15, 17, 18, 23, 26 y parte de 7, 21) **no las resuelve el laboratorio**; P21 y P22 entregan los insumos y el mapa de qué editar.

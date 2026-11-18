@@ -99,7 +99,7 @@ Una entrada por decisión: contexto, alternativas, elección y motivo.
 ## D21. Tanda real (perfil `final`) en laptop-dev
 - **Contexto:** pc-miguel no está disponible. El usuario pidió el 2026-11-17 a las 21:23 UTC intentar la tanda real en esta laptop: en el piloto, la RAM no fue el límite (Tctl máximo de 82,6 °C, por debajo del PAUSE de 88 °C).
 - **Alcance:** E0, E1 y E3 × {syn, modbus} × 10 repeticiones, perfil `final` (15 + 60 + 15 s), semilla 2027, regla Modbus rev 3 (D20, opción 1: "PLC caído tras el ataque" se reporta como resultado del escenario).
-- **Regla que se mantiene:** cada corrida lleva `platform=laptop-dev` y `run_profile=final`. Si luego se mide en otra plataforma (pc-alem), sus datos van en tablas y figuras aparte. Nunca se mezclan.
+- **Regla que se mantiene:** cada corrida lleva `platform=laptop-dev` y `run_profile=final`. Si luego se mide en otra plataforma, sus datos van en tablas y figuras aparte. Nunca se mezclan.
 - **Qué plataforma alimenta el paper** lo decide el usuario al final. Si es laptop-dev, se declaran sus limitaciones (L3: laptop, posible reducción de frecuencia por temperatura; techo del IPS de ~60–95 kpps).
 
 ## D22. La regla Modbus (rev 3) se mantiene tal cual y sus falsos positivos se declaran como limitación (decisión de Alberth, 2026-11-18)
