@@ -26,3 +26,4 @@
   - E3 modbus: SCADA al 100 %, pero PLC caído al final 3/3.
   - Calibración de la regla Modbus (D20): ni el umbral de 20/s ni `flowbits` evitan la caída. Se deja la rev 3 y la decisión abierta.
   - `check_chain.sh` final: 0 NO CUMPLE.
+- 2026-11-18 (UTC, laptop-dev): tanda real completa (130 corridas `final`, 5 bloques, 21:26–04:15 UTC). Anomalía A20 (control térmico leía el CSV del guardián por la fecha UTC; corregido en `run_once.sh`, commit `c6805e0`; 7 corridas con campos térmicos vacíos, L7). Análisis inicial en `docs/lab/09_analisis_tanda_real_laptop-dev.md` y figuras con `lab/analysis/analisis_final.py`. Abierta: A21 (descartes NFQUEUE frente a captura en E2 syn/icmp).

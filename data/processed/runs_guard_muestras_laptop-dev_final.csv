@@ -1,0 +1,8 @@
+run_id,campos_vacios_en_runs_csv,guard_tctl_en_t0_c,guard_t_en_t0_utc,guard_tctl_fin_enfriamiento_c,guard_t_fin_enfriamiento_utc,guard_estados_ventana,guard_tctl_max_ventana_c,fuente
+20261117T235851Z_laptop-dev_E3_icmp_final_r5,tctl_end_c|guard_states,59.0,2026-11-17T23:58:54.463Z,47.8,2026-11-18T00:00:25.384Z,OK,80.2,data/raw/guard/guard_laptop-dev_*.csv (medido)
+20261118T000055Z_laptop-dev_E3_icmp_final_r3,tctl_start_c|tctl_end_c|guard_states,43.9,2026-11-18T00:21:00.972Z,44.4,2026-11-18T00:22:31.881Z,OK,77.8,data/raw/guard/guard_laptop-dev_*.csv (medido)
+20261118T002300Z_laptop-dev_E3_icmp_final_r6,tctl_start_c|tctl_end_c|guard_states,45.2,2026-11-18T00:43:05.351Z,44.1,2026-11-18T00:44:36.262Z,OK,77.4,data/raw/guard/guard_laptop-dev_*.csv (medido)
+20261118T004508Z_laptop-dev_E3_icmp_final_r7,tctl_start_c|tctl_end_c|guard_states,44.1,2026-11-18T01:05:13.937Z,44.0,2026-11-18T01:06:44.856Z,OK,76.9,data/raw/guard/guard_laptop-dev_*.csv (medido)
+20261118T010715Z_laptop-dev_E3_icmp_final_r9,tctl_start_c|tctl_end_c|guard_states,45.5,2026-11-18T01:27:20.390Z,43.9,2026-11-18T01:28:51.300Z,OK,77.4,data/raw/guard/guard_laptop-dev_*.csv (medido)
+20261118T012921Z_laptop-dev_E3_icmp_final_r8,tctl_start_c|tctl_end_c|guard_states,43.8,2026-11-18T01:49:27.020Z,43.0,2026-11-18T01:50:57.948Z,OK,76.8,data/raw/guard/guard_laptop-dev_*.csv (medido)
+20261118T015128Z_laptop-dev_E1_icmp_final_r4,tctl_start_c|tctl_end_c|guard_states,60.0,2026-11-18T02:11:35.543Z,43.4,2026-11-18T02:13:06.567Z,OK,77.9,data/raw/guard/guard_laptop-dev_*.csv (medido)
