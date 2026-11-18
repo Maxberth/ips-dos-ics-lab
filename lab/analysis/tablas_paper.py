@@ -91,7 +91,7 @@ fa = {}
 for s1, s2 in pairs:
     x = [r["plc_alive_after"] != "yes" for r in by[(s1, "modbus")]]; y = [r["plc_alive_after"] != "yes" for r in by[(s2, "modbus")]]
     tab = [[sum(x), len(x) - sum(x)], [sum(y), len(y) - sum(y)]]; fa[(s1, s2)] = stats.fisher_exact(tab)[1]
-T += ["\\midrule", "PLC down (Modbus), $p$ & " + " & ".join(f"{fa[p]:.3f}" for p in pairs) + "\\\\", "\\bottomrule", "\\end{tabular}"]
+T += ["\\midrule", "PLC crashes, $p$ & " + " & ".join(f"{fa[p]:.3f}" for p in pairs) + "\\\\", "\\bottomrule", "\\end{tabular}"]
 open(f"{OUT}/t_tests.tex", "w").write("\n".join(T) + "\n")
 # ---- configuración ----
 prof = open(f"{REPO}/lab/config/profile_{A.platform}.env").read()
