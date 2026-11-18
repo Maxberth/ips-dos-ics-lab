@@ -1,0 +1,8 @@
+run_id,tctl_start_c_rec,tctl_end_c_rec,guard_states_rec,tctl_max_guard_c,origen,desfase_inicio_s,desfase_fin_s,mae_calib_inicio_c,mae_calib_fin_c,nota
+20261117T235851Z_laptop-dev_E3_icmp_final_r5,,72.9,OK,80.2,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián
+20261118T000055Z_laptop-dev_E3_icmp_final_r3,38.2,71.8,OK,77.8,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián
+20261118T002300Z_laptop-dev_E3_icmp_final_r6,38.1,73.2,OK,77.4,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián
+20261118T004508Z_laptop-dev_E3_icmp_final_r7,38.1,74.0,OK,76.9,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián
+20261118T010715Z_laptop-dev_E3_icmp_final_r9,37.9,67.8,OK,77.4,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián
+20261118T012921Z_laptop-dev_E3_icmp_final_r8,36.8,73.4,OK,76.8,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián
+20261118T015128Z_laptop-dev_E1_icmp_final_r4,53.0,72.1,OK,77.9,reconstruido,-3,20,3.54,3.53,A20: campos vacíos en runs.csv; reconstruido del CSV del guardián

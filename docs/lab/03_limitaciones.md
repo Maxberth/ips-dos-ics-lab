@@ -25,3 +25,7 @@ El atacante usa una sola IP (sin `--rand-source`), así que las reglas con `trac
 
 ## L6. Open vSwitch arrastra DPDK
 En CachyOS, el paquete `openvswitch` instala `dpdk` (unos 577 MiB) como dependencia. El laboratorio no usa DPDK: OVS corre en el kernel (datapath `system`). Solo ocupa disco.
+
+## L7. Siete corridas de laptop-dev con arranque frío y campos térmicos reconstruidos (A20)
+Siete corridas finales (E3 ICMP r3, r5, r6, r7, r8, r9 y E1 ICMP r4) perdieron `tctl_start_c`, `tctl_end_c` y/o `guard_states` en `runs.csv` por el fallo de fechas descrito en A20. Seis de ellas esperaron ~20 min antes de empezar, así que arrancaron con la laptop más fría (38–53 °C) que las demás corridas del perfil `final` (54–63 °C). Sus mediciones son completas y válidas. Los tres campos se reconstruyeron del CSV del guardián (`data/processed/runs_guard_reconstruido_laptop-dev_final.csv`) con error mediano de 1–3 °C, y deben citarse como estimados. Comparadas con las demás ICMP, E1 no mostró diferencia; en E3 hay una disponibilidad del SCADA algo menor (74 % frente a 82 %), con rangos solapados y sin separar el efecto del arranque frío del tiempo transcurrido, por lo que no se concluye nada y se declara. No se repitieron.
+
